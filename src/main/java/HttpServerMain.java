@@ -4,6 +4,8 @@ public class HttpServerMain {
 
     public static void main(String[] args) {
         serverHostAndPort(args);
+        HttpServer server = new HttpServer(currentPort);
+        server.serverUp();
     }
 
     public int portNumber() {
