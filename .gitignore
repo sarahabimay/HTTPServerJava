@@ -1,0 +1,7 @@
+.idea
+out
+copy
+notes/
+.gradle
+build/
+*.iml
