@@ -2,14 +2,16 @@ import java.util.Optional;
 
 public class HTTPRequest {
     private String request;
-    private Optional<HttpClientSocket> clientSocket;
 
     public HTTPRequest(Optional<HttpClientSocket> clientSocket) {
-        this.clientSocket = clientSocket;
         this.request = clientSocket.get().request();
     }
 
     public String request() {
-        return clientSocket.get().request();
+        return request;
+    }
+
+    public String response() {
+        return "HTTP/1.1 404 Not Found";
     }
 }

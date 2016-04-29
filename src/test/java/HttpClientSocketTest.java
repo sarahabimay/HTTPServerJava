@@ -31,6 +31,12 @@ public class HttpClientSocketTest {
         assertEquals("GET / HTTP/1.1", clientSocket.request());
     }
 
+    @Test
+    public void sendResponseToClientSocket() {
+        clientSocket.sendResponse("HTTP/1.1 404 Not Found");
+        assertEquals("HTTP/1.1 404 Not Found", clientSocket.lastResponse());
+    }
+
     private class JavaSocketFake extends Socket {
         @Override
         public InputStream getInputStream() {

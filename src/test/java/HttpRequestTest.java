@@ -6,11 +6,19 @@ import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 
 public class HttpRequestTest {
+    private final String GET_FOOBAR_REQUEST = "GET /foobar HTTP/1.1";
     @Test
     public void genericRequestReceived() {
         ServerSocketFake serverSocketFake = new ServerSocketFake();
         HTTPRequest request = new HTTPRequest(Optional.of(serverSocketFake.accept()));
-        assertEquals("GET / HTTP/1.1", request.request());
+        assertEquals(GET_FOOBAR_REQUEST, request.request());
+    }
+
+    @Test
+    public void generateFourOhFourResponseForRequest() {
+        ServerSocketFake serverSocketFake = new ServerSocketFake();
+        HTTPRequest request = new HTTPRequest(Optional.of(serverSocketFake.accept()));
+        assertEquals("HTTP/1.1 404 Not Found", request.response());
     }
 
     public class ServerSocketFake {
@@ -25,7 +33,7 @@ public class HttpRequestTest {
         }
 
         public String request() {
-            return "GET / HTTP/1.1";
+            return GET_FOOBAR_REQUEST;
         }
     }
 }

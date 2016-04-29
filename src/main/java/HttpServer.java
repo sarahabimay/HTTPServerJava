@@ -8,13 +8,18 @@ public class HttpServer {
     }
 
     public void serverUp() {
-        if(serverSocket.isPresent()) {
-            System.out.println("Start waiting for Requests");
-            HTTPRequest httpRequest = new HTTPRequest(serverSocket.get().accept());
+        if (serverSocket.isPresent()) {
+            Optional<HttpClientSocket> clientSocket = serverSocket.get().accept();
+            if (clientSocket.isPresent()) {
+                while (!clientSocket.get().isClosed()) {
+                    HTTPRequest httpRequest = new HTTPRequest(clientSocket);
+                    clientSocket.get().sendResponse(httpRequest.response());
+                }
+            }
         }
     }
 
     public Optional<Integer> getLocalPort() {
-        return serverSocket.isPresent()? Optional.of(serverSocket.get().getLocalPort()) : Optional.empty();
+        return serverSocket.isPresent() ? Optional.of(serverSocket.get().getLocalPort()) : Optional.empty();
     }
 }
