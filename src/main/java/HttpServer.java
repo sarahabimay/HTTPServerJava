@@ -1,22 +1,16 @@
-import java.io.IOException;
-import java.net.ServerSocket;
 import java.util.Optional;
 
 public class HttpServer {
-    private Optional<ServerSocket> serverSocket = Optional.empty();
+    private Optional<HttpServerSocket> serverSocket = Optional.empty();
 
-    public HttpServer(int portNumber) {
-        try {
-            this.serverSocket = Optional.of(new ServerSocket(portNumber));
-        }
-        catch(IOException ex){
-           this.serverSocket = Optional.empty();
-        }
+    public HttpServer(HttpServerSocket serverSocket) {
+        this.serverSocket = Optional.of(serverSocket);
     }
 
     public void serverUp() {
         if(serverSocket.isPresent()) {
             System.out.println("Start waiting for Requests");
+            HTTPRequest httpRequest = new HTTPRequest(serverSocket.get().accept());
         }
     }
 
