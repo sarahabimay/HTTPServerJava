@@ -7,9 +7,11 @@ import java.util.Optional;
 
 public class HttpClientSocket {
     private Socket socket;
+    private String lastResponse;
 
     public HttpClientSocket(Socket socket) {
         this.socket = socket;
+        this.lastResponse = "";
     }
 
     public Optional<BufferedReader> getInputReader() {
@@ -39,5 +41,20 @@ public class HttpClientSocket {
             }
         }
         return "";
+    }
+
+    public boolean isClosed() {
+        return socket.isClosed();
+    }
+
+    public void sendResponse(String response) {
+        this.lastResponse = response;
+        PrintWriter writer = getOutputWriter().get();
+        writer.println(response);
+        writer.close();
+    }
+
+    public String lastResponse() {
+        return lastResponse;
     }
 }
