@@ -49,12 +49,12 @@ public class CommandLineArgumentsTest {
 
     @Test
     public void startServerWithSpecifiedPortAndPublicDir() {
-        String[] both_options = new String[4];
-        both_options[0] = "-p";
-        both_options[1] = "4050";
-        both_options[2] = "-d";
-        both_options[3] = "/Users/sarahjohnston/Sarah/Server/public/";
-        arguments.process_arguments(both_options);
+        String[] both_arguments = new String[4];
+        both_arguments[0] = "-p";
+        both_arguments[1] = "4050";
+        both_arguments[2] = "-d";
+        both_arguments[3] = "/Users/sarahjohnston/Sarah/Server/public/";
+        arguments.process_arguments(both_arguments);
         int expected_port_number = 4050;
         String expected_public_dir = "/Users/sarahjohnston/Sarah/Server/public/";
         assertEquals(arguments.portNumber(), expected_port_number);
