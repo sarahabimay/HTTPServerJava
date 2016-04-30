@@ -1,3 +1,4 @@
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -11,12 +12,19 @@ import static org.junit.Assert.assertEquals;
 
 public class HttpServerTest {
 
+    private Router router;
+
+    @Before
+    public void setUp() {
+        router = new Router(routes());
+    }
+
     @Test
     public void verifyServerCreatedASocket() {
         int portNumber = 5050;
         try {
             HttpServerSocket serverSocket = new HttpServerSocket(new ServerSocket(portNumber));
-            HttpServer server = new HttpServer(serverSocket);
+            HttpServer server = new HttpServer(serverSocket, router);
             assertEquals((Integer) portNumber, server.getLocalPort().get());
         } catch (IOException e) {
             e.printStackTrace();
@@ -24,13 +32,13 @@ public class HttpServerTest {
     }
 
     @Test
-    public void clientSendsARequest() {
+    public void clientSendsAnInvalidRequest() {
         int portNumber = 5061;
         try {
             HttpServerSocketFake serverSocket = new HttpServerSocketFake(new ServerSocket(portNumber));
-            HttpServer server = new HttpServer(serverSocket);
+            HttpServer server = new HttpServer(serverSocket, router);
             server.serverUp();
-            HttpClientSocketSpy clientSocket = (HttpClientSocketSpy)serverSocket.getClientSocket();
+            HttpClientSocketSpy clientSocket = (HttpClientSocketSpy) serverSocket.getClientSocket();
             assertEquals(true, clientSocket.hasRequestBeenCalled());
         } catch (IOException e) {
             e.printStackTrace();
@@ -38,21 +46,38 @@ public class HttpServerTest {
     }
 
     @Test
-    public void responseSentToClient() {
+    public void getResponseSentToClient() {
         int portNumber = 5062;
         try {
             HttpServerSocketFake serverSocket = new HttpServerSocketFake(new ServerSocket(portNumber));
-            HttpServer server = new HttpServer(serverSocket);
+            HttpServer server = new HttpServer(serverSocket, router);
             server.serverUp();
-            HttpClientSocketSpy clientSocket = (HttpClientSocketSpy)serverSocket.getClientSocket();
+            HttpClientSocketSpy clientSocket = (HttpClientSocketSpy) serverSocket.getClientSocket();
             assertEquals(true, clientSocket.hasResponseBeenReceived());
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
-    private class HttpServerSocketFake extends HttpServerSocket{
+    @Test
+    public void putResponseSentToClient() {
+        int portNumber = 5063;
+        try {
+            HttpServerSocketFake serverSocket = new HttpServerSocketFake(new ServerSocket(portNumber));
+            HttpServer server = new HttpServer(serverSocket, router);
+            server.serverUp();
+            HttpClientSocketSpy clientSocket = (HttpClientSocketSpy) serverSocket.getClientSocket();
+            assertEquals(true, clientSocket.hasResponseBeenReceived());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private List<Route> routes() {
+        return new RoutesFactory().routes();
+    }
+
+    private class HttpServerSocketFake extends HttpServerSocket {
         private Optional<HttpClientSocket> clientSocket;
 
         public HttpServerSocketFake(ServerSocket serverSocket) {
@@ -64,7 +89,7 @@ public class HttpServerTest {
             return clientSocket;
         }
 
-        public HttpClientSocket getClientSocket(){
+        public HttpClientSocket getClientSocket() {
             return clientSocket.get();
         }
     }
@@ -87,11 +112,11 @@ public class HttpServerTest {
             return dummyRequests.size() == 0 ? null : dummyRequests.remove(0);
         }
 
-        public void sendResponse(String response){
+        public void sendResponse(String response) {
             hasResponseBeenReceived = true;
         }
 
-        public boolean isClosed(){
+        public boolean isClosed() {
             return closeConnection.remove(0);
         }
 
