@@ -7,23 +7,18 @@ import java.net.Socket;
 import static org.junit.Assert.assertEquals;
 
 public class HttpClientSocketTest {
-    private JavaSocketFake socket;
+    private JavaSocketFake socketFake;
     private HttpClientSocket clientSocket;
 
     @Before
     public void setUp() {
-        socket = new JavaSocketFake();
-        clientSocket = new HttpClientSocket(socket);
+        socketFake = new JavaSocketFake();
+        clientSocket = new HttpClientSocket(socketFake);
     }
 
     @Test
     public void socketInputReaderExists() {
         assertEquals(BufferedReader.class, clientSocket.getInputReader().get().getClass());
-    }
-
-    @Test
-    public void socketOutputWriterExists() {
-        assertEquals(PrintWriter.class, clientSocket.getOutputWriter().get().getClass());
     }
 
     @Test
@@ -34,10 +29,12 @@ public class HttpClientSocketTest {
     @Test
     public void sendResponseToClientSocket() {
         clientSocket.sendResponse("HTTP/1.1 404 Not Found");
-        assertEquals("HTTP/1.1 404 Not Found", clientSocket.lastResponse());
+        assertEquals(true, socketFake.hasBeenAskedForOutputStream());
     }
 
     private class JavaSocketFake extends Socket {
+        private boolean hasBeenAskedForOutputStream = false;
+
         @Override
         public InputStream getInputStream() {
             return new ByteArrayInputStream("GET / HTTP/1.1".getBytes());
@@ -45,7 +42,12 @@ public class HttpClientSocketTest {
 
         @Override
         public OutputStream getOutputStream() throws IOException {
+            hasBeenAskedForOutputStream = true;
             return new ByteArrayOutputStream();
+        }
+
+        public boolean hasBeenAskedForOutputStream() {
+            return hasBeenAskedForOutputStream;
         }
     }
 }

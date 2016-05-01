@@ -1,31 +1,19 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 import java.util.Optional;
 
 public class HttpClientSocket {
     private Socket socket;
-    private String lastResponse;
 
     public HttpClientSocket(Socket socket) {
         this.socket = socket;
-        this.lastResponse = "";
     }
 
     public Optional<BufferedReader> getInputReader() {
         try {
             return Optional.of(new BufferedReader(
                     new InputStreamReader(socket.getInputStream())));
-        } catch (IOException e) {
-            return Optional.empty();
-        }
-    }
-
-    public Optional<PrintWriter> getOutputWriter() {
-        try {
-            return Optional.of(new PrintWriter(socket.getOutputStream()));
         } catch (IOException e) {
             return Optional.empty();
         }
@@ -43,18 +31,28 @@ public class HttpClientSocket {
         return "";
     }
 
-    public boolean isClosed() {
-        return socket.isClosed();
-    }
-
     public void sendResponse(String response) {
-        this.lastResponse = response;
-        PrintWriter writer = getOutputWriter().get();
-        writer.println(response);
-        writer.close();
+        try {
+            OutputStream os = socket.getOutputStream();
+            os.write(formatResponse(response, new byte[0]));
+            os.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public String lastResponse() {
-        return lastResponse;
+    public byte[] formatResponse(String response, byte[] bodyBytes) {
+        ByteBuffer entireResponse = ByteBuffer.allocate(response.getBytes().length + bodyBytes.length);
+        entireResponse.put(response.getBytes());
+        entireResponse.put(bodyBytes);
+        return entireResponse.array();
+    }
+
+    public void close() {
+        try {
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
