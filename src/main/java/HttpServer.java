@@ -14,17 +14,17 @@ public class HttpServer {
 
     public void serverUp() {
         if (serverSocket.isPresent()) {
-            submitRequestToThreadpool(serverSocket.get().accept());
+            submitRequestToBeProcessed(serverSocket.get().accept());
         }
     }
 
-    private void submitRequestToThreadpool(Optional<HttpClientSocket> clientSocket) {
+    private void submitRequestToBeProcessed(Optional<HttpClientSocket> clientSocket) {
         ExecutorService executorService;
         if ((executorService = executorServiceCreator.create()) != null) {
             executorService.submit(() -> {
-                HTTPRequest httpRequest = new HTTPRequest(router, clientSocket);
-                clientSocket.get().sendResponse(httpRequest.response());
-                clientSocket.get().close();
+                ClientRequestProcessorService requestProcessorService =
+                        new ClientRequestProcessorService(clientSocket.get(), new RequestParser(), router);
+                requestProcessorService.process();
             });
             executorService.shutdown();
         }

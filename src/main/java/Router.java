@@ -1,5 +1,4 @@
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public class Router {
@@ -9,7 +8,7 @@ public class Router {
         this.routes = routes;
     }
 
-    public Optional<Route> findRoute(Map<String, String> requestDetails) {
-        return routes.stream().filter(r -> r.isMatch(requestDetails)).findFirst();
+    public Optional<Route> findRoute(HTTPRequest request) {
+        return routes.stream().filter(r -> r.isMatch(request)).findFirst();
     }
 }

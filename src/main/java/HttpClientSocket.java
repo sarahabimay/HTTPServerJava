@@ -19,16 +19,14 @@ public class HttpClientSocket {
         }
     }
 
-    public String request() {
-        if (getInputReader().isPresent()) {
-            BufferedReader reader = getInputReader().get();
-            try {
-                return reader.readLine();
-            } catch (IOException e) {
-                return "";
-            }
+    public void sendResponse(HTTPResponse response) {
+        try {
+            OutputStream os = socket.getOutputStream();
+            os.write(response.buildResponse());
+            os.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return "";
     }
 
     public void sendResponse(String response) {

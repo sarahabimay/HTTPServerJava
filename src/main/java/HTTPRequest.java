@@ -1,43 +1,39 @@
-import java.util.*;
+import java.util.List;
 
 public class HTTPRequest {
-    private final String METHOD_KEY = "method";
-    private final String PATH_KEY = "path";
-    private final String VERSION_KEY = "version";
-    private final String FOUR_OH_FOUR_RESPONSE = "HTTP/1.1 404 Not Found";
-    private Optional<Router> router = Optional.empty();
-    private Map<String, String> request;
+    private String method;
+    private String uri;
+    private String version;
+    private String body;
 
-    public HTTPRequest(Router router, Optional<HttpClientSocket> clientSocket) {
-        this.request = parse_request(clientSocket.get().request());
-        this.router = Optional.of(router);
+    public HTTPRequest() {
+        this.method = "";
+        this.uri = "";
+        this.version = "";
+        this.body = "";
     }
 
-    public Map<String, String> request() {
-        return request;
-    }
-
-    public String response() {
-        return router.isPresent() ? routeResponse() : FOUR_OH_FOUR_RESPONSE;
-    }
-
-    private String routeResponse() {
-        return route().isPresent() ? route().get().response() : FOUR_OH_FOUR_RESPONSE;
-    }
-
-    private Optional<Route> route() {
-        return request.size() > 0 ? router.get().findRoute(request) : Optional.empty();
-    }
-
-    private Map<String, String> parse_request(String request) {
-        Map<String, String> requestDetails = new HashMap<>();
-        List<String> requestValues = new ArrayList<>(Arrays.asList(request.split(" ")));
-        if (requestValues.size() == 3) {
-            List<String> requestKeys = new ArrayList<>(Arrays.asList(METHOD_KEY, PATH_KEY, VERSION_KEY));
-            for (int i = 0; i < requestKeys.size(); i++) {
-                requestDetails.put(requestKeys.get(i), requestValues.get(i));
-            }
+    public void addRequestLine(List<String> requestLine) {
+        if (requestLine.size() == 3) {
+            this.method = requestLine.get(0);
+            this.uri = requestLine.get(1);
+            this.version = requestLine.get(2);
         }
-        return requestDetails;
+    }
+
+    public void addBody(String body) {
+        this.body = body;
+    }
+
+    public String method() {
+        return method;
+    }
+
+    public String uri() {
+        return uri;
+    }
+
+    public String version() {
+        return version;
     }
 }
