@@ -10,7 +10,6 @@ public class Router {
     }
 
     public Optional<Route> findRoute(Map<String, String> requestDetails) {
-        Optional<Route> route = routes.stream().filter(r -> r.isMatch(requestDetails)).findFirst();
-        return route.isPresent() ? route : Optional.empty();
+        return routes.stream().filter(r -> r.isMatch(requestDetails)).findFirst();
     }
 }

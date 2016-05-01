@@ -16,8 +16,4 @@ public class HttpServerSocket {
             return Optional.empty();
         }
     }
-
-    public int getLocalPort() {
-        return serverSocket.getLocalPort();
-    }
 }

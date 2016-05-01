@@ -8,8 +8,11 @@ public class HttpServerMain {
         try {
             HttpServer server = new HttpServer(
                     new HttpServerSocket(new ServerSocket(arguments.portNumber())),
+                    new ExecutorServiceCreator(200),
                     new Router(routes()));
-            server.serverUp();
+            while(true) {
+                server.serverUp();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
