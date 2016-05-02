@@ -16,7 +16,7 @@ public class HttpClientSocketTest {
     public void setUp() {
         socketFake = new JavaSocketFake();
         clientSocket = new HttpClientSocket(socketFake);
-        requestLine = HTTPMethod.GET.method() + " / HTTP/1.1";
+        requestLine = HTTPMethod.GET + " " + HTTPRequestURI.INDEX + " " + HTTPVersion.HTTP_1_1;
     }
 
     @Test
@@ -42,9 +42,12 @@ public class HttpClientSocketTest {
     }
 
     private String statusNotFoundResponse() {
-        return "HTTP/1.1 " +
-                HTTPStatusCode.NOT_FOUND.statusCode() + " " +
-                HTTPStatusCode.NOT_FOUND.reason();
+        return new StringBuilder()
+                .append(HTTPVersion.HTTP_1_1.version())
+                .append(HTTPStatusCode.NOT_FOUND.statusCode())
+                .append(" ")
+                .append(HTTPStatusCode.NOT_FOUND.reason())
+                .toString();
     }
 
     private String requestLineFromClient() {

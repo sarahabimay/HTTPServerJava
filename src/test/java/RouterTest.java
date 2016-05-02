@@ -22,21 +22,35 @@ public class RouterTest {
 
     @Test
     public void routeNotFoundForParsedRequest() {
-        parsedRequestSpy.addRequestLine(Arrays.asList(HTTPMethod.GET.method(), "/foobar", "HTTP/1.1"));
+        parsedRequestSpy.addRequestLine(createGETUnrecognisedURIRequestLine());
         Optional<Route> route = router.findRoute(parsedRequestSpy);
         assertEquals(false, route.isPresent());
     }
 
     @Test
     public void findRouteForIndex() {
-        parsedRequestSpy.addRequestLine(Arrays.asList(HTTPMethod.GET.method(), "/", "HTTP/1.1"));
+        parsedRequestSpy.addRequestLine(createGETRequestLine());
         Optional<Route> route = router.findRoute(parsedRequestSpy);
         assertEquals(true, route.isPresent());
     }
 
     private List<Route> getRoutes() {
         List<Route> routes = new ArrayList<>();
-        routes.add(new Route(HTTPMethod.GET, "/", "HTTP/1.1"));
+        routes.add(new Route(HTTPMethod.GET, HTTPRequestURI.INDEX, HTTPVersion.HTTP_1_1));
         return routes;
+    }
+
+    private ArrayList<String> createGETRequestLine() {
+        String method = HTTPMethod.GET.method();
+        String uri = HTTPRequestURI.INDEX.uri();
+        String version = HTTPVersion.HTTP_1_1.version();
+        return new ArrayList<>(Arrays.asList(method, uri, version));
+    }
+
+    private List<String> createGETUnrecognisedURIRequestLine() {
+        String method = HTTPMethod.GET.method();
+        String uri = HTTPRequestURI.FOOBAR.uri();
+        String version = HTTPVersion.HTTP_1_1.version();
+        return Arrays.asList(method, uri, version);
     }
 }

@@ -18,8 +18,8 @@ public class HTTPResponse {
         return byteBuffer.array();
     }
 
-    public void setStatusLine(String version, int statusCode, String reason) {
-        this.statusLine = createStatusLine(version, statusCode, reason);
+    public void setStatusLine(HTTPVersion version, HTTPStatusCode statusCode) {
+        this.statusLine = createStatusLine(version, statusCode);
     }
 
     public String getStatusLine() {
@@ -30,8 +30,8 @@ public class HTTPResponse {
         this.body = body;
     }
 
-    private String createStatusLine(String version, int statusCode, String reason) {
-        return String.format("%s %d %s", version, statusCode, reason);
+    private String createStatusLine(HTTPVersion version, HTTPStatusCode statusCode) {
+        return String.format("%s %d %s", version.version(), statusCode.statusCode(), statusCode.reason());
     }
 
     private byte[] body() {
