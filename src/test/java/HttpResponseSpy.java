@@ -1,3 +1,7 @@
+import request.HTTPVersion;
+import response.HTTPResponse;
+import response.HTTPStatusCode;
+
 public class HttpResponseSpy extends HTTPResponse {
     @Override
     public byte[] buildResponse() {

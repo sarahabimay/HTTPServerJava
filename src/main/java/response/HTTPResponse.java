@@ -1,3 +1,7 @@
+package response;
+
+import request.HTTPVersion;
+
 import java.nio.ByteBuffer;
 
 public class HTTPResponse {

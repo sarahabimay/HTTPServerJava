@@ -1,3 +1,7 @@
+import request.HTTPRequest;
+import request.RequestParser;
+import server.HttpClientSocket;
+
 public class RequestParserSpy extends RequestParser {
     private HTTPRequest fakeHTTPRequest;
     private boolean hasRequestBeenParsed = false;

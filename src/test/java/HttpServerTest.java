@@ -1,7 +1,13 @@
 import org.junit.Before;
 import org.junit.Test;
+import routeActions.RouteAction;
+import router.*;
+import server.HttpClientSocket;
+import server.HttpServer;
+import server.HttpServerSocket;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
@@ -9,17 +15,17 @@ import static org.junit.Assert.assertEquals;
 public class HttpServerTest {
     private ExecutorServiceCreatorSpy executorServiceCreatorSpy;
     private HttpServer server;
-    private HttpClientSocketSpy clientSocketSpy;
+    private HttpClientSocketStub clientSocketSpy;
     private HttpServerSocketFake serverSocketFake;
-    private Router router;
+    private RouteProcessor routeProcessor;
 
     @Before
     public void setUp() {
-        router = new Router(routes());
-        clientSocketSpy = new HttpClientSocketSpy();
+        routeProcessor = new RouteProcessor(new Router(routes()));
+        clientSocketSpy = new HttpClientSocketStub();
         serverSocketFake = new HttpServerSocketFake(clientSocketSpy);
         executorServiceCreatorSpy = new ExecutorServiceCreatorSpy(1);
-        server = new HttpServer(serverSocketFake, executorServiceCreatorSpy, router);
+        server = new HttpServer(serverSocketFake, executorServiceCreatorSpy, routeProcessor);
     }
 
     @Test
@@ -36,8 +42,8 @@ public class HttpServerTest {
         assertEquals(true, executorServiceSpy.hasSubmittedATask());
     }
 
-    private List<Route> routes() {
-        return new RoutesFactory().routes();
+    private Map<Route, List<RouteAction>> routes() {
+        return new RoutesFactory().routeActions();
     }
 
     private class HttpServerSocketFake extends HttpServerSocket {
@@ -53,8 +59,8 @@ public class HttpServerTest {
         }
     }
 
-    private class HttpClientSocketSpy extends HttpClientSocket {
-        public HttpClientSocketSpy() {
+    private class HttpClientSocketStub extends HttpClientSocket {
+        public HttpClientSocketStub() {
             super(null);
         }
     }

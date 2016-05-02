@@ -1,5 +1,11 @@
 import org.junit.Before;
 import org.junit.Test;
+import request.HTTPMethod;
+import request.HTTPRequest;
+import request.HTTPRequestURI;
+import request.HTTPVersion;
+import response.HTTPResponse;
+import response.HTTPStatusCode;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -1,4 +1,10 @@
+package request;
+
 import java.util.List;
+
+import static request.HTTPRequestURI.UNRECOGNIZED;
+import static request.HTTPRequestURI.lookupURIName;
+import static request.HTTPVersion.lookupVersionName;
 
 public class HTTPRequest {
     private HTTPMethod method;
@@ -8,7 +14,7 @@ public class HTTPRequest {
 
     public HTTPRequest() {
         this.method = HTTPMethod.UNDEFINED;
-        this.uri = HTTPRequestURI.UNRECOGNIZED;
+        this.uri = UNRECOGNIZED;
         this.version = HTTPVersion.UNDEFINED;
         this.body = "";
     }
@@ -16,8 +22,8 @@ public class HTTPRequest {
     public void addRequestLine(List<String> requestLine) {
         if (requestLine.size() == 3) {
             this.method = HTTPMethod.valueOf(requestLine.get(0));
-            this.uri = HTTPRequestURI.lookupURIName(requestLine.get(1));
-            this.version = HTTPVersion.lookupVersionName(requestLine.get(2));
+            this.uri = lookupURIName(requestLine.get(1));
+            this.version = lookupVersionName(requestLine.get(2));
         }
     }
 
@@ -37,4 +43,8 @@ public class HTTPRequest {
         return version;
     }
 
+    public String body(){
+        return body;
+    }
 }
+

@@ -1,3 +1,5 @@
+package request;
+
 public enum HTTPMethod {
     GET("GET"),
     PUT("PUT"),
@@ -12,7 +14,7 @@ public enum HTTPMethod {
         this.method = method;
     }
 
-    String method() {
+    public String method() {
         return method;
     }
 }

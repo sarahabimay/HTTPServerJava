@@ -1,3 +1,5 @@
+package server;
+
 public class CommandLineArguments {
     public static int currentPort = 5000;
     public static String currentPublicClassPath = "/Users/sarahjohnston/Sarah/CobSpec/public/";

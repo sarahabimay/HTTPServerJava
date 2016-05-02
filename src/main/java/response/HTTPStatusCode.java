@@ -1,3 +1,5 @@
+package response;
+
 public enum HTTPStatusCode {
     OK(200, "OK"),
     NOT_FOUND(404, "Not Found");
@@ -10,11 +12,11 @@ public enum HTTPStatusCode {
         this.reason = reason;
     }
 
-    int statusCode() {
+    public int statusCode() {
         return statusCode;
     }
 
-    String reason(){
+    public String reason(){
         return reason;
     }
 }

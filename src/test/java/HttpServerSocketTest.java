@@ -1,4 +1,5 @@
 import org.junit.Test;
+import server.HttpServerSocket;
 
 import java.io.IOException;
 import java.net.ServerSocket;

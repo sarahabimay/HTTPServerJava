@@ -1,3 +1,5 @@
+package request;
+
 public enum HTTPVersion {
     HTTP_1_1("HTTP/1.1"),
     UNDEFINED("");
@@ -8,7 +10,7 @@ public enum HTTPVersion {
         this.version = version;
     }
 
-    String version() {
+    public String version() {
         return version;
     }
 

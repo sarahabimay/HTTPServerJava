@@ -1,15 +1,20 @@
+package server;
+
+import request.RequestParser;
+import router.RouteProcessor;
+
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 
 public class HttpServer {
     private Optional<HttpServerSocket> serverSocket = Optional.empty();
     private ExecutorServiceCreator executorServiceCreator;
-    private Router router;
+    private RouteProcessor routeProcessor;
 
-    public HttpServer(HttpServerSocket serverSocket, ExecutorServiceCreator executorServiceCreator, Router router) {
+    public HttpServer(HttpServerSocket serverSocket, ExecutorServiceCreator executorServiceCreator, RouteProcessor routeProcessor) {
         this.serverSocket = Optional.of(serverSocket);
         this.executorServiceCreator = executorServiceCreator;
-        this.router = router;
+        this.routeProcessor = routeProcessor;
     }
 
     public void serverUp() {
@@ -23,7 +28,7 @@ public class HttpServer {
         if ((executorService = executorServiceCreator.create()) != null) {
             executorService.submit(() -> {
                 ClientRequestProcessorService requestProcessorService =
-                        new ClientRequestProcessorService(clientSocket.get(), new RequestParser(), router);
+                        new ClientRequestProcessorService(clientSocket.get(), new RequestParser(), routeProcessor);
                 requestProcessorService.process();
             });
             executorService.shutdown();
