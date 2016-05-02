@@ -7,7 +7,6 @@ import java.util.Arrays;
 import static org.junit.Assert.assertEquals;
 
 public class HTTPResponseTest {
-
     private HTTPRequest httpRequest;
     private HTTPResponse response;
     private String expectedResponse;
@@ -15,12 +14,9 @@ public class HTTPResponseTest {
     @Before
     public void setUp() {
         httpRequest = new HTTPRequest();
-        httpRequest.addRequestLine(new ArrayList<>(Arrays.asList(HTTPMethod.GET.toString(), "/", "HTTP/1.1")));
-        response = new HTTPResponse();
-        response.setStatusLine(httpRequest.version(), HTTPStatusCode.OK.statusCode(), HTTPStatusCode.OK.reason());
-        expectedResponse = "HTTP/1.1 " +
-                HTTPStatusCode.OK.statusCode() +  " " +
-                HTTPStatusCode.OK.reason() + "/n/n";
+        httpRequest.addRequestLine(createGETRequestLine());
+        response = statusOKResponse();
+        expectedResponse = expectedStatusOKResponse();
     }
 
     @Test
@@ -42,5 +38,29 @@ public class HTTPResponseTest {
         response.setBody(body);
         byte[] byteResponse = response.buildResponse();
         assertEquals(expectedResponse + body, new String(byteResponse));
+    }
+
+    private ArrayList<String> createGETRequestLine() {
+        String method = HTTPMethod.GET.method();
+        String uri = HTTPRequestURI.INDEX.uri();
+        String version = HTTPVersion.HTTP_1_1.version();
+        return new ArrayList<>(Arrays.asList(method, uri, version));
+    }
+
+    private String expectedStatusOKResponse() {
+        return new StringBuilder()
+                .append(HTTPVersion.HTTP_1_1.version())
+                .append(" ")
+                .append(HTTPStatusCode.OK.statusCode())
+                .append(" ")
+                .append(HTTPStatusCode.OK.reason())
+                .append("/n/n")
+                .toString();
+    }
+
+    private HTTPResponse statusOKResponse() {
+        HTTPResponse response = new HTTPResponse();
+        response.setStatusLine(HTTPVersion.HTTP_1_1, HTTPStatusCode.OK);
+        return response;
     }
 }

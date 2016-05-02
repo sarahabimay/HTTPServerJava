@@ -8,24 +8,18 @@ import static org.junit.Assert.assertEquals;
 public class ClientRequestProcessorServiceTest {
     private ClientSocketSpy clientSocketSpy;
     private RequestParserSpy requestParserSpy;
-    private HTTPRequestSpy fakeHTTPRequestSpy;
-    private RouterSpy routerSpy;
     private ClientRequestProcessorService clientRequestProcessorService;
     private ByteArrayInputStream inputStream;
 
     @Before
     public void setUp() {
-        String requestLine = HTTPMethod.GET.method() + " / HTTP/1.1";
-        inputStream = new ByteArrayInputStream(requestLine.getBytes());
+        inputStream = new ByteArrayInputStream(buildGETRequestLine().getBytes());
         clientSocketSpy = new ClientSocketSpy(inputStream);
-        fakeHTTPRequestSpy = new HTTPRequestSpy();
-        requestParserSpy = new RequestParserSpy(fakeHTTPRequestSpy);
-        routerSpy = new RouterSpy(new Route(HTTPMethod.GET, "/", "HTTP/1.1"));
-        clientRequestProcessorService =
-                new ClientRequestProcessorService(
-                        clientSocketSpy,
-                        requestParserSpy,
-                        routerSpy);
+        requestParserSpy = new RequestParserSpy(new HTTPRequestSpy());
+        clientRequestProcessorService = new ClientRequestProcessorService(
+                clientSocketSpy,
+                requestParserSpy,
+                new RouteFake());
     }
 
     @Test
@@ -44,5 +38,15 @@ public class ClientRequestProcessorServiceTest {
     public void responseSentToClient() {
         clientRequestProcessorService.process();
         assertEquals(true, clientSocketSpy.hasSentResponseToClient());
+    }
+
+    private String buildGETRequestLine() {
+        return new StringBuilder()
+                .append(HTTPMethod.GET.method())
+                .append(" ")
+                .append(HTTPRequestURI.INDEX.uri())
+                .append(" ")
+                .append(HTTPVersion.HTTP_1_1.version())
+                .toString();
     }
 }

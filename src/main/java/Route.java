@@ -1,9 +1,9 @@
 public class Route {
-    private String path;
     private HTTPMethod method;
-    private String version;
+    private HTTPRequestURI path;
+    private HTTPVersion version;
 
-    public Route(HTTPMethod method, String path, String version) {
+    public Route(HTTPMethod method, HTTPRequestURI path, HTTPVersion version) {
         this.method = method;
         this.path = path;
         this.version = version;
@@ -11,14 +11,16 @@ public class Route {
 
     public HTTPResponse createStatusOKResponseNoBody(HTTPRequest request) {
         HTTPResponse response = new HTTPResponse();
-        response.setStatusLine(request.version(), HTTPStatusCode.OK.statusCode(), HTTPStatusCode.OK.reason());
+        response.setStatusLine(request.version(), HTTPStatusCode.OK);
         response.setBody("");
         return response;
     }
 
     public boolean isMatch(HTTPRequest request) {
-        return request.uri().equals(path) &&
-                request.method().equals(method) &&
-                request.version().equals(this.version);
+        boolean isURIMatch = request.uri().uri().equals(path.uri());
+        boolean isMethodMatch = request.method().method().equals(method.method());
+        boolean isVersionMatch = request.version().version().equals(version.version());
+
+        return isURIMatch && isMethodMatch && isVersionMatch;
     }
 }

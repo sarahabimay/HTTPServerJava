@@ -12,9 +12,8 @@ public class RequestParserTest {
 
     @Before
     public void setUp() {
-        String requestLine = HTTPMethod.GET.method() + " / HTTP/1.1";
-        inputStream = new ByteArrayInputStream(requestLine.getBytes());
         requestParser = new RequestParser();
+        inputStream = new ByteArrayInputStream(buildGETRequestLine().getBytes());
         socketSpy = new ClientSocketSpy(inputStream);
     }
 
@@ -29,5 +28,15 @@ public class RequestParserTest {
         HTTPRequest HTTPRequest = requestParser.parseRequest(socketSpy);
         HTTPMethod expectedMethod = HTTPMethod.GET;
         assertEquals(expectedMethod, HTTPRequest.method());
+    }
+
+    private String buildGETRequestLine() {
+        return new StringBuilder()
+                .append(HTTPMethod.GET)
+                .append(" ")
+                .append(HTTPRequestURI.INDEX)
+                .append(" ")
+                .append(HTTPVersion.HTTP_1_1)
+                .toString();
     }
 }

@@ -9,12 +9,16 @@ public class HTTPRequestTest {
     @Test
     public void createGETWithNoBodyRequest() {
         HTTPRequest request = new HTTPRequest();
-        HTTPMethod method = HTTPMethod.GET;
-        String uri = "/";
-        String version = "HTTP/1.1";
-        request.addRequestLine(new ArrayList<>(Arrays.asList(method.toString(), uri, version)));
-        assertEquals(method, request.method());
-        assertEquals(uri, request.uri());
-        assertEquals(version, request.version());
+        request.addRequestLine(createGETRequestLine());
+        assertEquals(HTTPMethod.GET, request.method());
+        assertEquals(HTTPRequestURI.INDEX, request.uri());
+        assertEquals(HTTPVersion.HTTP_1_1, request.version());
+    }
+
+    private ArrayList<String> createGETRequestLine() {
+        String method = HTTPMethod.GET.method();
+        String uri = HTTPRequestURI.INDEX.uri();
+        String version = HTTPVersion.HTTP_1_1.version();
+        return new ArrayList<>(Arrays.asList(method, uri, version));
     }
 }
