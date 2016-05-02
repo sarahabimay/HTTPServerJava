@@ -19,7 +19,7 @@ public class ClientRequestProcessorServiceTest {
         clientSocketSpy = new ClientSocketSpy(inputStream);
         fakeHTTPRequestSpy = new HTTPRequestSpy();
         requestParserSpy = new RequestParserSpy(fakeHTTPRequestSpy);
-        routerSpy = new RouterSpy(new Route("GET", "/", "HTTP/1.1"));
+        routerSpy = new RouterSpy(new Route(HTTPMethod.GET, "/", "HTTP/1.1"));
         clientRequestProcessorService =
                 new ClientRequestProcessorService(
                         clientSocketSpy,

@@ -9,10 +9,10 @@ public class HTTPRequestTest {
     @Test
     public void createGETWithNoBodyRequest() {
         HTTPRequest request = new HTTPRequest();
-        String method = "GET";
+        HTTPMethod method = HTTPMethod.GET;
         String uri = "/";
         String version = "HTTP/1.1";
-        request.addRequestLine(new ArrayList<>(Arrays.asList(method, uri, version)));
+        request.addRequestLine(new ArrayList<>(Arrays.asList(method.toString(), uri, version)));
         assertEquals(method, request.method());
         assertEquals(uri, request.uri());
         assertEquals(version, request.version());

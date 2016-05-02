@@ -6,6 +6,14 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 public class RouteFactoryTest {
+//    @Test
+//    public void getRoutes() {
+//        RoutesFactory routesFactory = new RoutesFactory();
+//        Map<Route, List<RequestController>> routes = routesFactory.routes();
+//        List<Route> expectedRoutes = routes();
+//        assertEquals(expectedRoutes.size(), routes.size());
+//    }
+
     @Test
     public void getListOfRoutes() {
         RoutesFactory routesFactory = new RoutesFactory();
@@ -16,10 +24,11 @@ public class RouteFactoryTest {
 
     private List<Route> routes() {
         List<Route> routes = new ArrayList<>();
-        routes.add(new Route("GET", "/", "HTTP/1.1"));
-        routes.add(new Route("PUT", "/form", "HTTP/1.1"));
-        routes.add(new Route("POST", "/form", "HTTP/1.1"));
-        routes.add(new Route("HEAD", "/", "HTTP/1.1"));
+        routes.add(new Route(HTTPMethod.GET, "/", "HTTP/1.1"));
+        routes.add(new Route(HTTPMethod.PUT, "/form", "HTTP/1.1"));
+        routes.add(new Route(HTTPMethod.POST, "/form", "HTTP/1.1"));
+        routes.add(new Route(HTTPMethod.HEAD, "/", "HTTP/1.1"));
+        routes.add(new Route(HTTPMethod.OPTIONS, "/", "HTTP/1.1"));
         return routes;
     }
 }
