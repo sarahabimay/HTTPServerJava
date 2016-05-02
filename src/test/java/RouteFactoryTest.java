@@ -6,14 +6,6 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 public class RouteFactoryTest {
-//    @Test
-//    public void getRoutes() {
-//        RoutesFactory routesFactory = new RoutesFactory();
-//        Map<Route, List<RequestController>> routes = routesFactory.routes();
-//        List<Route> expectedRoutes = routes();
-//        assertEquals(expectedRoutes.size(), routes.size());
-//    }
-
     @Test
     public void getListOfRoutes() {
         RoutesFactory routesFactory = new RoutesFactory();

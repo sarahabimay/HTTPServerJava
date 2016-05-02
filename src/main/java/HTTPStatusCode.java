@@ -1,0 +1,2 @@
+public class HTTPStatusCode {
+}
