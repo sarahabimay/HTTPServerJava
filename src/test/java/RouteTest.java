@@ -1,5 +1,10 @@
 import org.junit.Before;
 import org.junit.Test;
+import request.HTTPMethod;
+import request.HTTPRequest;
+import request.HTTPRequestURI;
+import request.HTTPVersion;
+import router.Route;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,27 +54,6 @@ public class RouteTest {
         assertEquals(true, putFormRoute.isMatch(request));
     }
 
-    @Test
-    public void statusOKForGetRequest() {
-        request.addRequestLine(createGETRequestLine());
-        HTTPResponse actualResponse = getIndexRoute.createStatusOKResponseNoBody(request);
-        assertEquals(statusOKResponse().getStatusLine(), actualResponse.getStatusLine());
-    }
-
-    @Test
-    public void statusOKForPostRequest() {
-        request.addRequestLine(createPOSTRequestLine());
-        HTTPResponse actualResponse = postFormRoute.createStatusOKResponseNoBody(request);
-        assertEquals(statusOKResponse().getStatusLine(), actualResponse.getStatusLine());
-    }
-
-    @Test
-    public void statusOKForPutRequest() {
-        request.addRequestLine(createPUTRequestLine());
-        HTTPResponse actualResponse = putFormRoute.createStatusOKResponseNoBody(request);
-        assertEquals(statusOKResponse().getStatusLine(), actualResponse.getStatusLine());
-    }
-
     private ArrayList<String> createGETRequestLine() {
         String method = HTTPMethod.GET.method();
         String uri = HTTPRequestURI.INDEX.uri();
@@ -96,11 +80,5 @@ public class RouteTest {
         String uri = HTTPRequestURI.FOOBAR.uri();
         String version = HTTPVersion.HTTP_1_1.version();
         return Arrays.asList(method, uri, version);
-    }
-
-    private HTTPResponse statusOKResponse() {
-        HTTPResponse expectedResponse = new HTTPResponse();
-        expectedResponse.setStatusLine(HTTPVersion.HTTP_1_1, HTTPStatusCode.OK);
-        return expectedResponse;
     }
 }

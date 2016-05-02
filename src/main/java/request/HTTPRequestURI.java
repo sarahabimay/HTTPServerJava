@@ -1,7 +1,11 @@
+package request;
+
 public enum HTTPRequestURI {
     INDEX("/"),
     FOOBAR("/foobar"),
     FORM("/form"),
+    OPTIONS_ONE("/method_options"),
+    OPTIONS_TWO("/method_options2"),
     UNRECOGNIZED("");
 
     private final String uri;
@@ -11,7 +15,7 @@ public enum HTTPRequestURI {
         this.uri = uri;
     }
 
-    String uri() {
+    public String uri() {
         return uri;
     }
 

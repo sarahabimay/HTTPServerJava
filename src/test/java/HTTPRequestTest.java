@@ -1,24 +1,28 @@
 import org.junit.Test;
+import request.HTTPRequest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
+import static request.HTTPMethod.GET;
+import static request.HTTPRequestURI.INDEX;
+import static request.HTTPVersion.HTTP_1_1;
 
 public class HTTPRequestTest {
     @Test
     public void createGETWithNoBodyRequest() {
         HTTPRequest request = new HTTPRequest();
         request.addRequestLine(createGETRequestLine());
-        assertEquals(HTTPMethod.GET, request.method());
-        assertEquals(HTTPRequestURI.INDEX, request.uri());
-        assertEquals(HTTPVersion.HTTP_1_1, request.version());
+        assertEquals(GET, request.method());
+        assertEquals(INDEX, request.uri());
+        assertEquals(HTTP_1_1, request.version());
     }
 
     private ArrayList<String> createGETRequestLine() {
-        String method = HTTPMethod.GET.method();
-        String uri = HTTPRequestURI.INDEX.uri();
-        String version = HTTPVersion.HTTP_1_1.version();
+        String method = GET.method();
+        String uri = INDEX.uri();
+        String version = HTTP_1_1.version();
         return new ArrayList<>(Arrays.asList(method, uri, version));
     }
 }

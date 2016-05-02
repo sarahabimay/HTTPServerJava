@@ -1,6 +1,15 @@
+package server;
+
+import routeActions.RouteAction;
+import router.Route;
+import router.RouteProcessor;
+import router.Router;
+import router.RoutesFactory;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
+import java.util.Map;
 
 public class HttpServerMain {
 
@@ -12,12 +21,18 @@ public class HttpServerMain {
             HttpServer server = new HttpServer(
                     new HttpServerSocket(new ServerSocket(arguments.portNumber())),
                     new ExecutorServiceCreator(NUMBER_OF_THREADS),
-                    new Router(routes()));
-            while(true) {
-                server.serverUp();
-            }
+                    new RouteProcessor(new Router(routeActions())));
+
+            startServer(server);
+
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private static void startServer(HttpServer server) {
+        while(true) {
+            server.serverUp();
         }
     }
 
@@ -27,7 +42,7 @@ public class HttpServerMain {
         return arguments;
     }
 
-    private static List<Route> routes() {
-        return new RoutesFactory().routes();
+    private static Map<Route, List<RouteAction>> routeActions() {
+        return new RoutesFactory().routeActions();
     }
 }

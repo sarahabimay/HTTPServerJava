@@ -1,5 +1,9 @@
 import org.junit.Before;
 import org.junit.Test;
+import request.HTTPMethod;
+import request.HTTPRequestURI;
+import request.HTTPVersion;
+import server.ClientRequestProcessorService;
 
 import java.io.ByteArrayInputStream;
 
@@ -10,16 +14,18 @@ public class ClientRequestProcessorServiceTest {
     private RequestParserSpy requestParserSpy;
     private ClientRequestProcessorService clientRequestProcessorService;
     private ByteArrayInputStream inputStream;
+    private RouteProcessorSpy routeProcessorSpy;
 
     @Before
     public void setUp() {
         inputStream = new ByteArrayInputStream(buildGETRequestLine().getBytes());
         clientSocketSpy = new ClientSocketSpy(inputStream);
         requestParserSpy = new RequestParserSpy(new HTTPRequestSpy());
+        routeProcessorSpy = new RouteProcessorSpy(new RouterStub());
         clientRequestProcessorService = new ClientRequestProcessorService(
                 clientSocketSpy,
                 requestParserSpy,
-                new RouteFake());
+                routeProcessorSpy);
     }
 
     @Test
@@ -32,6 +38,12 @@ public class ClientRequestProcessorServiceTest {
     public void requestHasBeenParsed() {
         clientRequestProcessorService.process();
         assertEquals(true, requestParserSpy.hasRequestBeenParsed());
+    }
+
+    @Test
+    public void responseHasBeenCreated() {
+        clientRequestProcessorService.process();
+        assertEquals(true, routeProcessorSpy.hasRequestBeenParsed());
     }
 
     @Test

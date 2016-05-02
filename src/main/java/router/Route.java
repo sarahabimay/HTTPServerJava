@@ -1,3 +1,10 @@
+package router;
+
+import request.HTTPMethod;
+import request.HTTPRequest;
+import request.HTTPRequestURI;
+import request.HTTPVersion;
+
 public class Route {
     private HTTPMethod method;
     private HTTPRequestURI path;
@@ -7,13 +14,6 @@ public class Route {
         this.method = method;
         this.path = path;
         this.version = version;
-    }
-
-    public HTTPResponse createStatusOKResponseNoBody(HTTPRequest request) {
-        HTTPResponse response = new HTTPResponse();
-        response.setStatusLine(request.version(), HTTPStatusCode.OK);
-        response.setBody("");
-        return response;
     }
 
     public boolean isMatch(HTTPRequest request) {

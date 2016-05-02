@@ -1,3 +1,7 @@
+package request;
+
+import server.HttpClientSocket;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,14 +11,13 @@ import java.util.Optional;
 
 public class RequestParser {
     public HTTPRequest parseRequest(HttpClientSocket clientSocket) {
-        Optional<BufferedReader> reader = clientSocket.getInputReader();
-        return generateParsedRequest(reader);
+        return generateParsedRequest(clientSocket.getInputReader());
     }
 
     private HTTPRequest generateParsedRequest(Optional<BufferedReader> reader) {
-        HTTPRequest HTTPRequest = new HTTPRequest();
-        HTTPRequest.addRequestLine(parseRequestLine(getHeader(reader)));
-        return HTTPRequest;
+        HTTPRequest request = new HTTPRequest();
+        request.addRequestLine(parseRequestLine(getHeader(reader)));
+        return request;
     }
 
     private List<String> parseRequestLine(String header) {

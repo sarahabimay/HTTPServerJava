@@ -1,5 +1,10 @@
 import org.junit.Before;
 import org.junit.Test;
+import request.HTTPMethod;
+import request.HTTPRequestURI;
+import request.HTTPVersion;
+import response.HTTPStatusCode;
+import server.HttpClientSocket;
 
 import java.io.*;
 import java.net.Socket;
