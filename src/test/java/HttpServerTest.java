@@ -1,7 +1,6 @@
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,18 +54,8 @@ public class HttpServerTest {
     }
 
     private class HttpClientSocketSpy extends HttpClientSocket {
-        private List<String> dummyRequests = new ArrayList<>();
-        private List<Boolean> closeConnection = new ArrayList<>();
-
         public HttpClientSocketSpy() {
             super(null);
-            dummyRequests.add("");
-            closeConnection.add(false);
-            closeConnection.add(true);
-        }
-
-        public String request() {
-            return dummyRequests.size() == 0 ? null : dummyRequests.remove(0);
         }
     }
 }
