@@ -26,7 +26,7 @@ public class RequestParserTest {
     public void createParsedRequestObject() {
         ClientSocketSpy socketSpy = new ClientSocketSpy(inputStream);
         HTTPRequest HTTPRequest = requestParser.parseRequest(socketSpy);
-        String expectedMethod = "GET";
+        HTTPMethod expectedMethod = HTTPMethod.GET;
         assertEquals(expectedMethod, HTTPRequest.method());
     }
 }

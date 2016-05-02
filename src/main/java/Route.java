@@ -1,9 +1,9 @@
 public class Route {
     private String path;
-    private String method;
+    private HTTPMethod method;
     private String version;
 
-    public Route(String method, String path, String version) {
+    public Route(HTTPMethod method, String path, String version) {
         this.method = method;
         this.path = path;
         this.version = version;
@@ -17,6 +17,8 @@ public class Route {
     }
 
     public boolean isMatch(HTTPRequest request) {
-        return request.uri().equals(path) && request.method().equals(method) && request.version().equals(this.version);
+        return request.uri().equals(path) &&
+                request.method().equals(method) &&
+                request.version().equals(this.version);
     }
 }

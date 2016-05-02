@@ -22,21 +22,21 @@ public class RouterTest {
 
     @Test
     public void routeNotFoundForParsedRequest() {
-        parsedRequestSpy.addRequestLine(Arrays.asList("GET", "/foobar", "HTTP/1.1"));
+        parsedRequestSpy.addRequestLine(Arrays.asList(HTTPMethod.GET.toString(), "/foobar", "HTTP/1.1"));
         Optional<Route> route = router.findRoute(parsedRequestSpy);
         assertEquals(false, route.isPresent());
     }
 
     @Test
     public void findRouteForIndex() {
-        parsedRequestSpy.addRequestLine(Arrays.asList("GET", "/", "HTTP/1.1"));
+        parsedRequestSpy.addRequestLine(Arrays.asList(HTTPMethod.GET.toString(), "/", "HTTP/1.1"));
         Optional<Route> route = router.findRoute(parsedRequestSpy);
         assertEquals(true, route.isPresent());
     }
 
     private List<Route> getRoutes() {
         List<Route> routes = new ArrayList<>();
-        routes.add(new Route("GET", "/", "HTTP/1.1"));
+        routes.add(new Route(HTTPMethod.GET, "/", "HTTP/1.1"));
         return routes;
     }
 }
