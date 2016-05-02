@@ -1,10 +1,6 @@
 import org.junit.Test;
-import request.HTTPMethod;
 import request.HTTPRequest;
-import request.HTTPRequestURI;
-import request.HTTPVersion;
 import response.HTTPResponse;
-import response.HTTPStatusCode;
 import routeActions.StatusNOKAction;
 
 import java.util.ArrayList;
@@ -12,6 +8,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static request.HTTPMethod.GET;
+import static request.HTTPRequestURI.FOOBAR;
+import static request.HTTPVersion.HTTP_1_1;
+import static response.HTTPStatusCode.NOT_FOUND;
 
 public class StatusNOKActionTest {
     @Test
@@ -24,16 +24,16 @@ public class StatusNOKActionTest {
     }
 
     private List<String> requestUnavailableResource() {
-        return new ArrayList<>(Arrays.asList(HTTPMethod.GET.method(), HTTPRequestURI.FOOBAR.uri(), HTTPVersion.HTTP_1_1.version()));
+        return new ArrayList<>(Arrays.asList(GET.method(), FOOBAR.uri(), HTTP_1_1.version()));
     }
 
     private String statusNOKResponseLine() {
         return new StringBuilder()
-                .append(HTTPVersion.HTTP_1_1.version())
+                .append(HTTP_1_1.version())
                 .append(" ")
-                .append(HTTPStatusCode.NOT_FOUND.statusCode())
+                .append(NOT_FOUND.statusCode())
                 .append(" ")
-                .append(HTTPStatusCode.NOT_FOUND.reason())
+                .append(NOT_FOUND.reason())
                 .toString();
     }
 }

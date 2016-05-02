@@ -2,12 +2,13 @@ package routeActions;
 
 import request.HTTPRequest;
 import response.HTTPResponse;
-import response.HTTPStatusCode;
+
+import static response.HTTPStatusCode.OK;
 
 public class StatusOKAction implements RouteAction {
     public HTTPResponse generateResponse(HTTPRequest request) {
         HTTPResponse response = new HTTPResponse();
-        response.setStatusLine(request.version(), HTTPStatusCode.OK);
+        response.setStatusLine(request.version(), OK);
         response.setBody(request.body());
         return response;
     }

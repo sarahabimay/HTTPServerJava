@@ -3,17 +3,21 @@ import request.HTTPRequest;
 import request.HTTPRequestURI;
 import request.HTTPVersion;
 
+import static request.HTTPMethod.*;
+import static request.HTTPRequestURI.*;
+import static request.HTTPVersion.*;
+
 public class HTTPRequestSpy extends HTTPRequest {
     public HTTPMethod method() {
-        return HTTPMethod.GET;
+        return GET;
     }
 
     public HTTPRequestURI uri() {
-        return HTTPRequestURI.INDEX;
+        return INDEX;
     }
 
     public HTTPVersion version() {
-        return HTTPVersion.HTTP_1_1;
+        return HTTP_1_1;
     }
 
     public String body(){

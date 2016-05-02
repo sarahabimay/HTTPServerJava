@@ -1,10 +1,10 @@
 import org.junit.Test;
-import request.HTTPVersion;
 import response.HTTPResponse;
-import response.HTTPStatusCode;
 import routeActions.StatusOKAction;
 
 import static org.junit.Assert.assertEquals;
+import static request.HTTPVersion.HTTP_1_1;
+import static response.HTTPStatusCode.OK;
 
 public class StatusOKActionTest {
     @Test
@@ -17,11 +17,11 @@ public class StatusOKActionTest {
 
     private String statusOKResponseLine() {
         return new StringBuilder()
-                .append(HTTPVersion.HTTP_1_1.version())
+                .append(HTTP_1_1.version())
                 .append(" ")
-                .append(HTTPStatusCode.OK.statusCode())
+                .append(OK.statusCode())
                 .append(" ")
-                .append(HTTPStatusCode.OK.reason())
+                .append(OK.reason())
                 .toString();
     }
 }
