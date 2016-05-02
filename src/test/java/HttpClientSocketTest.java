@@ -10,11 +10,13 @@ import static org.junit.Assert.assertEquals;
 public class HttpClientSocketTest {
     private JavaSocketFake socketFake;
     private HttpClientSocket clientSocket;
+    private String requestLine;
 
     @Before
     public void setUp() {
         socketFake = new JavaSocketFake();
         clientSocket = new HttpClientSocket(socketFake);
+        requestLine = HTTPMethod.GET.method() + " / HTTP/1.1";
     }
 
     @Test
@@ -24,10 +26,28 @@ public class HttpClientSocketTest {
 
     @Test
     public void receiveRequestMessage() {
-        assertEquals("GET / HTTP/1.1", requestHeader());
+        assertEquals(requestLine, requestLineFromClient());
     }
 
-    private String requestHeader() {
+    @Test
+    public void sendResponseToClientSocket() {
+        clientSocket.sendResponse(statusNotFoundResponse());
+        assertEquals(true, socketFake.hasBeenAskedForOutputStream());
+    }
+
+    @Test
+    public void sendHttpResponseToClientSocket() {
+        clientSocket.sendResponse(new HttpResponseSpy());
+        assertEquals(true, socketFake.hasBeenAskedForOutputStream());
+    }
+
+    private String statusNotFoundResponse() {
+        return "HTTP/1.1 " +
+                HTTPStatusCode.NOT_FOUND.statusCode() + " " +
+                HTTPStatusCode.NOT_FOUND.reason();
+    }
+
+    private String requestLineFromClient() {
         Optional<BufferedReader> inputReader = clientSocket.getInputReader();
         return getHeader(inputReader);
     }
@@ -42,24 +62,13 @@ public class HttpClientSocketTest {
         }
         return "";
     }
-    @Test
-    public void sendResponseToClientSocket() {
-        clientSocket.sendResponse("HTTP/1.1 404 Not Found");
-        assertEquals(true, socketFake.hasBeenAskedForOutputStream());
-    }
-
-    @Test
-    public void sendHttpResponseToClientSocket() {
-        clientSocket.sendResponse(new HttpResponseSpy());
-        assertEquals(true, socketFake.hasBeenAskedForOutputStream());
-    }
 
     private class JavaSocketFake extends Socket {
         private boolean hasBeenAskedForOutputStream = false;
 
         @Override
         public InputStream getInputStream() {
-            return new ByteArrayInputStream("GET / HTTP/1.1".getBytes());
+            return new ByteArrayInputStream(requestLine.getBytes());
         }
 
         @Override

@@ -19,7 +19,7 @@ public class ClientRequestProcessorService {
             response = route.get().createStatusOKResponseNoBody(request);
         } else {
             response = new HTTPResponse();
-            response.setStatusLine("HTTP/1.1", 404, "Not Found");
+            response.setStatusLine("HTTP/1.1", HTTPStatusCode.NOT_FOUND.statusCode(), HTTPStatusCode.NOT_FOUND.reason());
         }
 
         clientSocket.sendResponse(response);

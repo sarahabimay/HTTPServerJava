@@ -11,7 +11,7 @@ public class Route {
 
     public HTTPResponse createStatusOKResponseNoBody(HTTPRequest request) {
         HTTPResponse response = new HTTPResponse();
-        response.setStatusLine(request.version(), 200, "OK");
+        response.setStatusLine(request.version(), HTTPStatusCode.OK.statusCode(), HTTPStatusCode.OK.reason());
         response.setBody("");
         return response;
     }

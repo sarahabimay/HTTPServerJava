@@ -15,7 +15,8 @@ public class ClientRequestProcessorServiceTest {
 
     @Before
     public void setUp() {
-        inputStream = new ByteArrayInputStream("GET / HTTP/1.1".getBytes());
+        String requestLine = HTTPMethod.GET.method() + " / HTTP/1.1";
+        inputStream = new ByteArrayInputStream(requestLine.getBytes());
         clientSocketSpy = new ClientSocketSpy(inputStream);
         fakeHTTPRequestSpy = new HTTPRequestSpy();
         requestParserSpy = new RequestParserSpy(fakeHTTPRequestSpy);
