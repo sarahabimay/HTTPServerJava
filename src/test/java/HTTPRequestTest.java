@@ -12,8 +12,7 @@ import static request.HTTPVersion.HTTP_1_1;
 public class HTTPRequestTest {
     @Test
     public void createGETWithNoBodyRequest() {
-        HTTPRequest request = new HTTPRequest();
-        request.addRequestLine(createGETRequestLine());
+        HTTPRequest request = new HTTPRequest().addRequestLine(createGETRequestLine());
         assertEquals(GET, request.method());
         assertEquals(INDEX, request.uri());
         assertEquals(HTTP_1_1, request.version());

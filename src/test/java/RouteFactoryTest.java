@@ -26,12 +26,7 @@ public class RouteFactoryTest {
     }
 
     @Test
-    public void getRoutes() {
-        assertEquals(routeActions().size(), routesFactory.routeActions().size());
-    }
-
-    @Test
-    public void getListOfRoutes() {
+    public void allRouteActionAsExpected() {
         assertEquals(routeActions().size(), routesFactory.routeActions().size());
     }
 
@@ -42,7 +37,12 @@ public class RouteFactoryTest {
         routeActions.put(new Route(PUT, FORM, HTTP_1_1), insertToList.apply(new StatusOKAction()));
         routeActions.put(new Route(POST, FORM, HTTP_1_1), insertToList.apply(new StatusOKAction()));
         routeActions.put(new Route(OPTIONS, OPTIONS_ONE, HTTP_1_1), insertToList.apply(new StatusOKAction()));
+        routeActions.put(new Route(GET, OPTIONS_ONE, HTTP_1_1), insertToList.apply(new StatusOKAction()));
+        routeActions.put(new Route(PUT, OPTIONS_ONE, HTTP_1_1), insertToList.apply(new StatusOKAction()));
+        routeActions.put(new Route(POST, OPTIONS_ONE, HTTP_1_1), insertToList.apply(new StatusOKAction()));
+        routeActions.put(new Route(HEAD, OPTIONS_ONE, HTTP_1_1), insertToList.apply(new StatusOKAction()));
         routeActions.put(new Route(OPTIONS, OPTIONS_TWO, HTTP_1_1), insertToList.apply(new StatusOKAction()));
+        routeActions.put(new Route(GET, OPTIONS_TWO, HTTP_1_1), insertToList.apply(new StatusOKAction()));
         return routeActions;
     }
 }

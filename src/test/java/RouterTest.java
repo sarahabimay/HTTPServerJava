@@ -17,56 +17,58 @@ import static request.HTTPVersion.HTTP_1_1;
 
 public class RouterTest {
     private Router router;
-    private HTTPRequest parsedRequest;
     private String statusOKResponse;
     private String statusFourOhFourResponse;
 
     @Before
     public void setUp() {
         router = new Router(new RoutesFactory().routeActions());
-        parsedRequest = new HTTPRequest();
         statusOKResponse = "HTTP/1.1 200 OK";
         statusFourOhFourResponse = "HTTP/1.1 404 Not Found";
     }
 
     @Test
     public void fourOhFourAction() {
-        parsedRequest.addRequestLine(createGETUnrecognisedURIRequestLine());
-        List<RouteAction> actions = router.findRouteActions(parsedRequest);
-        HTTPResponse response = actions.get(0).generateResponse(parsedRequest);
+        HTTPRequest request = unrecognisedResourceRequest();
+        List<RouteAction> actions = router.findRouteActions(request);
+        HTTPResponse response = actions.get(0).generateResponse(request);
         assertEquals(statusFourOhFourResponse, response.getStatusLine());
     }
 
     @Test
     public void okActionForGETRequest() {
-        parsedRequest.addRequestLine(createKnownGETRequestLine());
-        List<RouteAction> actions = router.findRouteActions(parsedRequest);
-        HTTPResponse response = actions.get(0).generateResponse(parsedRequest);
+        HTTPRequest request = knownResourceGETRequest();
+        List<RouteAction> actions = router.findRouteActions(request);
+        HTTPResponse response = actions.get(0).generateResponse(request);
         assertEquals(statusOKResponse, response.getStatusLine());
     }
 
     @Test
     public void okActionForPOSTRequest() {
-        parsedRequest.addRequestLine(createPOSTRequestLine());
-        List<RouteAction> actions = router.findRouteActions(parsedRequest);
-        HTTPResponse response = actions.get(0).generateResponse(parsedRequest);
+        HTTPRequest request = knownResourcePOSTRequest();
+        List<RouteAction> actions = router.findRouteActions(request);
+        HTTPResponse response = actions.get(0).generateResponse(request);
         assertEquals(statusOKResponse, response.getStatusLine());
     }
 
     @Test
     public void okActionForPUTRequest() {
-        parsedRequest.addRequestLine(createPUTRequestLine());
-        List<RouteAction> actions = router.findRouteActions(parsedRequest);
-        HTTPResponse response = actions.get(0).generateResponse(parsedRequest);
+        HTTPRequest request = knownResourcePUTRequest();
+        List<RouteAction> actions = router.findRouteActions(request);
+        HTTPResponse response = actions.get(0).generateResponse(request);
         assertEquals(statusOKResponse, response.getStatusLine());
     }
 
     @Test
     public void okActionForHEADRequest() {
-        parsedRequest.addRequestLine(createHEADRequestLine());
-        List<RouteAction> actions = router.findRouteActions(parsedRequest);
-        HTTPResponse response = actions.get(0).generateResponse(parsedRequest);
+        HTTPRequest request = knownResourceHEADRequest();
+        List<RouteAction> actions = router.findRouteActions(request);
+        HTTPResponse response = actions.get(0).generateResponse(request);
         assertEquals(statusOKResponse, response.getStatusLine());
+    }
+
+    private HTTPRequest unrecognisedResourceRequest() {
+        return new HTTPRequest().addRequestLine(createGETUnrecognisedURIRequestLine());
     }
 
     private List<String> createGETUnrecognisedURIRequestLine() {
@@ -76,11 +78,19 @@ public class RouterTest {
         return Arrays.asList(method, uri, version);
     }
 
+    private HTTPRequest knownResourceGETRequest() {
+        return new HTTPRequest().addRequestLine(createKnownGETRequestLine());
+    }
+
     private List<String> createKnownGETRequestLine() {
         String method = GET.method();
         String uri = INDEX.uri();
         String version = HTTP_1_1.version();
         return new ArrayList<>(Arrays.asList(method, uri, version));
+    }
+
+    private HTTPRequest knownResourcePOSTRequest() {
+        return new HTTPRequest().addRequestLine(createPOSTRequestLine());
     }
 
     private ArrayList<String> createPOSTRequestLine() {
@@ -90,11 +100,19 @@ public class RouterTest {
         return new ArrayList<>(Arrays.asList(method, uri, version));
     }
 
+    private HTTPRequest knownResourcePUTRequest() {
+        return new HTTPRequest().addRequestLine(createPUTRequestLine());
+    }
+
     private List<String> createPUTRequestLine() {
         String method = PUT.method();
         String uri = FORM.uri();
         String version = HTTP_1_1.version();
         return Arrays.asList(method, uri, version);
+    }
+
+    private HTTPRequest knownResourceHEADRequest() {
+        return new HTTPRequest().addRequestLine(createHEADRequestLine());
     }
 
     private List<String> createHEADRequestLine() {

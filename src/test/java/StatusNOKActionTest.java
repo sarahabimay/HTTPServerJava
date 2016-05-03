@@ -17,8 +17,7 @@ public class StatusNOKActionTest {
     @Test
     public void createStatusNOKResponse() {
         StatusNOKAction action = new StatusNOKAction();
-        HTTPRequest request = new HTTPRequest();
-        request.addRequestLine(requestUnavailableResource());
+        HTTPRequest request = new HTTPRequest().addRequestLine(requestUnavailableResource());
         HTTPResponse response = action.generateResponse(request);
         assertEquals(statusNOKResponseLine(), response.getStatusLine());
     }
