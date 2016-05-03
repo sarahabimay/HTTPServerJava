@@ -1,53 +1,69 @@
 import org.junit.Before;
 import org.junit.Test;
 import request.HTTPMethod;
-import request.HTTPRequest;
 import request.HTTPRequestURI;
 import request.HTTPVersion;
+import response.EntityHeaderFields;
 import response.HTTPResponse;
 import response.HTTPStatusCode;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
+import static request.HTTPMethod.GET;
+import static request.HTTPMethod.HEAD;
+import static response.EntityHeaderFields.Allow;
 
 public class HTTPResponseTest {
-    private HTTPRequest httpRequest;
+
     private HTTPResponse response;
-    private String expectedResponse;
 
     @Before
     public void setUp() {
-        httpRequest = new HTTPRequest();
-        httpRequest.addRequestLine(createGETRequestLine());
         response = statusOKResponse();
-        expectedResponse = expectedStatusOKResponse();
     }
 
     @Test
     public void generateResponseWithoutBody() {
-        byte[] byteResponse = response.buildResponse();
-        assertEquals(expectedResponse, new String(byteResponse));
+        byte[] byteResponse = statusOKResponse().buildResponse();
+        assertEquals(expectedStatusOKResponse(), new String(byteResponse));
     }
 
     @Test
     public void generateResponseWithEmptyBody() {
         response.setBody("");
         byte[] byteResponse = response.buildResponse();
-        assertEquals(expectedResponse, new String(byteResponse));
+        assertEquals(expectedStatusOKResponse() + doubleCarriageReturn(), new String(byteResponse));
     }
 
     @Test
     public void generateResponseWithBodyContents() {
-        String body = "Some Text";
-        response.setBody(body);
+        response.setBody("Some Text");
         byte[] byteResponse = response.buildResponse();
-        assertEquals(expectedResponse + body, new String(byteResponse));
+        String expectedResponse = expectedStatusOKResponse() + doubleCarriageReturn() + "Some Text";
+        assertEquals(expectedResponse, new String(byteResponse));
+    }
+
+    @Test
+    public void generateResponseWithAllowContents() {
+        HTTPResponse response = setEntityHeaders(statusOKResponse());
+        byte[] byteResponse = response.buildResponse();
+        assertEquals(expectedStatusOKResponse() + "\r\nAllow: GET,HEAD\r\n", new String(byteResponse));
+    }
+
+    private HTTPResponse setEntityHeaders(HTTPResponse response) {
+        Map<EntityHeaderFields, List<HTTPMethod>> headers = new HashMap<>();
+        headers.put(Allow, allowedMethods());
+        response.setEntityHeaders(headers);
+        return response;
+    }
+
+    private ArrayList<HTTPMethod> allowedMethods() {
+        return new ArrayList<>(Arrays.asList(GET, HEAD));
     }
 
     private ArrayList<String> createGETRequestLine() {
-        String method = HTTPMethod.GET.method();
+        String method = GET.method();
         String uri = HTTPRequestURI.INDEX.uri();
         String version = HTTPVersion.HTTP_1_1.version();
         return new ArrayList<>(Arrays.asList(method, uri, version));
@@ -60,7 +76,6 @@ public class HTTPResponseTest {
                 .append(HTTPStatusCode.OK.statusCode())
                 .append(" ")
                 .append(HTTPStatusCode.OK.reason())
-                .append("/n/n")
                 .toString();
     }
 
@@ -68,5 +83,9 @@ public class HTTPResponseTest {
         HTTPResponse response = new HTTPResponse();
         response.setStatusLine(HTTPVersion.HTTP_1_1, HTTPStatusCode.OK);
         return response;
+    }
+
+    private String doubleCarriageReturn() {
+        return "\r\n\r\n";
     }
 }

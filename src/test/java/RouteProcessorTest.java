@@ -20,40 +20,38 @@ public class RouteProcessorTest {
     private String statusLineOKResponse;
     private String statusLineFourOhFourResponse;
     private RouteProcessor routeProcessor;
-    private HTTPRequest request;
 
     @Before
     public void setUp() {
         statusLineOKResponse = "HTTP/1.1 200 OK";
         statusLineFourOhFourResponse = "HTTP/1.1 404 Not Found";
         routeProcessor = new RouteProcessor(new Router(routeActions()));
-        request = new HTTPRequest();
     }
 
     @Test
     public void buildStatusOKResponse() {
-        request.addRequestLine(new ArrayList<>(Arrays.asList(GET.method(), INDEX.uri(), HTTP_1_1.version())));
+        HTTPRequest request = new HTTPRequest().addRequestLine(new ArrayList<>(Arrays.asList(GET.method(), INDEX.uri(), HTTP_1_1.version())));
         HTTPResponse response = routeProcessor.buildResponse(request);
         assertEquals(statusLineOKResponse, response.getStatusLine());
     }
 
     @Test
     public void buildStatusNotFoundResponse() {
-        request.addRequestLine(new ArrayList<>(Arrays.asList(GET.method(), FOOBAR.uri(), HTTP_1_1.version())));
+        HTTPRequest request = new HTTPRequest().addRequestLine(new ArrayList<>(Arrays.asList(GET.method(), FOOBAR.uri(), HTTP_1_1.version())));
         HTTPResponse response = routeProcessor.buildResponse(request);
         assertEquals(statusLineFourOhFourResponse, response.getStatusLine());
     }
 
     @Test
     public void buildResponseForPOSTRequest() {
-        request.addRequestLine(new ArrayList<>(Arrays.asList(POST.method(), FORM.uri(), HTTP_1_1.version())));
+        HTTPRequest request = new HTTPRequest().addRequestLine(new ArrayList<>(Arrays.asList(POST.method(), FORM.uri(), HTTP_1_1.version())));
         HTTPResponse response = routeProcessor.buildResponse(request);
         assertEquals(statusLineOKResponse, response.getStatusLine());
     }
 
     @Test
     public void buildResponseForPUTRequest() {
-        request.addRequestLine(new ArrayList<>(Arrays.asList(PUT.method(), FORM.uri(), HTTP_1_1.version())));
+        HTTPRequest request = new HTTPRequest().addRequestLine(new ArrayList<>(Arrays.asList(PUT.method(), FORM.uri(), HTTP_1_1.version())));
         HTTPResponse response = routeProcessor.buildResponse(request);
         assertEquals(statusLineOKResponse, response.getStatusLine());
     }

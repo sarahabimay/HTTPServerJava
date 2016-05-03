@@ -19,12 +19,20 @@ public class HTTPRequest {
         this.body = "";
     }
 
-    public void addRequestLine(List<String> requestLine) {
+    public HTTPRequest(HTTPMethod method, HTTPRequestURI uri, HTTPVersion version, String body) {
+        this.method = method;
+        this.uri = uri;
+        this.version = version;
+        this.body = body;
+    }
+
+    public HTTPRequest addRequestLine(List<String> requestLine) {
         if (requestLine.size() == 3) {
             this.method = HTTPMethod.valueOf(requestLine.get(0));
             this.uri = lookupURIName(requestLine.get(1));
             this.version = lookupVersionName(requestLine.get(2));
         }
+        return new HTTPRequest(method, uri, version, body);
     }
 
     public void addBody(String body) {
