@@ -1,9 +1,6 @@
 package router;
 
-import routeActions.AllowAllOptionsAction;
-import routeActions.AllowGETAndOPTIONSAction;
-import routeActions.RouteAction;
-import routeActions.StatusOKAction;
+import routeActions.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,16 +16,17 @@ public class RoutesFactory {
         Map<Route, List<RouteAction>> routeActions = new HashMap<>();
         routeActions.put(new Route(HEAD, INDEX, HTTP_1_1), insertToList.apply(new StatusOKAction()));
         routeActions.put(new Route(GET, INDEX, HTTP_1_1), insertToList.apply(new StatusOKAction()));
-        routeActions.put(new Route(GET, FORM, HTTP_1_1), insertToList.apply(new StatusOKAction()));
-        routeActions.put(new Route(PUT, FORM, HTTP_1_1), insertToList.apply(new StatusOKAction()));
-        routeActions.put(new Route(POST, FORM, HTTP_1_1), insertToList.apply(new StatusOKAction()));
+        routeActions.put(new Route(GET, FORM, HTTP_1_1), insertToList.apply(new GETResourceAction()));
+        routeActions.put(new Route(PUT, FORM, HTTP_1_1), insertToList.apply(new UpdateResourceAction()));
+        routeActions.put(new Route(POST, FORM, HTTP_1_1), insertToList.apply(new UpdateResourceAction()));
         routeActions.put(new Route(OPTIONS, OPTIONS_ONE, HTTP_1_1), insertToList.apply(new AllowAllOptionsAction()));
-        routeActions.put(new Route(GET, OPTIONS_ONE, HTTP_1_1), insertToList.apply(new StatusOKAction()));
-        routeActions.put(new Route(PUT, OPTIONS_ONE, HTTP_1_1), insertToList.apply(new StatusOKAction()));
-        routeActions.put(new Route(POST, OPTIONS_ONE, HTTP_1_1), insertToList.apply(new StatusOKAction()));
+        routeActions.put(new Route(GET, OPTIONS_ONE, HTTP_1_1), insertToList.apply(new GETResourceAction()));
+        routeActions.put(new Route(PUT, OPTIONS_ONE, HTTP_1_1), insertToList.apply(new UpdateResourceAction()));
+        routeActions.put(new Route(POST, OPTIONS_ONE, HTTP_1_1), insertToList.apply(new UpdateResourceAction()));
         routeActions.put(new Route(HEAD, OPTIONS_ONE, HTTP_1_1), insertToList.apply(new StatusOKAction()));
         routeActions.put(new Route(OPTIONS, OPTIONS_TWO, HTTP_1_1), insertToList.apply(new AllowGETAndOPTIONSAction()));
-        routeActions.put(new Route(GET, OPTIONS_TWO, HTTP_1_1), insertToList.apply(new StatusOKAction()));
+        routeActions.put(new Route(GET, OPTIONS_TWO, HTTP_1_1), insertToList.apply(new GETResourceAction()));
+        routeActions.put(new Route(DELETE, FORM, HTTP_1_1), insertToList.apply(new DeleteResourceAction()));
         return routeActions;
     }
 }

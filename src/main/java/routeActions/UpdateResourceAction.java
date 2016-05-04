@@ -3,8 +3,6 @@ package routeActions;
 import request.HTTPRequest;
 import response.HTTPResponse;
 import response.HTTPStatusCode;
-import routeActions.RouteAction;
-import routeActions.URIProcessor;
 
 public class UpdateResourceAction implements RouteAction {
     @Override

@@ -6,7 +6,8 @@ public enum HTTPMethod {
     POST("POST"),
     HEAD("HEAD"),
     OPTIONS("OPTIONS"),
-    UNDEFINED("");
+    DELETE("DELETE"),
+    UNDEFINED("") ;
 
     private final String method;
 
