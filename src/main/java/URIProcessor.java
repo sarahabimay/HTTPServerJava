@@ -29,5 +29,15 @@ public class URIProcessor {
             e.printStackTrace();
         }
     }
+
+    public String read(String resource) {
+        Path root = Paths.get(pathToResourceFolder);
+        Path resourcePath = root.resolve(resource);
+        try {
+            return new String(Files.readAllBytes(resourcePath));
+        } catch (IOException e) {
+            return "";
+        }
+    }
 }
 

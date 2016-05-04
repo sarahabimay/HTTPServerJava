@@ -33,6 +33,14 @@ public class URIProcessorTest {
     }
 
     @Test
+    public void readContentsAtURI() {
+        String resourceToRead = "read_me";
+        createFileAtResource(resourceToRead, "data=fatcat");
+        String contents = uriProcessor.read(resourceToRead);
+        assertEquals("data=fatcat", contents);
+    }
+
+    @Test
     public void createContentsAtURI() {
         uriProcessor.create("form", "data=fatcat");
         List<String> contents = contentsAtResource(parentFolder, "form");
