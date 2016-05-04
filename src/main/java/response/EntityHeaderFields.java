@@ -1,7 +1,9 @@
 package response;
 
 public enum EntityHeaderFields {
-    Allow("Allow");
+    ALLOW("Allow"),
+    CONTENT_LENGTH("Content-Length"),
+    INVALID_HEADER("INVALID_HEADER");
 
     private final String field;
 
@@ -10,6 +12,21 @@ public enum EntityHeaderFields {
     }
 
     public String field(){
+        return field;
+    }
+
+    static public EntityHeaderFields lookupHeaderField(String field){
+        EntityHeaderFields[] fields = EntityHeaderFields.values();
+        for (EntityHeaderFields aField : fields) {
+            if (aField.toString().equals(field)) {
+                return aField;
+            }
+        }
+        return INVALID_HEADER;
+    }
+
+    @Override
+    public String toString() {
         return field;
     }
 }

@@ -10,14 +10,14 @@ import static org.junit.Assert.assertEquals;
 import static request.HTTPMethod.OPTIONS;
 import static request.HTTPRequestURI.OPTIONS_TWO;
 import static request.HTTPVersion.HTTP_1_1;
-import static response.EntityHeaderFields.Allow;
+import static response.EntityHeaderFields.ALLOW;
 
 public class AllowGETAndOPTIONSActionTest {
     @Test
     public void createOptionResponse() {
         HTTPResponse response = new AllowGETAndOPTIONSAction().generateResponse(createOptionsRequest());
         assertEquals("HTTP/1.1 200 OK", response.getStatusLine());
-        assertEquals(Allow, response.getEntityHeaders().keySet().toArray()[0]);
+        assertEquals(ALLOW, response.getEntityHeaders().keySet().toArray()[0]);
         assertEquals(2, response.getEntityHeaders().values().toString().split(",").length);
     }
 

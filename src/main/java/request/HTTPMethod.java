@@ -17,4 +17,14 @@ public enum HTTPMethod {
     public String method() {
         return method;
     }
+
+    public static HTTPMethod lookupMethod(String method) {
+        HTTPMethod[] methods = HTTPMethod.values();
+        for (HTTPMethod methodName : methods) {
+            if (methodName.toString().equals(method)) {
+                return methodName;
+            }
+        }
+        return UNDEFINED;
+    }
 }

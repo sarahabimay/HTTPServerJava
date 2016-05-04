@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import static request.HTTPMethod.*;
-import static response.EntityHeaderFields.*;
+import static response.EntityHeaderFields.ALLOW;
 import static response.HTTPStatusCode.OK;
 
 public class AllowAllOptionsAction implements RouteAction {
@@ -28,7 +28,7 @@ public class AllowAllOptionsAction implements RouteAction {
 
     private void setEntityHeaders(HTTPResponse response) {
         Map<EntityHeaderFields, List<HTTPMethod>> headers = new HashMap<>();
-        headers.put(Allow, ALLOWED_METHODS);
+        headers.put(ALLOW, ALLOWED_METHODS);
         response.setEntityHeaders(headers);
     }
 }
