@@ -12,7 +12,7 @@ import java.util.Map;
 
 import static request.HTTPMethod.GET;
 import static request.HTTPMethod.OPTIONS;
-import static response.EntityHeaderFields.Allow;
+import static response.EntityHeaderFields.ALLOW;
 import static response.HTTPStatusCode.OK;
 
 public class AllowGETAndOPTIONSAction implements RouteAction {
@@ -28,7 +28,7 @@ public class AllowGETAndOPTIONSAction implements RouteAction {
 
     private void setEntityHeaders(HTTPResponse response) {
         Map<EntityHeaderFields, List<HTTPMethod>> headers = new HashMap<>();
-        headers.put(Allow, ALLOWED_METHODS);
+        headers.put(ALLOW, ALLOWED_METHODS);
         response.setEntityHeaders(headers);
     }
 }

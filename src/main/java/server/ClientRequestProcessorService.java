@@ -2,7 +2,6 @@ package server;
 
 import request.RequestParser;
 import router.RouteProcessor;
-import server.HttpClientSocket;
 
 public class ClientRequestProcessorService {
     private final RouteProcessor routeProcessor;
@@ -16,7 +15,10 @@ public class ClientRequestProcessorService {
     }
 
     public void process() {
-        clientSocket.sendResponse(routeProcessor.buildResponse(requestParser.parseRequest(clientSocket)));
-        clientSocket.close();
+        try {
+            clientSocket.sendResponse(routeProcessor.buildResponse(requestParser.parseRequest(clientSocket)));
+            clientSocket.close();
+        } catch(Exception e) {
+        }
     }
 }

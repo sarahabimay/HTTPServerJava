@@ -19,6 +19,7 @@ public class RoutesFactory {
         Map<Route, List<RouteAction>> routeActions = new HashMap<>();
         routeActions.put(new Route(HEAD, INDEX, HTTP_1_1), insertToList.apply(new StatusOKAction()));
         routeActions.put(new Route(GET, INDEX, HTTP_1_1), insertToList.apply(new StatusOKAction()));
+        routeActions.put(new Route(GET, FORM, HTTP_1_1), insertToList.apply(new StatusOKAction()));
         routeActions.put(new Route(PUT, FORM, HTTP_1_1), insertToList.apply(new StatusOKAction()));
         routeActions.put(new Route(POST, FORM, HTTP_1_1), insertToList.apply(new StatusOKAction()));
         routeActions.put(new Route(OPTIONS, OPTIONS_ONE, HTTP_1_1), insertToList.apply(new AllowAllOptionsAction()));

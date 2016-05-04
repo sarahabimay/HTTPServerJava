@@ -12,7 +12,7 @@ import java.util.*;
 import static org.junit.Assert.assertEquals;
 import static request.HTTPMethod.GET;
 import static request.HTTPMethod.HEAD;
-import static response.EntityHeaderFields.Allow;
+import static response.EntityHeaderFields.*;
 
 public class HTTPResponseTest {
 
@@ -53,7 +53,7 @@ public class HTTPResponseTest {
 
     private HTTPResponse setEntityHeaders(HTTPResponse response) {
         Map<EntityHeaderFields, List<HTTPMethod>> headers = new HashMap<>();
-        headers.put(Allow, allowedMethods());
+        headers.put(ALLOW, allowedMethods());
         response.setEntityHeaders(headers);
         return response;
     }
