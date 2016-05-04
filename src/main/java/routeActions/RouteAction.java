@@ -4,5 +4,5 @@ import request.HTTPRequest;
 import response.HTTPResponse;
 
 public interface RouteAction {
-    HTTPResponse generateResponse(HTTPRequest request);
+    HTTPResponse generateResponse(HTTPRequest request, URIProcessor uriProcessor);
 }

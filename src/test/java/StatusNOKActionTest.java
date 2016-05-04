@@ -18,7 +18,8 @@ public class StatusNOKActionTest {
     public void createStatusNOKResponse() {
         StatusNOKAction action = new StatusNOKAction();
         HTTPRequest request = new HTTPRequest().addRequestLine(requestUnavailableResource());
-        HTTPResponse response = action.generateResponse(request);
+        URIProcessorStub uriProcessorStub = new URIProcessorStub();
+        HTTPResponse response = action.generateResponse(request, uriProcessorStub);
         assertEquals(statusNOKResponseLine(), response.getStatusLine());
     }
 

@@ -20,8 +20,8 @@ public class ClientRequestProcessorServiceTest {
     public void setUp() {
         inputStream = new ByteArrayInputStream(buildGETRequestLine().getBytes());
         clientSocketSpy = new ClientSocketSpy(inputStream);
-        requestParserSpy = new RequestParserSpy(new HTTPRequestSpy());
-        routeProcessorSpy = new RouteProcessorSpy(new RouterStub());
+        requestParserSpy = new RequestParserSpy(new HTTPRequestFake());
+        routeProcessorSpy = new RouteProcessorSpy(new RouterStub(), new URIProcessorStub());
         clientRequestProcessorService = new ClientRequestProcessorService(
                 clientSocketSpy,
                 requestParserSpy,

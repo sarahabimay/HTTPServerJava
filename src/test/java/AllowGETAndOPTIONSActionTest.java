@@ -15,7 +15,9 @@ import static response.EntityHeaderFields.ALLOW;
 public class AllowGETAndOPTIONSActionTest {
     @Test
     public void createOptionResponse() {
-        HTTPResponse response = new AllowGETAndOPTIONSAction().generateResponse(createOptionsRequest());
+        URIProcessorStub uriProcessorStub = new URIProcessorStub();
+        HTTPResponse response = new AllowGETAndOPTIONSAction()
+                                    .generateResponse(createOptionsRequest(), uriProcessorStub);
         assertEquals("HTTP/1.1 200 OK", response.getStatusLine());
         assertEquals(ALLOW, response.getEntityHeaders().keySet().toArray()[0]);
         assertEquals(2, response.getEntityHeaders().values().toString().split(",").length);
