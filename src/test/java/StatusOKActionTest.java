@@ -10,8 +10,7 @@ public class StatusOKActionTest {
     @Test
     public void createStatusOkResponse() {
         StatusOKAction action = new StatusOKAction();
-        HTTPRequestSpy requestSpy = new HTTPRequestSpy();
-        HTTPResponse response = action.generateResponse(requestSpy);
+        HTTPResponse response = action.generateResponse(new HTTPRequestFake(), new URIProcessorStub());
         assertEquals(statusOKResponseLine(), response.getStatusLine());
     }
 

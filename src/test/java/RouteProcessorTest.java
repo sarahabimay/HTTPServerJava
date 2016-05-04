@@ -25,7 +25,7 @@ public class RouteProcessorTest {
     public void setUp() {
         statusLineOKResponse = "HTTP/1.1 200 OK";
         statusLineFourOhFourResponse = "HTTP/1.1 404 Not Found";
-        routeProcessor = new RouteProcessor(new Router(routeActions()));
+        routeProcessor = new RouteProcessor(new Router(routeActions()), new URIProcessorStub());
     }
 
     @Test

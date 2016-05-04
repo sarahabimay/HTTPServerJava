@@ -19,19 +19,21 @@ public class RouterTest {
     private Router router;
     private String statusOKResponse;
     private String statusFourOhFourResponse;
+    private URIProcessorStub uriProcessorStub;
 
     @Before
     public void setUp() {
         router = new Router(new RoutesFactory().routeActions());
         statusOKResponse = "HTTP/1.1 200 OK";
         statusFourOhFourResponse = "HTTP/1.1 404 Not Found";
+        uriProcessorStub = new URIProcessorStub();
     }
 
     @Test
     public void fourOhFourAction() {
         HTTPRequest request = unrecognisedResourceRequest();
         List<RouteAction> actions = router.findRouteActions(request);
-        HTTPResponse response = actions.get(0).generateResponse(request);
+        HTTPResponse response = actions.get(0).generateResponse(request, uriProcessorStub);
         assertEquals(statusFourOhFourResponse, response.getStatusLine());
     }
 
@@ -39,7 +41,7 @@ public class RouterTest {
     public void okActionForGETRequest() {
         HTTPRequest request = knownResourceGETRequest();
         List<RouteAction> actions = router.findRouteActions(request);
-        HTTPResponse response = actions.get(0).generateResponse(request);
+        HTTPResponse response = actions.get(0).generateResponse(request, uriProcessorStub);
         assertEquals(statusOKResponse, response.getStatusLine());
     }
 
@@ -47,7 +49,7 @@ public class RouterTest {
     public void okActionForPOSTRequest() {
         HTTPRequest request = knownResourcePOSTRequest();
         List<RouteAction> actions = router.findRouteActions(request);
-        HTTPResponse response = actions.get(0).generateResponse(request);
+        HTTPResponse response = actions.get(0).generateResponse(request, uriProcessorStub);
         assertEquals(statusOKResponse, response.getStatusLine());
     }
 
@@ -55,7 +57,7 @@ public class RouterTest {
     public void okActionForPUTRequest() {
         HTTPRequest request = knownResourcePUTRequest();
         List<RouteAction> actions = router.findRouteActions(request);
-        HTTPResponse response = actions.get(0).generateResponse(request);
+        HTTPResponse response = actions.get(0).generateResponse(request, uriProcessorStub);
         assertEquals(statusOKResponse, response.getStatusLine());
     }
 
@@ -63,7 +65,7 @@ public class RouterTest {
     public void okActionForHEADRequest() {
         HTTPRequest request = knownResourceHEADRequest();
         List<RouteAction> actions = router.findRouteActions(request);
-        HTTPResponse response = actions.get(0).generateResponse(request);
+        HTTPResponse response = actions.get(0).generateResponse(request, uriProcessorStub);
         assertEquals(statusOKResponse, response.getStatusLine());
     }
 

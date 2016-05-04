@@ -19,7 +19,7 @@ public class AllowGETAndOPTIONSAction implements RouteAction {
     private final List<HTTPMethod> ALLOWED_METHODS = Arrays.asList(GET, OPTIONS);
 
     @Override
-    public HTTPResponse generateResponse(HTTPRequest request) {
+    public HTTPResponse generateResponse(HTTPRequest request, URIProcessor uriProcessor) {
         HTTPResponse response = new HTTPResponse();
         response.setStatusLine(request.version(), OK);
         setEntityHeaders(response);

@@ -21,7 +21,7 @@ public class HttpServerTest {
 
     @Before
     public void setUp() {
-        routeProcessor = new RouteProcessor(new Router(routes()));
+        routeProcessor = new RouteProcessor(new Router(routes()), new URIProcessorStub());
         clientSocketSpy = new HttpClientSocketStub();
         serverSocketFake = new HttpServerSocketFake(clientSocketSpy);
         executorServiceCreatorSpy = new ExecutorServiceCreatorSpy(1);
