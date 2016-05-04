@@ -5,3 +5,4 @@ notes/
 .gradle
 build/
 *.iml
+*.log

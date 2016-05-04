@@ -34,6 +34,10 @@ public class HTTPResponse {
         this.body = body;
     }
 
+    public String getBody() {
+        return body;
+    }
+
     public byte[] buildResponse() {
         return addFormattedResponse(allocateByteBuffer()).array();
     }
