@@ -2,6 +2,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import routeActions.URIProcessor;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,11 +16,12 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
 
 public class URIProcessorTest {
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
     private File rootFolder;
     private String parentFolder;
     private URIProcessor uriProcessor;
+
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Before
     public void setUp() {
@@ -34,7 +36,7 @@ public class URIProcessorTest {
 
     @Test
     public void readContentsAtURI() {
-        String resourceToRead = "read_me";
+        String resourceToRead = "/read_me";
         createFileAtResource(resourceToRead, "data=fatcat");
         String contents = uriProcessor.read(resourceToRead);
         assertEquals("data=fatcat", contents);
@@ -42,14 +44,15 @@ public class URIProcessorTest {
 
     @Test
     public void createContentsAtURI() {
-        uriProcessor.create("form", "data=fatcat");
-        List<String> contents = contentsAtResource(parentFolder, "form");
+        String newResource = "/form";
+        uriProcessor.create(newResource, "data=fatcat");
+        List<String> contents = contentsAtResource(parentFolder, newResource);
         assertEquals("data=fatcat", contents.get(0));
     }
 
     @Test
     public void updateContentsAtURI() {
-        String updateMeResource = "update_me";
+        String updateMeResource = "/update_me";
         createFileAtResource(updateMeResource, "data=fatcat");
         uriProcessor.create(updateMeResource, "data=heathcliff");
         List<String> contents = contentsAtResource(parentFolder, updateMeResource);
@@ -58,16 +61,17 @@ public class URIProcessorTest {
 
     @Test
     public void deleteContentsAtURI() {
-        createFileAtResource("delete_me", "contents");
-        uriProcessor.delete("delete_me");
-        List<String> contents = contentsAtResource(parentFolder, "delete_me");
+        String deleteResource = "/delete_me";
+        createFileAtResource(deleteResource, "contents");
+        uriProcessor.delete(deleteResource);
+        List<String> contents = contentsAtResource(parentFolder, deleteResource);
         assertEquals(0, contents.size());
     }
 
-    private void createFileAtResource(String delete_me, String contents) {
+    private void createFileAtResource(String resource, String contents) {
         String resourcePath = rootFolder
                 .toPath()
-                .resolve(delete_me)
+                .resolve(removeLeadingBackslash(resource))
                 .toString();
         try {
             Files.write(Paths.get(resourcePath), contents.getBytes());
@@ -78,8 +82,9 @@ public class URIProcessorTest {
 
     private List<String> contentsAtResource(String parentFolder, String resource) {
         try {
-            Path resourcePath = Paths.get(parentFolder)
-                    .resolve(resource);
+            Path resourcePath =
+                    Paths.get(parentFolder)
+                    .resolve(removeLeadingBackslash(resource));
 
             if (resourcePath.toFile().exists()) {
                 return Files.readAllLines(resourcePath, UTF_8);
@@ -96,5 +101,12 @@ public class URIProcessorTest {
                 .toPath()
                 .resolve("test")
                 .toString();
+    }
+
+    private String removeLeadingBackslash(String resource) {
+        if (resource.charAt(0) == '/') {
+            return resource.substring(1, resource.length());
+        }
+        return resource;
     }
 }

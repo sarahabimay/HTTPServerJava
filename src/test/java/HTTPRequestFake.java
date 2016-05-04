@@ -7,7 +7,7 @@ import static request.HTTPMethod.*;
 import static request.HTTPRequestURI.*;
 import static request.HTTPVersion.*;
 
-public class HTTPRequestSpy extends HTTPRequest {
+public class HTTPRequestFake extends HTTPRequest {
     public HTTPMethod method() {
         return GET;
     }
