@@ -13,6 +13,7 @@ import static request.HTTPMethod.GET;
 import static request.HTTPMethod.POST;
 import static request.HTTPRequestURI.FORM;
 import static request.HTTPRequestURI.INDEX;
+import static request.HTTPRequestURI.PARAMETERS;
 import static request.HTTPVersion.HTTP_1_1;
 
 public class RequestParserTest {
@@ -57,6 +58,30 @@ public class RequestParserTest {
         socketSpy = new ClientSocketSpy(inputStream);
         HTTPRequest httpRequest = requestParser.parseRequest(socketSpy);
         assertEquals(emptyRequestHeaders(), httpRequest.headers());
+    }
+
+    @Test
+    public void parseRequestWithParameters() {
+        inputStream = new ByteArrayInputStream(buildRequestWithParameters().getBytes());
+        socketSpy = new ClientSocketSpy(inputStream);
+        HTTPRequest httpRequest = requestParser.parseRequest(socketSpy);
+        assertEquals(queryParameters(), httpRequest.queryParameters());
+    }
+
+    private String buildRequestWithParameters() {
+        return new StringBuilder()
+                .append(GET)
+                .append(" ")
+                .append(PARAMETERS)
+                .append("?")
+                .append(queryParameters())
+                .append(" ")
+                .append(HTTP_1_1)
+                .toString();
+    }
+
+    private String queryParameters() {
+        return "variable_1=Operators%20%3C%2C%20%3E%2C%20%3D%2C%20!%3D%3B%20%2B%2C%20-%2C%20*%2C%20%26%2C%20%40%2C%20%23%2C%20%24%2C%20%5B%2C%20%5D%3A%20%22is%20that%20all%22%3F&variable_2=stuff";
     }
 
     private Map<EntityHeaderFields, List<String>> emptyRequestHeaders() {

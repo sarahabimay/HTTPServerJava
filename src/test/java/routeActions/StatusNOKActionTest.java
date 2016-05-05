@@ -1,13 +1,14 @@
 package routeActions;
 
 import org.junit.Test;
+import request.HTTPMethod;
 import request.HTTPRequest;
+import request.HTTPRequestURI;
+import request.HTTPVersion;
 import response.HTTPResponse;
 import router.URIProcessorStub;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static request.HTTPMethod.GET;
@@ -19,14 +20,21 @@ public class StatusNOKActionTest {
     @Test
     public void createStatusNOKResponse() {
         StatusNOKAction action = new StatusNOKAction();
-        HTTPRequest request = new HTTPRequest().addRequestLine(requestUnavailableResource());
-        URIProcessorStub uriProcessorStub = new URIProcessorStub();
-        HTTPResponse response = action.generateResponse(request, uriProcessorStub);
+        HTTPResponse response = action.generateResponse(unavailableResourceRequest(), new URIProcessorStub());
         assertEquals(statusNOKResponseLine(), response.getStatusLine());
     }
 
-    private List<String> requestUnavailableResource() {
-        return new ArrayList<>(Arrays.asList(GET.method(), FOOBAR.uri(), HTTP_1_1.version()));
+    private HTTPRequest unavailableResourceRequest() {
+        return new HTTPRequest().addRequestLine(createRequestLine(GET, FOOBAR, "", HTTP_1_1));
+    }
+
+    private Map<String, String> createRequestLine(HTTPMethod method, HTTPRequestURI uri, String queryParams, HTTPVersion version) {
+        Map<String, String> requestLine = new HashMap<>();
+        requestLine.put("method", method.method());
+        requestLine.put("uri", uri.uri());
+        requestLine.put("version", version.version());
+        requestLine.put("queryParameters", queryParams);
+        return requestLine;
     }
 
     private String statusNOKResponseLine() {

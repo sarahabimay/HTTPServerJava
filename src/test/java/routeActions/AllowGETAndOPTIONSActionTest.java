@@ -5,12 +5,12 @@ import request.HTTPRequest;
 import response.HTTPResponse;
 import router.URIProcessorStub;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static request.HTTPMethod.OPTIONS;
-import static request.HTTPRequestURI.OPTIONS_TWO;
+import static request.HTTPRequestURI.OPTIONS_ONE;
 import static request.HTTPVersion.HTTP_1_1;
 import static response.EntityHeaderFields.ALLOW;
 
@@ -29,7 +29,11 @@ public class AllowGETAndOPTIONSActionTest {
         return new HTTPRequest().addRequestLine(optionsRequestLine());
     }
 
-    private ArrayList<String> optionsRequestLine() {
-        return new ArrayList<>(Arrays.asList(OPTIONS.method(), OPTIONS_TWO.uri(), HTTP_1_1.version()));
+    private Map<String, String> optionsRequestLine() {
+        Map<String, String> requestLine = new HashMap<>();
+        requestLine.put("method", OPTIONS.method());
+        requestLine.put("uri", OPTIONS_ONE.uri());
+        requestLine.put("version", HTTP_1_1.version());
+        return requestLine;
     }
 }

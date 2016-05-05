@@ -2,13 +2,14 @@ package router;
 
 import org.junit.Before;
 import org.junit.Test;
+import request.HTTPMethod;
 import request.HTTPRequest;
+import request.HTTPRequestURI;
+import request.HTTPVersion;
 import response.HTTPResponse;
 import routeActions.RouteAction;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static request.HTTPMethod.*;
@@ -31,7 +32,7 @@ public class RouterTest {
 
     @Test
     public void fourOhFourAction() {
-        HTTPRequest request = unrecognisedResourceRequest();
+        HTTPRequest request = unknownResourceRequest();
         List<RouteAction> actions = router.findRouteActions(request);
         HTTPResponse response = actions.get(0).generateResponse(request, uriProcessorStub);
         assertEquals(statusFourOhFourResponse, response.getStatusLine());
@@ -69,58 +70,32 @@ public class RouterTest {
         assertEquals(statusOKResponse, response.getStatusLine());
     }
 
-    private HTTPRequest unrecognisedResourceRequest() {
-        return new HTTPRequest().addRequestLine(createGETUnrecognisedURIRequestLine());
-    }
-
-    private List<String> createGETUnrecognisedURIRequestLine() {
-        String method = GET.method();
-        String uri = FOOBAR.uri();
-        String version = HTTP_1_1.version();
-        return Arrays.asList(method, uri, version);
-    }
-
     private HTTPRequest knownResourceGETRequest() {
-        return new HTTPRequest().addRequestLine(createKnownGETRequestLine());
-    }
-
-    private List<String> createKnownGETRequestLine() {
-        String method = GET.method();
-        String uri = INDEX.uri();
-        String version = HTTP_1_1.version();
-        return new ArrayList<>(Arrays.asList(method, uri, version));
+        return new HTTPRequest().addRequestLine(createRequestLine(GET, INDEX, "", HTTP_1_1));
     }
 
     private HTTPRequest knownResourcePOSTRequest() {
-        return new HTTPRequest().addRequestLine(createPOSTRequestLine());
-    }
-
-    private ArrayList<String> createPOSTRequestLine() {
-        String method = POST.method();
-        String uri = FORM.uri();
-        String version = HTTP_1_1.version();
-        return new ArrayList<>(Arrays.asList(method, uri, version));
+        return new HTTPRequest().addRequestLine(createRequestLine(POST, FORM, "", HTTP_1_1));
     }
 
     private HTTPRequest knownResourcePUTRequest() {
-        return new HTTPRequest().addRequestLine(createPUTRequestLine());
+        return new HTTPRequest().addRequestLine(createRequestLine(PUT, FORM, "", HTTP_1_1));
     }
 
-    private List<String> createPUTRequestLine() {
-        String method = PUT.method();
-        String uri = FORM.uri();
-        String version = HTTP_1_1.version();
-        return Arrays.asList(method, uri, version);
+    private HTTPRequest unknownResourceRequest() {
+        return new HTTPRequest().addRequestLine(createRequestLine(GET, FOOBAR, "", HTTP_1_1));
     }
 
     private HTTPRequest knownResourceHEADRequest() {
-        return new HTTPRequest().addRequestLine(createHEADRequestLine());
+        return new HTTPRequest().addRequestLine(createRequestLine(HEAD, INDEX, "", HTTP_1_1));
     }
 
-    private List<String> createHEADRequestLine() {
-        String method = PUT.method();
-        String uri = FORM.uri();
-        String version = HTTP_1_1.version();
-        return Arrays.asList(method, uri, version);
+    private Map<String, String> createRequestLine(HTTPMethod method, HTTPRequestURI uri, String queryParams, HTTPVersion version) {
+        Map<String, String> requestLine = new HashMap<>();
+        requestLine.put("method", method.method());
+        requestLine.put("uri", uri.uri());
+        requestLine.put("version", version.version());
+        requestLine.put("queryParameters", queryParams);
+        return requestLine;
     }
 }

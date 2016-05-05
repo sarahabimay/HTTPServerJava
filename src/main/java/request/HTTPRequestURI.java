@@ -10,7 +10,8 @@ public enum HTTPRequestURI {
     IMAGEJPEG("/image.jpeg"),
     IMAGEPNG("/image.png"),
     IMAGEGIF("/image.gif"),
-    UNRECOGNIZED("");
+    PARAMETERS("/parameters"),
+    UNRECOGNIZED(""), ;
 
     private final String uri;
 

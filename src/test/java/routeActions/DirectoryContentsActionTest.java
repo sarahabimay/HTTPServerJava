@@ -27,6 +27,6 @@ public class DirectoryContentsActionTest {
     }
 
     private HTTPRequest newRequest(HTTPMethod method, HTTPRequestURI uri) {
-        return new HTTPRequest(method, uri, HTTP_1_1, null, null);
+        return new HTTPRequest(method, uri, HTTP_1_1, null, null, null);
     }
 }

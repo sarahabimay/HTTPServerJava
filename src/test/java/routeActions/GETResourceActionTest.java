@@ -50,6 +50,6 @@ public class GETResourceActionTest {
     }
 
     private HTTPRequest newGETRequest(HTTPMethod method, HTTPRequestURI uri, HTTPVersion version) {
-        return new HTTPRequest(method, uri, version, null, null);
+        return new HTTPRequest(method, uri, version, null, null, null);
     }
 }

@@ -7,11 +7,12 @@ import request.HTTPRequest;
 import request.HTTPRequestURI;
 import request.HTTPVersion;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
+import static request.HTTPMethod.*;
+import static request.HTTPRequestURI.*;
+import static request.HTTPVersion.HTTP_1_1;
 
 public class RouteTest {
     private Route getIndexRoute;
@@ -20,9 +21,9 @@ public class RouteTest {
 
     @Before
     public void setUp() {
-        getIndexRoute = new Route(HTTPMethod.GET, HTTPRequestURI.INDEX, HTTPVersion.HTTP_1_1);
-        postFormRoute = new Route(HTTPMethod.POST, HTTPRequestURI.FORM, HTTPVersion.HTTP_1_1);
-        putFormRoute = new Route(HTTPMethod.PUT, HTTPRequestURI.FORM, HTTPVersion.HTTP_1_1);
+        getIndexRoute = new Route(GET, INDEX, HTTP_1_1);
+        postFormRoute = new Route(POST, FORM, HTTP_1_1);
+        putFormRoute = new Route(PUT, FORM, HTTP_1_1);
     }
 
     @Test
@@ -54,46 +55,27 @@ public class RouteTest {
     }
 
     private HTTPRequest knownResourceGETRequest() {
-        return new HTTPRequest().addRequestLine(createGETRequestLine());
-    }
-
-    private ArrayList<String> createGETRequestLine() {
-        String method = HTTPMethod.GET.method();
-        String uri = HTTPRequestURI.INDEX.uri();
-        String version = HTTPVersion.HTTP_1_1.version();
-        return new ArrayList<>(Arrays.asList(method, uri, version));
+        return new HTTPRequest().addRequestLine(createRequestLine(GET, INDEX, "", HTTP_1_1));
     }
 
     private HTTPRequest knownResourcePOSTRequest() {
-        return new HTTPRequest().addRequestLine(createPOSTRequestLine());
-    }
-
-    private ArrayList<String> createPOSTRequestLine() {
-        String method = HTTPMethod.POST.method();
-        String uri = HTTPRequestURI.FORM.uri();
-        String version = HTTPVersion.HTTP_1_1.version();
-        return new ArrayList<>(Arrays.asList(method, uri, version));
+        return new HTTPRequest().addRequestLine(createRequestLine(POST, FORM, "", HTTP_1_1));
     }
 
     private HTTPRequest knownResourcePUTRequest() {
-        return new HTTPRequest().addRequestLine(createPUTRequestLine());
-    }
-
-    private List<String> createPUTRequestLine() {
-        String method = HTTPMethod.PUT.method();
-        String uri = HTTPRequestURI.FORM.uri();
-        String version = HTTPVersion.HTTP_1_1.version();
-        return Arrays.asList(method, uri, version);
+        return new HTTPRequest().addRequestLine(createRequestLine(PUT, FORM, "", HTTP_1_1));
     }
 
     private HTTPRequest unknownResourceRequest() {
-        return new HTTPRequest().addRequestLine(createGETUnrecognisedURIRequestLine());
+        return new HTTPRequest().addRequestLine(createRequestLine(GET, FOOBAR, "", HTTP_1_1));
     }
 
-    private List<String> createGETUnrecognisedURIRequestLine() {
-        String method = HTTPMethod.GET.method();
-        String uri = HTTPRequestURI.FOOBAR.uri();
-        String version = HTTPVersion.HTTP_1_1.version();
-        return Arrays.asList(method, uri, version);
+    private Map<String, String> createRequestLine(HTTPMethod method, HTTPRequestURI uri, String queryParams, HTTPVersion version) {
+        Map<String, String> requestLine = new HashMap<>();
+        requestLine.put("method", method.method());
+        requestLine.put("uri", uri.uri());
+        requestLine.put("version", version.version());
+        requestLine.put("queryParameters", queryParams);
+        return requestLine;
     }
 }

@@ -21,6 +21,7 @@ public class RoutesFactory {
         routeActions.put(new Route(GET, IMAGEJPEG, HTTP_1_1), insertToList.apply(new GETResourceAction()));
         routeActions.put(new Route(GET, IMAGEPNG, HTTP_1_1), insertToList.apply(new GETResourceAction()));
         routeActions.put(new Route(GET, IMAGEGIF, HTTP_1_1), insertToList.apply(new GETResourceAction()));
+        routeActions.put(new Route(GET, PARAMETERS, HTTP_1_1), insertToList.apply(new ParameterDecodeAction()));
         routeActions.put(new Route(PUT, FORM, HTTP_1_1), insertToList.apply(new UpdateResourceAction()));
         routeActions.put(new Route(POST, FORM, HTTP_1_1), insertToList.apply(new UpdateResourceAction()));
         routeActions.put(new Route(OPTIONS, OPTIONS_ONE, HTTP_1_1), insertToList.apply(new AllowAllOptionsAction()));
