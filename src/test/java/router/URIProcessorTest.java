@@ -4,14 +4,16 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import testHelper.TestHelpers;
 import routeActions.URIProcessor;
+import testHelper.TestHelpers;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class URIProcessorTest {
     private File rootFolder;
@@ -69,4 +71,37 @@ public class URIProcessorTest {
         List<String> contents = testHelpers.contentsAtResource(parentFolder, deleteResource);
         assertEquals(0, contents.size());
     }
+
+    @Test
+    public void getDirectoryLinks() {
+        String pathToPublicDirectory = "/Users/sarahjohnston/Sarah/CobSpec/public/";
+        URIProcessor uriProcessor = new URIProcessor(pathToPublicDirectory);
+        String htmlLinks = uriProcessor.links();
+        String expectedPayload = directoryLinksHtml();
+        assertThat(htmlLinks, containsString(expectedPayload));
+    }
+
+    private String directoryLinksHtml() {
+        return new StringBuilder()
+                .append("<a href='/file1'>file1</a>")
+                .append("<br>")
+                .append("<a href='/file2'>file2</a>")
+                .append("<br>")
+                .append("<a href='/image.gif'>image.gif</a>")
+                .append("<br>")
+                .append("<a href='/image.jpeg'>image.jpeg</a>")
+                .append("<br>")
+                .append("<a href='/image.png'>image.png</a>")
+                .append("<br>")
+                .append("<a href='/method_options'>method_options</a>")
+                .append("<br>")
+                .append("<a href='/partial_content.txt'>partial_content.txt</a>")
+                .append("<br>")
+                .append("<a href='/patch-content.txt'>patch-content.txt</a>")
+                .append("<br>")
+                .append("<a href='/text-file.txt'>text-file.txt</a>")
+                .append("<br>")
+                .toString();
+    }
+
 }

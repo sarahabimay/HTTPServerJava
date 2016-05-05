@@ -19,4 +19,9 @@ public class URIProcessorStub extends URIProcessor {
     public String read(String resource) {
         return "";
     }
+
+    @Override
+    public String links() {
+        return "";
+    }
 }
