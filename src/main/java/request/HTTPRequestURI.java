@@ -7,6 +7,9 @@ public enum HTTPRequestURI {
     OPTIONS_ONE("/method_options"),
     OPTIONS_TWO("/method_options2"),
     FILE1("/file1"),
+    IMAGEJPEG("/image.jpeg"),
+    IMAGEPNG("/image.png"),
+    IMAGEGIF("/image.gif"),
     UNRECOGNIZED("");
 
     private final String uri;

@@ -10,7 +10,7 @@ public class DirectoryContentsAction implements RouteAction {
     public HTTPResponse generateResponse(HTTPRequest request, URIProcessor uriProcessor) {
         HTTPResponse response = new HTTPResponse();
         response.setStatusLine(request.version(), OK);
-        response.setBody(uriProcessor.links());
+        response.setBody(uriProcessor.links().getBytes());
         return response;
     }
 }

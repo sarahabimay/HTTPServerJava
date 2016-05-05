@@ -9,7 +9,6 @@ public class StatusOKAction implements RouteAction {
     public HTTPResponse generateResponse(HTTPRequest request, URIProcessor uriProcessor) {
         HTTPResponse response = new HTTPResponse();
         response.setStatusLine(request.version(), OK);
-        response.setBody(request.body());
         return response;
     }
 }
