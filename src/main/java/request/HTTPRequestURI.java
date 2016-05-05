@@ -6,6 +6,7 @@ public enum HTTPRequestURI {
     FORM("/form"),
     OPTIONS_ONE("/method_options"),
     OPTIONS_TWO("/method_options2"),
+    FILE1("/file1"),
     UNRECOGNIZED("");
 
     private final String uri;

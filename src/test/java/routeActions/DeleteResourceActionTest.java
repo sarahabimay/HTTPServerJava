@@ -8,7 +8,6 @@ import org.junit.rules.TemporaryFolder;
 import request.HTTPMethod;
 import request.HTTPRequest;
 import request.HTTPRequestURI;
-import request.HTTPVersion;
 import testHelper.TestHelpers;
 
 import java.io.File;
@@ -39,22 +38,18 @@ public class DeleteResourceActionTest {
 
     @Test
     public void resourceHasBeenRemoved() {
-
-    }
-    @Test
-    public void generateResponseWithResourceContents() {
         String payload = "data=fatcat";
         testHelpers.createFileAtResource(rootFolder, "/form", payload);
         URIProcessor uriProcessor = new URIProcessor(testHelpers.pathToRootFolder(temporaryFolder, testFolder));
 
-        HTTPRequest getRequest = newDeleteRequest(DELETE, FORM, HTTP_1_1);
+        HTTPRequest getRequest = newRequest(DELETE, FORM);
         new DeleteResourceAction().generateResponse(getRequest, uriProcessor);
 
         Assert.assertEquals(new ArrayList<>(), testHelpers.contentsAtResource(
                 testHelpers.pathToRootFolder(temporaryFolder, testFolder), FORM.uri()));
     }
 
-    private HTTPRequest newDeleteRequest(HTTPMethod method, HTTPRequestURI uri, HTTPVersion version) {
-        return new HTTPRequest(method, uri, version, null, null);
+    private HTTPRequest newRequest(HTTPMethod method, HTTPRequestURI uri) {
+        return new HTTPRequest(method, uri, HTTP_1_1, null, null);
     }
 }
