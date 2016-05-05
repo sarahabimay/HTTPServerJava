@@ -16,8 +16,8 @@ public class URIProcessorStub extends URIProcessor {
     }
 
     @Override
-    public String read(String resource) {
-        return "";
+    public byte[] read(String resource) {
+        return new byte[0];
     }
 
     @Override

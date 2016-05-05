@@ -42,7 +42,7 @@ public class URIProcessorTest {
     public void readContentsAtURI() {
         String resourceToRead = "/read_me";
         testHelpers.createFileAtResource(rootFolder, resourceToRead, "data=fatcat");
-        String contents = uriProcessor.read(resourceToRead);
+        String contents = new String(uriProcessor.read(resourceToRead));
         assertEquals("data=fatcat", contents);
     }
 
@@ -77,31 +77,6 @@ public class URIProcessorTest {
         String pathToPublicDirectory = "/Users/sarahjohnston/Sarah/CobSpec/public/";
         URIProcessor uriProcessor = new URIProcessor(pathToPublicDirectory);
         String htmlLinks = uriProcessor.links();
-        String expectedPayload = directoryLinksHtml();
-        assertThat(htmlLinks, containsString(expectedPayload));
+        assertThat(htmlLinks, containsString("<a href='/file1'>file1</a>"));
     }
-
-    private String directoryLinksHtml() {
-        return new StringBuilder()
-                .append("<a href='/file1'>file1</a>")
-                .append("<br>")
-                .append("<a href='/file2'>file2</a>")
-                .append("<br>")
-                .append("<a href='/image.gif'>image.gif</a>")
-                .append("<br>")
-                .append("<a href='/image.jpeg'>image.jpeg</a>")
-                .append("<br>")
-                .append("<a href='/image.png'>image.png</a>")
-                .append("<br>")
-                .append("<a href='/method_options'>method_options</a>")
-                .append("<br>")
-                .append("<a href='/partial_content.txt'>partial_content.txt</a>")
-                .append("<br>")
-                .append("<a href='/patch-content.txt'>patch-content.txt</a>")
-                .append("<br>")
-                .append("<a href='/text-file.txt'>text-file.txt</a>")
-                .append("<br>")
-                .toString();
-    }
-
 }

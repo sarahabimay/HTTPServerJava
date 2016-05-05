@@ -11,8 +11,8 @@ public class HTTPResponse {
     private final String COLON = ": ";
     private final String COMMA = ",";
     private String statusLine;
-    private String body;
     private Map<EntityHeaderFields, List<HTTPMethod>> entityHeaders;
+    private byte[] body;
 
     public void setStatusLine(HTTPVersion version, HTTPStatusCode statusCode) {
         this.statusLine = createStatusLine(version, statusCode);
@@ -30,12 +30,12 @@ public class HTTPResponse {
         return entityHeaders;
     }
 
-    public void setBody(String body) {
+    public void setBody(byte[] body) {
         this.body = body;
     }
 
     public String getBody() {
-        return body;
+        return new String(body);
     }
 
     public byte[] buildResponse() {
@@ -53,7 +53,7 @@ public class HTTPResponse {
     private ByteBuffer addFormattedResponse(ByteBuffer byteBuffer) {
         byteBuffer.put(statusLine.getBytes());
         byteBuffer.put(getBytes(formattedEntityHeader()));
-        byteBuffer.put(getBytes(formattedBody()));
+        addBodyToByteResponse(byteBuffer);
         return byteBuffer;
     }
 
@@ -66,7 +66,7 @@ public class HTTPResponse {
     }
 
     private int lengthOfBody() {
-        return body == null ? 0 : formattedBody().getBytes().length;
+        return body == null ? 0 : doubleCRLF().getBytes().length + body.length;
     }
 
     private String formattedEntityHeader() {
@@ -89,14 +89,17 @@ public class HTTPResponse {
                 .append(join(entry.getValue(), COMMA));
     }
 
+    private void addBodyToByteResponse(ByteBuffer byteBuffer) {
+        if (body != null) {
+            byteBuffer.put(doubleCRLF().getBytes());
+            byteBuffer.put(body);
+        }
+    }
+
     private String join(List<HTTPMethod> methods, String characters) {
         String combined = methods.stream().map(HTTPMethod::toString).reduce("", (acc, method) -> acc + method + characters);
         combined = combined.substring(0, combined.length() - characters.length());
         return combined;
-    }
-
-    private String formattedBody() {
-        return body == null ? body : new StringBuilder().append(doubleCRLF()).append(body).toString();
     }
 
     private byte[] getBytes(String line) {

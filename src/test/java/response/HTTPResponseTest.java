@@ -30,14 +30,14 @@ public class HTTPResponseTest {
 
     @Test
     public void generateResponseWithEmptyBody() {
-        response.setBody("");
+        response.setBody(new byte[0]);
         byte[] byteResponse = response.buildResponse();
         assertEquals(expectedStatusOKResponse() + doubleCarriageReturn(), new String(byteResponse));
     }
 
     @Test
     public void generateResponseWithBodyContents() {
-        response.setBody("Some Text");
+        response.setBody("Some Text".getBytes());
         byte[] byteResponse = response.buildResponse();
         String expectedResponse = expectedStatusOKResponse() + doubleCarriageReturn() + "Some Text";
         assertEquals(expectedResponse, new String(byteResponse));

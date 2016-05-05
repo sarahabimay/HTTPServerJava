@@ -33,13 +33,13 @@ public class URIProcessor {
         }
     }
 
-    public String read(String resource) {
+    public byte[] read(String resource) {
         Path root = Paths.get(pathToResourceFolder);
         Path resourcePath = root.resolve(removeLeadingBackslash(resource));
         try {
-            return new String(Files.readAllBytes(resourcePath));
+            return Files.readAllBytes(resourcePath);
         } catch (IOException e) {
-            return "";
+            return new byte[0];
         }
     }
 
