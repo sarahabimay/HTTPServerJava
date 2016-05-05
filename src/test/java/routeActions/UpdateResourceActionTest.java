@@ -50,7 +50,7 @@ public class UpdateResourceActionTest {
     }
 
     private HTTPRequest newPostRequest(HTTPMethod method, HTTPRequestURI uri, HTTPVersion version, String payload) {
-        return new HTTPRequest(method, uri, version, null, payload);
+        return new HTTPRequest(method, uri, version, null, null, payload);
     }
 }
 

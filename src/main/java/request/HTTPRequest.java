@@ -16,39 +16,39 @@ public class HTTPRequest {
     private HTTPVersion version;
     private Map<EntityHeaderFields, List<String>> headers;
     private String body;
+    private String queryParameters;
 
     public HTTPRequest() {
         this.method = HTTPMethod.UNDEFINED;
         this.uri = UNRECOGNIZED;
         this.version = HTTPVersion.UNDEFINED;
         this.body = "";
+        this.queryParameters = "";
     }
 
-    public HTTPRequest(HTTPMethod method, HTTPRequestURI uri, HTTPVersion version, Map<EntityHeaderFields, List<String>> headers, String body) {
+    public HTTPRequest(HTTPMethod method, HTTPRequestURI uri, HTTPVersion version, String queryParameters, Map<EntityHeaderFields, List<String>> headers, String body) {
         this.method = method;
         this.uri = uri;
         this.version = version;
+        this.queryParameters = queryParameters;
         this.headers = headers;
         this.body = body;
     }
 
-    public HTTPRequest addRequestLine(List<String> requestLine) {
-        if (requestLine.size() == 3) {
-            this.method = lookupMethod(requestLine.get(0));
-            this.uri = lookupURIName(requestLine.get(1));
-            this.version = lookupVersionName(requestLine.get(2));
-
-        } else {
-        }
-        return new HTTPRequest(method, uri, version, headers, body);
+    public HTTPRequest addRequestLine(Map<String, String> requestLine) {
+        this.method = lookupMethod(requestLine.get("method"));
+        this.uri = lookupURIName(requestLine.get("uri"));
+        this.version = lookupVersionName(requestLine.get("version"));
+        this.queryParameters = requestLine.get("queryParameters");
+        return new HTTPRequest(method, uri, version, queryParameters, headers, body);
     }
 
     public HTTPRequest addRequestHeader(Map<EntityHeaderFields, List<String>> requestHeaders) {
-        return new HTTPRequest(method, uri, version, requestHeaders, body);
+        return new HTTPRequest(method, uri, version, queryParameters, requestHeaders, body);
     }
 
     public HTTPRequest addBody(String body) {
-        return new HTTPRequest(method, uri, version, headers, body);
+        return new HTTPRequest(method, uri, version, queryParameters, headers, body);
     }
 
     public HTTPMethod method() {
@@ -57,6 +57,10 @@ public class HTTPRequest {
 
     public HTTPRequestURI uri() {
         return uri;
+    }
+
+    public String queryParameters() {
+        return queryParameters;
     }
 
     public HTTPVersion version() {

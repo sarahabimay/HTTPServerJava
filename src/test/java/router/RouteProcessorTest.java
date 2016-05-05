@@ -2,7 +2,10 @@ package router;
 
 import org.junit.Before;
 import org.junit.Test;
+import request.HTTPMethod;
 import request.HTTPRequest;
+import request.HTTPRequestURI;
+import request.HTTPVersion;
 import response.HTTPResponse;
 import routeActions.RouteAction;
 import routeActions.StatusOKAction;
@@ -28,31 +31,44 @@ public class RouteProcessorTest {
     }
 
     @Test
-    public void buildStatusOKResponse() {
-        HTTPRequest request = new HTTPRequest().addRequestLine(new ArrayList<>(Arrays.asList(GET.method(), INDEX.uri(), HTTP_1_1.version())));
+    public void buildStatusOyKResponse() {
+        HTTPRequest request = createRequest(GET, INDEX, "", HTTP_1_1);
         HTTPResponse response = routeProcessor.buildResponse(request);
         assertEquals(statusLineOKResponse, response.getStatusLine());
     }
 
     @Test
     public void buildStatusNotFoundResponse() {
-        HTTPRequest request = new HTTPRequest().addRequestLine(new ArrayList<>(Arrays.asList(GET.method(), FOOBAR.uri(), HTTP_1_1.version())));
+        HTTPRequest request = createRequest(GET, FOOBAR, "", HTTP_1_1);
         HTTPResponse response = routeProcessor.buildResponse(request);
         assertEquals(statusLineFourOhFourResponse, response.getStatusLine());
     }
 
     @Test
     public void buildResponseForPOSTRequest() {
-        HTTPRequest request = new HTTPRequest().addRequestLine(new ArrayList<>(Arrays.asList(POST.method(), FORM.uri(), HTTP_1_1.version())));
+        HTTPRequest request = createRequest(POST, FORM, "", HTTP_1_1);
         HTTPResponse response = routeProcessor.buildResponse(request);
         assertEquals(statusLineOKResponse, response.getStatusLine());
     }
 
     @Test
     public void buildResponseForPUTRequest() {
-        HTTPRequest request = new HTTPRequest().addRequestLine(new ArrayList<>(Arrays.asList(PUT.method(), FORM.uri(), HTTP_1_1.version())));
+        HTTPRequest request = createRequest(PUT, FORM, "", HTTP_1_1);
         HTTPResponse response = routeProcessor.buildResponse(request);
         assertEquals(statusLineOKResponse, response.getStatusLine());
+    }
+
+    private HTTPRequest createRequest(HTTPMethod method, HTTPRequestURI uri, String queryParams, HTTPVersion version) {
+        return new HTTPRequest().addRequestLine(createRequestLine(method, uri, queryParams, version));
+    }
+
+    private Map<String, String> createRequestLine(HTTPMethod method, HTTPRequestURI uri, String queryParams, HTTPVersion version) {
+        Map<String, String> requestLine = new HashMap<>();
+        requestLine.put("method", method.method());
+        requestLine.put("uri", uri.uri());
+        requestLine.put("version", version.version());
+        requestLine.put("queryParameters", queryParams);
+        return requestLine;
     }
 
     public Map<Route, List<RouteAction>> routeActions() {

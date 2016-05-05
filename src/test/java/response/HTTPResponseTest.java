@@ -3,7 +3,6 @@ package response;
 import org.junit.Before;
 import org.junit.Test;
 import request.HTTPMethod;
-import request.HTTPRequestURI;
 import request.HTTPVersion;
 
 import java.util.*;
@@ -59,13 +58,6 @@ public class HTTPResponseTest {
 
     private ArrayList<HTTPMethod> allowedMethods() {
         return new ArrayList<>(Arrays.asList(GET, HEAD));
-    }
-
-    private ArrayList<String> createGETRequestLine() {
-        String method = GET.method();
-        String uri = HTTPRequestURI.INDEX.uri();
-        String version = HTTPVersion.HTTP_1_1.version();
-        return new ArrayList<>(Arrays.asList(method, uri, version));
     }
 
     private String expectedStatusOKResponse() {
