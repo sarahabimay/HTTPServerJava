@@ -23,7 +23,7 @@ public class AllowOptionsAction implements RouteAction {
         return response;
     }
 
-    private Map<EntityHeaderFields,List<HTTPMethod>> allowedMethodsHeader(List<HTTPMethod> methods) {
+    private Map<EntityHeaderFields, List<HTTPMethod>> allowedMethodsHeader(List<HTTPMethod> methods) {
         Map<EntityHeaderFields, List<HTTPMethod>> allowed = new HashMap<>();
         allowed.put(ALLOW, methods);
         return allowed;

@@ -12,25 +12,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import static functions.FunctionHelpers.insertToList;
-
 public class Router {
-    private final Map<Route, List<RouteAction>> routeActions;
+    private final Map<Route, RouteAction> routeActions;
 
-    public Router(Map<Route, List<RouteAction>> routeActions) {
+    public Router(Map<Route, RouteAction> routeActions) {
         this.routeActions = routeActions;
     }
 
-    public List<RouteAction> findRouteActions(HTTPRequest request) {
-        for (Entry<Route, List<RouteAction>> entry : routeActions.entrySet()) {
+    public RouteAction findRouteActions(HTTPRequest request) {
+        for (Entry<Route, RouteAction> entry : routeActions.entrySet()) {
             if (entry.getKey().isMatch(request)) {
                 return entry.getValue();
             }
         }
         if (!resourceNotFound(request.uri())) {
-            return insertToList.apply(new StatusNOKAction());
+            return new StatusNOKAction();
         } else {
-            return insertToList.apply(new MethodNotAllowedAction());
+            return new MethodNotAllowedAction();
         }
     }
 
@@ -40,7 +38,7 @@ public class Router {
 
     public List<HTTPMethod> allowedMethods(HTTPResource resource) {
         List<HTTPMethod> methods = new ArrayList<>();
-        for (Entry<Route, List<RouteAction>> entry : routeActions.entrySet()) {
+        for (Entry<Route, RouteAction> entry : routeActions.entrySet()) {
             if (entry.getKey().resource().uri().equals(resource.uri())) {
                 methods.add(entry.getKey().method());
             }

@@ -16,7 +16,6 @@ public class RouteProcessor {
     public HTTPResponse buildResponse(HTTPRequest request) {
         return router
                 .findRouteActions(request)
-                .get(0)
                 .generateResponse(request, router, uriProcessor);
     }
 }
