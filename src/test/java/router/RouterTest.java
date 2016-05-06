@@ -8,10 +8,14 @@ import request.HTTPResource;
 import request.HTTPVersion;
 import response.HTTPResponse;
 import routeActions.RouteAction;
+import routeActions.StatusOKAction;
 
 import java.util.*;
 
+import static functions.FunctionHelpers.insertToList;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static request.HTTPMethod.*;
 import static request.HTTPResource.*;
 import static request.HTTPVersion.HTTP_1_1;
@@ -20,6 +24,7 @@ public class RouterTest {
     private Router router;
     private String statusOKResponse;
     private String statusFourOhFourResponse;
+    private String statusMethodNotAllowedResponse;
     private URIProcessorStub uriProcessorStub;
 
     @Before
@@ -27,6 +32,7 @@ public class RouterTest {
         router = new Router(new RoutesFactory().routeActions());
         statusOKResponse = "HTTP/1.1 200 OK";
         statusFourOhFourResponse = "HTTP/1.1 404 Not Found";
+        statusMethodNotAllowedResponse = "HTTP/1.1 405 Method Not Allowed";
         uriProcessorStub = new URIProcessorStub();
     }
 
@@ -34,15 +40,23 @@ public class RouterTest {
     public void fourOhFourResponse() {
         HTTPRequest request = unknownResourceRequest();
         List<RouteAction> actions = router.findRouteActions(request);
-        HTTPResponse response = actions.get(0).generateResponse(request, uriProcessorStub);
+        HTTPResponse response = actions.get(0).generateResponse(request, router, uriProcessorStub);
         assertEquals(statusFourOhFourResponse, response.getStatusLine());
+    }
+
+    @Test
+    public void methodNotAllowedResponse() {
+        HTTPRequest request = bogusMethodRequest();
+        List<RouteAction> actions = router.findRouteActions(request);
+        HTTPResponse response = actions.get(0).generateResponse(request, router, uriProcessorStub);
+        assertEquals(statusMethodNotAllowedResponse, response.getStatusLine());
     }
 
     @Test
     public void okActionForGETRequest() {
         HTTPRequest request = knownResourceGETRequest();
         List<RouteAction> actions = router.findRouteActions(request);
-        HTTPResponse response = actions.get(0).generateResponse(request, uriProcessorStub);
+        HTTPResponse response = actions.get(0).generateResponse(request, router, uriProcessorStub);
         assertEquals(statusOKResponse, response.getStatusLine());
     }
 
@@ -50,7 +64,7 @@ public class RouterTest {
     public void okActionForPOSTRequest() {
         HTTPRequest request = knownResourcePOSTRequest();
         List<RouteAction> actions = router.findRouteActions(request);
-        HTTPResponse response = actions.get(0).generateResponse(request, uriProcessorStub);
+        HTTPResponse response = actions.get(0).generateResponse(request, router, uriProcessorStub);
         assertEquals(statusOKResponse, response.getStatusLine());
     }
 
@@ -58,7 +72,7 @@ public class RouterTest {
     public void okActionForPUTRequest() {
         HTTPRequest request = knownResourcePUTRequest();
         List<RouteAction> actions = router.findRouteActions(request);
-        HTTPResponse response = actions.get(0).generateResponse(request, uriProcessorStub);
+        HTTPResponse response = actions.get(0).generateResponse(request, router, uriProcessorStub);
         assertEquals(statusOKResponse, response.getStatusLine());
     }
 
@@ -66,8 +80,28 @@ public class RouterTest {
     public void okActionForHEADRequest() {
         HTTPRequest request = knownResourceHEADRequest();
         List<RouteAction> actions = router.findRouteActions(request);
-        HTTPResponse response = actions.get(0).generateResponse(request, uriProcessorStub);
+        HTTPResponse response = actions.get(0).generateResponse(request, router, uriProcessorStub);
         assertEquals(statusOKResponse, response.getStatusLine());
+    }
+
+    @Test
+    public void findMethodsAllowedForAResource() {
+        HTTPResource resource = HTTPResource.FORM;
+        Router router = new Router(routeActions());
+        List<HTTPMethod> methods = router.allowedMethods(resource);
+        assertThat(methods, hasItem(POST));
+        assertThat(methods, hasItem(PUT));
+    }
+
+    public Map<Route, List<RouteAction>> routeActions() {
+        Map<Route, List<RouteAction>> routeActions = new HashMap<>();
+        routeActions.put(new Route(HEAD, INDEX, HTTP_1_1), insertToList.apply(new StatusOKAction()));
+        routeActions.put(new Route(GET, INDEX, HTTP_1_1), insertToList.apply(new StatusOKAction()));
+        routeActions.put(new Route(PUT, FORM, HTTP_1_1), insertToList.apply(new StatusOKAction()));
+        routeActions.put(new Route(POST, FORM, HTTP_1_1), insertToList.apply(new StatusOKAction()));
+        routeActions.put(new Route(OPTIONS, OPTIONS_ONE, HTTP_1_1), insertToList.apply(new StatusOKAction()));
+        routeActions.put(new Route(OPTIONS, OPTIONS_TWO, HTTP_1_1), insertToList.apply(new StatusOKAction()));
+        return routeActions;
     }
 
     private HTTPRequest knownResourceGETRequest() {
@@ -82,12 +116,16 @@ public class RouterTest {
         return new HTTPRequest().addRequestLine(createRequestLine(PUT, FORM, "", HTTP_1_1));
     }
 
+    private HTTPRequest knownResourceHEADRequest() {
+        return new HTTPRequest().addRequestLine(createRequestLine(HEAD, INDEX, "", HTTP_1_1));
+    }
+
     private HTTPRequest unknownResourceRequest() {
         return new HTTPRequest().addRequestLine(createRequestLine(GET, FOOBAR, "", HTTP_1_1));
     }
 
-    private HTTPRequest knownResourceHEADRequest() {
-        return new HTTPRequest().addRequestLine(createRequestLine(HEAD, INDEX, "", HTTP_1_1));
+    private HTTPRequest bogusMethodRequest() {
+        return new HTTPRequest().addRequestLine(createRequestLine(UNDEFINED, INDEX, "", HTTP_1_1));
     }
 
     private Map<String, String> createRequestLine(HTTPMethod method, HTTPResource uri, String queryParams, HTTPVersion version) {

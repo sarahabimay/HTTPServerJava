@@ -13,9 +13,15 @@ public class HTTPResponse {
     private String statusLine;
     private Map<EntityHeaderFields, List<HTTPMethod>> entityHeaders;
     private byte[] body;
+    private HTTPStatusCode statusCode;
 
     public void setStatusLine(HTTPVersion version, HTTPStatusCode statusCode) {
+        this.statusCode = statusCode;
         this.statusLine = createStatusLine(version, statusCode);
+    }
+
+    public HTTPStatusCode getStatusCode() {
+        return statusCode;
     }
 
     public String getStatusLine() {

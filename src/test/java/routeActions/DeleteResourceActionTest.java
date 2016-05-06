@@ -8,6 +8,7 @@ import org.junit.rules.TemporaryFolder;
 import request.HTTPMethod;
 import request.HTTPRequest;
 import request.HTTPResource;
+import router.RouterStub;
 import testHelper.TestHelpers;
 
 import java.io.File;
@@ -44,7 +45,7 @@ public class DeleteResourceActionTest {
         URIProcessor uriProcessor = new URIProcessor(testHelpers.pathToRootFolder(temporaryFolder, testFolder));
 
         HTTPRequest getRequest = newRequest(DELETE, FORM);
-        new DeleteResourceAction().generateResponse(getRequest, uriProcessor);
+        new DeleteResourceAction().generateResponse(getRequest, new RouterStub(), uriProcessor);
 
         Assert.assertEquals(new ArrayList<>(), testHelpers.contentsAtResource(
                 testHelpers.pathToRootFolder(temporaryFolder, testFolder), FORM.uri()));

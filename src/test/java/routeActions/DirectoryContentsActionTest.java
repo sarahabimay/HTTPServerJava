@@ -5,6 +5,7 @@ import request.HTTPMethod;
 import request.HTTPRequest;
 import request.HTTPResource;
 import response.HTTPResponse;
+import router.RouterStub;
 
 import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.Assert.assertThat;
@@ -16,7 +17,7 @@ public class DirectoryContentsActionTest {
     @Test
     public void generateResponseWithDirectoryContents() {
         DirectoryContentsAction action = new DirectoryContentsAction();
-        HTTPResponse response = action.generateResponse(newRequest(GET, INDEX), createURIProcessor());
+        HTTPResponse response = action.generateResponse(newRequest(GET, INDEX), new RouterStub(), createURIProcessor());
         String expectedLink = "<a href='/file1'>file1</a>";
         assertThat(response.getBody(), containsString(expectedLink));
     }

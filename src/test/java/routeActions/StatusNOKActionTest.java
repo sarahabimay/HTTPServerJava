@@ -6,8 +6,11 @@ import request.HTTPRequest;
 import request.HTTPResource;
 import request.HTTPVersion;
 import response.HTTPResponse;
+import router.RouterStub;
 import router.URIProcessorStub;
 
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static request.HTTPMethod.GET;
@@ -19,7 +22,7 @@ public class StatusNOKActionTest {
     @Test
     public void createStatusNOKResponse() {
         StatusNOKAction action = new StatusNOKAction();
-        HTTPResponse response = action.generateResponse(unavailableResourceRequest(), new URIProcessorStub());
+        HTTPResponse response = action.generateResponse(unavailableResourceRequest(), new RouterStub() , new URIProcessorStub());
         assertEquals(statusNOKResponseLine(), response.getStatusLine());
     }
 
