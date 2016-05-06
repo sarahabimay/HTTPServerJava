@@ -1,6 +1,5 @@
 package response;
 
-import request.HTTPMethod;
 import request.HTTPVersion;
 
 import java.nio.ByteBuffer;
@@ -11,7 +10,7 @@ public class HTTPResponse {
     private final String COLON = ": ";
     private final String COMMA = ",";
     private String statusLine;
-    private Map<EntityHeaderFields, List<HTTPMethod>> entityHeaders;
+    private Map<EntityHeaderFields, List<String>> entityHeaders;
     private byte[] body;
     private HTTPStatusCode statusCode;
 
@@ -28,11 +27,11 @@ public class HTTPResponse {
         return statusLine;
     }
 
-    public void setEntityHeaders(Map<EntityHeaderFields, List<HTTPMethod>> headers) {
+    public void setEntityHeaders(Map<EntityHeaderFields, List<String>> headers) {
         this.entityHeaders = headers;
     }
 
-    public Map<EntityHeaderFields, List<HTTPMethod>> getEntityHeaders() {
+    public Map<EntityHeaderFields, List<String>> getEntityHeaders() {
         return entityHeaders;
     }
 
@@ -48,19 +47,19 @@ public class HTTPResponse {
         return addFormattedResponse(allocateByteBuffer()).array();
     }
 
+    private ByteBuffer addFormattedResponse(ByteBuffer byteBuffer) {
+        byteBuffer.put(statusLine.getBytes());
+        byteBuffer.put(getBytes(formattedEntityHeader()));
+        addBodyToByteResponse(byteBuffer);
+        return byteBuffer;
+    }
+
     private String createStatusLine(HTTPVersion version, HTTPStatusCode statusCode) {
         return String.format("%s %d %s", version.version(), statusCode.statusCode(), statusCode.reason());
     }
 
     private ByteBuffer allocateByteBuffer() {
         return ByteBuffer.allocate(responseMessageLength());
-    }
-
-    private ByteBuffer addFormattedResponse(ByteBuffer byteBuffer) {
-        byteBuffer.put(statusLine.getBytes());
-        byteBuffer.put(getBytes(formattedEntityHeader()));
-        addBodyToByteResponse(byteBuffer);
-        return byteBuffer;
     }
 
     private int responseMessageLength() {
@@ -81,13 +80,13 @@ public class HTTPResponse {
 
     private String formatEachEntityHeader() {
         StringBuilder entityHeader = new StringBuilder();
-        for (Map.Entry<EntityHeaderFields, List<HTTPMethod>> entry : entityHeaders.entrySet()) {
+        for (Map.Entry<EntityHeaderFields, List<String>> entry : entityHeaders.entrySet()) {
             entityHeader = addFormattedField(entry, entityHeader);
         }
         return entityHeader.append(crLF()).toString();
     }
 
-    private StringBuilder addFormattedField(Map.Entry<EntityHeaderFields, List<HTTPMethod>> entry, StringBuilder entityHeader) {
+    private StringBuilder addFormattedField(Map.Entry<EntityHeaderFields, List<String>> entry, StringBuilder entityHeader) {
         return entityHeader
                 .append(crLF())
                 .append(entry.getKey().field())
@@ -102,8 +101,8 @@ public class HTTPResponse {
         }
     }
 
-    private String join(List<HTTPMethod> methods, String characters) {
-        String combined = methods.stream().map(HTTPMethod::toString).reduce("", (acc, method) -> acc + method + characters);
+    private String join(List<String> methods, String characters) {
+        String combined = methods.stream().map(String::toString).reduce("", (acc, method) -> acc + method + characters);
         combined = combined.substring(0, combined.length() - characters.length());
         return combined;
     }

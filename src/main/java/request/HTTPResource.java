@@ -12,6 +12,7 @@ public enum HTTPResource {
     IMAGEGIF("/image.gif"),
     PARAMETERS("/parameters"),
     TEXT_FILE("/text-file.txt"),
+    PARTIAL_CONTENT("/partial_content.txt"),
     UNRECOGNIZED("");
 
     private final String uri;

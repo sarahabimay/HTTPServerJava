@@ -89,9 +89,9 @@ public class RouterTest {
     public void findMethodsAllowedForAResource() {
         HTTPResource resource = HTTPResource.FORM;
         Router router = new Router(routeActions());
-        List<HTTPMethod> methods = router.allowedMethods(resource);
-        assertThat(methods, hasItem(POST));
-        assertThat(methods, hasItem(PUT));
+        List<String> methods = router.allowedMethods(resource);
+        assertThat(methods, hasItem(POST.method()));
+        assertThat(methods, hasItem(PUT.method()));
     }
 
     public Map<Route, RouteAction> routeActions() {

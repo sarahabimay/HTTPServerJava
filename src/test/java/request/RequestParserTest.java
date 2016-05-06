@@ -11,10 +11,9 @@ import java.util.*;
 import static org.junit.Assert.assertEquals;
 import static request.HTTPMethod.GET;
 import static request.HTTPMethod.POST;
-import static request.HTTPResource.FORM;
-import static request.HTTPResource.INDEX;
-import static request.HTTPResource.PARAMETERS;
+import static request.HTTPResource.*;
 import static request.HTTPVersion.HTTP_1_1;
+import static response.EntityHeaderFields.RANGE;
 
 public class RequestParserTest {
     private RequestParser requestParser;
@@ -62,13 +61,47 @@ public class RequestParserTest {
 
     @Test
     public void parseRequestWithParameters() {
-        inputStream = new ByteArrayInputStream(buildRequestWithParameters().getBytes());
+        inputStream = new ByteArrayInputStream(buildRequestWithQueryParameters().getBytes());
         socketSpy = new ClientSocketSpy(inputStream);
         HTTPRequest httpRequest = requestParser.parseRequest(socketSpy);
         assertEquals(queryParameters(), httpRequest.queryParameters());
     }
 
-    private String buildRequestWithParameters() {
+    @Test
+    public void parsePartialContentRequest() {
+        inputStream = new ByteArrayInputStream(partialContentRequest().getBytes());
+        socketSpy = new ClientSocketSpy(inputStream);
+        HTTPRequest httpRequest = requestParser.parseRequest(socketSpy);
+        assertEquals(new ArrayList<>(Arrays.asList("bytes=0-4")), httpRequest.headers().get(RANGE));
+    }
+
+    private String partialContentRequest() {
+        return new StringBuilder()
+                .append(GET)
+                .append(" ")
+                .append(PARTIAL_CONTENT)
+                .append(" ")
+                .append(HTTP_1_1)
+                .append("\n")
+                .append(partiaContentHeaders())
+                .toString();
+    }
+
+    private String partiaContentHeaders() {
+        return new StringBuilder()
+                .append("Host: localhost:5000")
+                .append("\n")
+                .append("Range: bytes=0-4")
+                .append("\n")
+                .append("Connection: Keep-Alive")
+                .append("\n")
+                .append("User-Agent: Apache-HttpClient/4.3.5 (java 1.5)")
+                .append("\n")
+                .append("Accept-Encoding: gzip,deflate")
+                .toString();
+    }
+
+    private String buildRequestWithQueryParameters() {
         return new StringBuilder()
                 .append(GET)
                 .append(" ")

@@ -67,8 +67,8 @@ public class RouteProcessorTest {
         HTTPResponse response = routeProcessor.buildResponse(request);
         String methodNotFoundResponse = "HTTP/1.1 405 Method Not Allowed";
         assertEquals(methodNotFoundResponse, response.getStatusLine());
-        assertThat(response.getEntityHeaders().get(EntityHeaderFields.ALLOW), hasItem(HTTPMethod.PUT));
-        assertThat(response.getEntityHeaders().get(EntityHeaderFields.ALLOW), hasItem(HTTPMethod.POST));
+        assertThat(response.getEntityHeaders().get(EntityHeaderFields.ALLOW), hasItem(PUT.method()));
+        assertThat(response.getEntityHeaders().get(EntityHeaderFields.ALLOW), hasItem(POST.method()));
     }
 
     private HTTPRequest createRequest(HTTPMethod method, HTTPResource uri, String queryParams, HTTPVersion version) {

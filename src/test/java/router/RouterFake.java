@@ -1,6 +1,5 @@
 package router;
 
-import request.HTTPMethod;
 import request.HTTPRequest;
 import request.HTTPResource;
 import routeActions.RouteAction;
@@ -8,7 +7,7 @@ import routeActions.RouteAction;
 import java.util.List;
 
 public class RouterFake extends Router {
-    private List<HTTPMethod> fakeResourceMethods;
+    private List<String> fakeResourceMethods;
 
     public RouterFake() {
         super(null);
@@ -20,11 +19,11 @@ public class RouterFake extends Router {
     }
 
     @Override
-    public List<HTTPMethod> allowedMethods(HTTPResource resource) {
+    public List<String> allowedMethods(HTTPResource resource) {
         return fakeResourceMethods;
     }
 
-    public void setFakeResourceMethods(List<HTTPMethod> resourceMethods) {
+    public void setFakeResourceMethods(List<String> resourceMethods) {
         fakeResourceMethods = resourceMethods;
     }
 }

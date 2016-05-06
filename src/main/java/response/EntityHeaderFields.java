@@ -2,7 +2,9 @@ package response;
 
 public enum EntityHeaderFields {
     ALLOW("Allow"),
+    RANGE("Range"),
     CONTENT_LENGTH("Content-Length"),
+    CONTENT_RANGE("Content-Range"),
     INVALID_HEADER("INVALID_HEADER");
 
     private final String field;

@@ -1,7 +1,6 @@
 package routeActions;
 
 import org.junit.Test;
-import request.HTTPMethod;
 import request.HTTPRequest;
 import response.HTTPResponse;
 import router.RouterFake;
@@ -13,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static request.HTTPMethod.OPTIONS;
+import static request.HTTPMethod.*;
 import static request.HTTPResource.OPTIONS_ONE;
 import static request.HTTPVersion.HTTP_1_1;
 import static response.EntityHeaderFields.ALLOW;
@@ -22,7 +21,7 @@ public class AllowOptionsActionTest {
     @Test
     public void createOptionResponse() {
         RouterFake router = new RouterFake();
-        router.setFakeResourceMethods(new ArrayList<>(Arrays.asList(HTTPMethod.GET, HTTPMethod.HEAD)));
+        router.setFakeResourceMethods(new ArrayList<>(Arrays.asList(GET.method(), HEAD.method())));
         URIProcessorStub uriProcessorStub = new URIProcessorStub();
         HTTPResponse response = new AllowOptionsAction().generateResponse(createOptionsRequest(), router , uriProcessorStub);
         assertEquals("HTTP/1.1 200 OK", response.getStatusLine());
