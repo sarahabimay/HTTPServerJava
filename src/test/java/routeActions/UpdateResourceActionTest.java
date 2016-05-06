@@ -9,6 +9,7 @@ import request.HTTPMethod;
 import request.HTTPRequest;
 import request.HTTPResource;
 import request.HTTPVersion;
+import router.RouterStub;
 import testHelper.TestHelpers;
 
 import java.io.File;
@@ -44,7 +45,7 @@ public class UpdateResourceActionTest {
 
         String updatedPayload = "data=heathcliff";
         HTTPRequest getRequest = newPostRequest(POST, FORM, HTTP_1_1, updatedPayload);
-        new UpdateResourceAction().generateResponse(getRequest, uriProcessor);
+        new UpdateResourceAction().generateResponse(getRequest, new RouterStub(), uriProcessor);
 
         Assert.assertEquals(updatedPayload, testHelpers.contentsAtResource(testHelpers.pathToRootFolder(temporaryFolder, testFolder), FORM.uri()).get(0));
     }

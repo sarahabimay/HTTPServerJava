@@ -3,6 +3,7 @@ package routeActions;
 import org.junit.Test;
 import request.HTTPRequest;
 import response.HTTPResponse;
+import router.RouterStub;
 
 import static org.junit.Assert.assertEquals;
 import static request.HTTPMethod.GET;
@@ -14,7 +15,7 @@ public class ParameterDecodeActionTest {
     public void decodeQueryParameters() {
         String pathToPublicDir = "/Users/sarahjohnston/Sarah/CobSpec/public/";
         URIProcessor uriProcessor = new URIProcessor(pathToPublicDir);
-        HTTPResponse response = new ParameterDecodeAction().generateResponse(getWithParametersRequest(), uriProcessor);
+        HTTPResponse response = new ParameterDecodeAction().generateResponse(getWithParametersRequest(), new RouterStub(), uriProcessor);
         assertEquals(expectedDecodedParams(), response.getBody());
     }
 

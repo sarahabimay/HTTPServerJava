@@ -17,6 +17,6 @@ public class RouteProcessor {
         return router
                 .findRouteActions(request)
                 .get(0)
-                .generateResponse(request, uriProcessor);
+                .generateResponse(request, router, uriProcessor);
     }
 }

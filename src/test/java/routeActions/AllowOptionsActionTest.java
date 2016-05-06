@@ -1,10 +1,14 @@
 package routeActions;
 
 import org.junit.Test;
+import request.HTTPMethod;
 import request.HTTPRequest;
 import response.HTTPResponse;
+import router.RouterFake;
 import router.URIProcessorStub;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,14 +18,16 @@ import static request.HTTPResource.OPTIONS_ONE;
 import static request.HTTPVersion.HTTP_1_1;
 import static response.EntityHeaderFields.ALLOW;
 
-public class AllowAllOptionsActionTest {
+public class AllowOptionsActionTest {
     @Test
     public void createOptionResponse() {
+        RouterFake router = new RouterFake();
+        router.setFakeResourceMethods(new ArrayList<>(Arrays.asList(HTTPMethod.GET, HTTPMethod.HEAD)));
         URIProcessorStub uriProcessorStub = new URIProcessorStub();
-        HTTPResponse response = new AllowAllOptionsAction().generateResponse(createOptionsRequest(), uriProcessorStub);
+        HTTPResponse response = new AllowOptionsAction().generateResponse(createOptionsRequest(), router , uriProcessorStub);
         assertEquals("HTTP/1.1 200 OK", response.getStatusLine());
         assertEquals(ALLOW, response.getEntityHeaders().keySet().toArray()[0]);
-        assertEquals(5, response.getEntityHeaders().values().toString().split(",").length);
+        assertEquals(2, response.getEntityHeaders().values().toString().split(",").length);
     }
 
     private HTTPRequest createOptionsRequest() {

@@ -3,6 +3,7 @@ package routeActions;
 import org.junit.Test;
 import request.HTTPRequestFake;
 import response.HTTPResponse;
+import router.RouterStub;
 import router.URIProcessorStub;
 
 import static org.junit.Assert.assertEquals;
@@ -13,7 +14,7 @@ public class StatusOKActionTest {
     @Test
     public void createStatusOkResponse() {
         StatusOKAction action = new StatusOKAction();
-        HTTPResponse response = action.generateResponse(new HTTPRequestFake(), new URIProcessorStub());
+        HTTPResponse response = action.generateResponse(new HTTPRequestFake(), new RouterStub() , new URIProcessorStub());
         assertEquals(statusOKResponseLine(), response.getStatusLine());
     }
 

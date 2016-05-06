@@ -9,6 +9,7 @@ import request.HTTPRequest;
 import request.HTTPResource;
 import request.HTTPVersion;
 import response.HTTPResponse;
+import router.RouterStub;
 import testHelper.TestHelpers;
 
 import java.io.File;
@@ -44,7 +45,7 @@ public class GETResourceActionTest {
         URIProcessor uriProcessor = new URIProcessor(testHelpers.pathToRootFolder(temporaryFolder, testFolder));
 
         HTTPRequest getRequest = newGETRequest(GET, FORM, HTTP_1_1);
-        HTTPResponse response = new GETResourceAction().generateResponse(getRequest, uriProcessor);
+        HTTPResponse response = new GETResourceAction().generateResponse(getRequest, new RouterStub(), uriProcessor);
 
         assertEquals(content, response.getBody());
     }

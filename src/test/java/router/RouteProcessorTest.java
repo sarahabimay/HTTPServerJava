@@ -6,6 +6,7 @@ import request.HTTPMethod;
 import request.HTTPRequest;
 import request.HTTPResource;
 import request.HTTPVersion;
+import response.EntityHeaderFields;
 import response.HTTPResponse;
 import routeActions.RouteAction;
 import routeActions.StatusOKAction;
@@ -13,7 +14,9 @@ import routeActions.StatusOKAction;
 import java.util.*;
 
 import static functions.FunctionHelpers.insertToList;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static request.HTTPMethod.*;
 import static request.HTTPResource.*;
 import static request.HTTPVersion.HTTP_1_1;
@@ -56,6 +59,16 @@ public class RouteProcessorTest {
         HTTPRequest request = createRequest(PUT, FORM, "", HTTP_1_1);
         HTTPResponse response = routeProcessor.buildResponse(request);
         assertEquals(statusLineOKResponse, response.getStatusLine());
+    }
+
+    @Test
+    public void methodNotAllowedWithAllowedMethods() {
+        HTTPRequest request = createRequest(UNDEFINED, FORM, "", HTTP_1_1);
+        HTTPResponse response = routeProcessor.buildResponse(request);
+        String methodNotFoundResponse = "HTTP/1.1 405 Method Not Allowed";
+        assertEquals(methodNotFoundResponse, response.getStatusLine());
+        assertThat(response.getEntityHeaders().get(EntityHeaderFields.ALLOW), hasItem(HTTPMethod.PUT));
+        assertThat(response.getEntityHeaders().get(EntityHeaderFields.ALLOW), hasItem(HTTPMethod.POST));
     }
 
     private HTTPRequest createRequest(HTTPMethod method, HTTPResource uri, String queryParams, HTTPVersion version) {

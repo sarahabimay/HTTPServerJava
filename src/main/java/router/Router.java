@@ -3,6 +3,7 @@ package router;
 import request.HTTPMethod;
 import request.HTTPRequest;
 import request.HTTPResource;
+import routeActions.MethodNotAllowedAction;
 import routeActions.RouteAction;
 import routeActions.StatusNOKAction;
 
@@ -26,6 +27,24 @@ public class Router {
                 return entry.getValue();
             }
         }
-        return insertToList.apply(new StatusNOKAction());
+        if (!resourceNotFound(request.uri())) {
+            return insertToList.apply(new StatusNOKAction());
+        } else {
+            return insertToList.apply(new MethodNotAllowedAction());
+        }
+    }
+
+    private boolean resourceNotFound(HTTPResource uri) {
+        return routeActions.keySet().stream().anyMatch(route -> route.resource().equals(uri));
+    }
+
+    public List<HTTPMethod> allowedMethods(HTTPResource resource) {
+        List<HTTPMethod> methods = new ArrayList<>();
+        for (Entry<Route, List<RouteAction>> entry : routeActions.entrySet()) {
+            if (entry.getKey().resource().uri().equals(resource.uri())) {
+                methods.add(entry.getKey().method());
+            }
+        }
+        return methods;
     }
 }
