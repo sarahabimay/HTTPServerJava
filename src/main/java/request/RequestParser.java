@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.*;
 
 import static request.HTTPMethod.lookupMethod;
-import static request.HTTPRequestURI.*;
+import static request.HTTPResource.*;
 import static request.HTTPVersion.*;
 import static response.EntityHeaderFields.*;
 import static response.EntityHeaderFields.CONTENT_LENGTH;

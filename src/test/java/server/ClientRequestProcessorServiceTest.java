@@ -59,7 +59,7 @@ public class ClientRequestProcessorServiceTest {
         return new StringBuilder()
                 .append(HTTPMethod.GET.method())
                 .append(" ")
-                .append(HTTPRequestURI.INDEX.uri())
+                .append(HTTPResource.INDEX.uri())
                 .append(" ")
                 .append(HTTPVersion.HTTP_1_1.version())
                 .toString();

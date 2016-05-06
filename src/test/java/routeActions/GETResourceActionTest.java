@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import request.HTTPMethod;
 import request.HTTPRequest;
-import request.HTTPRequestURI;
+import request.HTTPResource;
 import request.HTTPVersion;
 import response.HTTPResponse;
 import testHelper.TestHelpers;
@@ -16,7 +16,7 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 import static request.HTTPMethod.GET;
-import static request.HTTPRequestURI.FORM;
+import static request.HTTPResource.FORM;
 import static request.HTTPVersion.HTTP_1_1;
 
 public class GETResourceActionTest {
@@ -49,7 +49,7 @@ public class GETResourceActionTest {
         assertEquals(content, response.getBody());
     }
 
-    private HTTPRequest newGETRequest(HTTPMethod method, HTTPRequestURI uri, HTTPVersion version) {
+    private HTTPRequest newGETRequest(HTTPMethod method, HTTPResource uri, HTTPVersion version) {
         return new HTTPRequest(method, uri, version, null, null, null);
     }
 }

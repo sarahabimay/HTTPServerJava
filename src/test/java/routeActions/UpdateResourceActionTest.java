@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import request.HTTPMethod;
 import request.HTTPRequest;
-import request.HTTPRequestURI;
+import request.HTTPResource;
 import request.HTTPVersion;
 import testHelper.TestHelpers;
 
@@ -15,7 +15,7 @@ import java.io.File;
 import java.io.IOException;
 
 import static request.HTTPMethod.POST;
-import static request.HTTPRequestURI.FORM;
+import static request.HTTPResource.FORM;
 import static request.HTTPVersion.HTTP_1_1;
 
 public class UpdateResourceActionTest {
@@ -49,7 +49,7 @@ public class UpdateResourceActionTest {
         Assert.assertEquals(updatedPayload, testHelpers.contentsAtResource(testHelpers.pathToRootFolder(temporaryFolder, testFolder), FORM.uri()).get(0));
     }
 
-    private HTTPRequest newPostRequest(HTTPMethod method, HTTPRequestURI uri, HTTPVersion version, String payload) {
+    private HTTPRequest newPostRequest(HTTPMethod method, HTTPResource uri, HTTPVersion version, String payload) {
         return new HTTPRequest(method, uri, version, null, null, payload);
     }
 }
