@@ -3,16 +3,15 @@ package routeActions;
 import org.junit.Test;
 import request.HTTPMethod;
 import request.HTTPRequest;
-import request.HTTPRequestURI;
+import request.HTTPResource;
 import request.HTTPVersion;
 import response.HTTPResponse;
 import router.URIProcessorStub;
 
-import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static request.HTTPMethod.GET;
-import static request.HTTPRequestURI.FOOBAR;
+import static request.HTTPResource.FOOBAR;
 import static request.HTTPVersion.HTTP_1_1;
 import static response.HTTPStatusCode.NOT_FOUND;
 
@@ -28,7 +27,7 @@ public class StatusNOKActionTest {
         return new HTTPRequest().addRequestLine(createRequestLine(GET, FOOBAR, "", HTTP_1_1));
     }
 
-    private Map<String, String> createRequestLine(HTTPMethod method, HTTPRequestURI uri, String queryParams, HTTPVersion version) {
+    private Map<String, String> createRequestLine(HTTPMethod method, HTTPResource uri, String queryParams, HTTPVersion version) {
         Map<String, String> requestLine = new HashMap<>();
         requestLine.put("method", method.method());
         requestLine.put("uri", uri.uri());

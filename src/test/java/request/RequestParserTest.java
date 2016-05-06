@@ -11,9 +11,9 @@ import java.util.*;
 import static org.junit.Assert.assertEquals;
 import static request.HTTPMethod.GET;
 import static request.HTTPMethod.POST;
-import static request.HTTPRequestURI.FORM;
-import static request.HTTPRequestURI.INDEX;
-import static request.HTTPRequestURI.PARAMETERS;
+import static request.HTTPResource.FORM;
+import static request.HTTPResource.INDEX;
+import static request.HTTPResource.PARAMETERS;
 import static request.HTTPVersion.HTTP_1_1;
 
 public class RequestParserTest {
@@ -111,7 +111,7 @@ public class RequestParserTest {
         return new StringBuilder()
                 .append(HTTPMethod.OPTIONS)
                 .append(" ")
-                .append(HTTPRequestURI.OPTIONS_ONE)
+                .append(HTTPResource.OPTIONS_ONE)
                 .append(" ")
                 .append(HTTP_1_1)
                 .toString();

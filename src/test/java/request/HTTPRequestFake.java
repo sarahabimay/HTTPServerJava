@@ -1,7 +1,7 @@
 package request;
 
 import static request.HTTPMethod.GET;
-import static request.HTTPRequestURI.INDEX;
+import static request.HTTPResource.INDEX;
 import static request.HTTPVersion.HTTP_1_1;
 
 public class HTTPRequestFake extends HTTPRequest {
@@ -9,7 +9,7 @@ public class HTTPRequestFake extends HTTPRequest {
         return GET;
     }
 
-    public HTTPRequestURI uri() {
+    public HTTPResource uri() {
         return INDEX;
     }
 

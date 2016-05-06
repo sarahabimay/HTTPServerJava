@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import request.HTTPMethod;
 import request.HTTPRequest;
-import request.HTTPRequestURI;
+import request.HTTPResource;
 import request.HTTPVersion;
 import response.HTTPResponse;
 import routeActions.RouteAction;
@@ -15,7 +15,7 @@ import java.util.*;
 import static functions.FunctionHelpers.insertToList;
 import static org.junit.Assert.assertEquals;
 import static request.HTTPMethod.*;
-import static request.HTTPRequestURI.*;
+import static request.HTTPResource.*;
 import static request.HTTPVersion.HTTP_1_1;
 
 public class RouteProcessorTest {
@@ -58,11 +58,11 @@ public class RouteProcessorTest {
         assertEquals(statusLineOKResponse, response.getStatusLine());
     }
 
-    private HTTPRequest createRequest(HTTPMethod method, HTTPRequestURI uri, String queryParams, HTTPVersion version) {
+    private HTTPRequest createRequest(HTTPMethod method, HTTPResource uri, String queryParams, HTTPVersion version) {
         return new HTTPRequest().addRequestLine(createRequestLine(method, uri, queryParams, version));
     }
 
-    private Map<String, String> createRequestLine(HTTPMethod method, HTTPRequestURI uri, String queryParams, HTTPVersion version) {
+    private Map<String, String> createRequestLine(HTTPMethod method, HTTPResource uri, String queryParams, HTTPVersion version) {
         Map<String, String> requestLine = new HashMap<>();
         requestLine.put("method", method.method());
         requestLine.put("uri", uri.uri());

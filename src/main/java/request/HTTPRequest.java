@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.Map;
 
 import static request.HTTPMethod.lookupMethod;
-import static request.HTTPRequestURI.UNRECOGNIZED;
-import static request.HTTPRequestURI.lookupURIName;
+import static request.HTTPResource.UNRECOGNIZED;
+import static request.HTTPResource.lookupURIName;
 import static request.HTTPVersion.lookupVersionName;
 
 public class HTTPRequest {
     private HTTPMethod method;
-    private HTTPRequestURI uri;
+    private HTTPResource uri;
     private HTTPVersion version;
     private Map<EntityHeaderFields, List<String>> headers;
     private String body;
@@ -26,7 +26,7 @@ public class HTTPRequest {
         this.queryParameters = "";
     }
 
-    public HTTPRequest(HTTPMethod method, HTTPRequestURI uri, HTTPVersion version, String queryParameters, Map<EntityHeaderFields, List<String>> headers, String body) {
+    public HTTPRequest(HTTPMethod method, HTTPResource uri, HTTPVersion version, String queryParameters, Map<EntityHeaderFields, List<String>> headers, String body) {
         this.method = method;
         this.uri = uri;
         this.version = version;
@@ -55,7 +55,7 @@ public class HTTPRequest {
         return method;
     }
 
-    public HTTPRequestURI uri() {
+    public HTTPResource uri() {
         return uri;
     }
 

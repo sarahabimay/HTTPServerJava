@@ -10,7 +10,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static request.HTTPMethod.OPTIONS;
-import static request.HTTPRequestURI.OPTIONS_ONE;
+import static request.HTTPResource.OPTIONS_ONE;
 import static request.HTTPVersion.HTTP_1_1;
 import static response.EntityHeaderFields.ALLOW;
 

@@ -6,7 +6,7 @@ import response.HTTPResponse;
 
 import static org.junit.Assert.assertEquals;
 import static request.HTTPMethod.GET;
-import static request.HTTPRequestURI.PARAMETERS;
+import static request.HTTPResource.PARAMETERS;
 import static request.HTTPVersion.HTTP_1_1;
 
 public class ParameterDecodeActionTest {

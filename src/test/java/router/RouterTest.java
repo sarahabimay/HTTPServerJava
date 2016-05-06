@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import request.HTTPMethod;
 import request.HTTPRequest;
-import request.HTTPRequestURI;
+import request.HTTPResource;
 import request.HTTPVersion;
 import response.HTTPResponse;
 import routeActions.RouteAction;
@@ -13,7 +13,7 @@ import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static request.HTTPMethod.*;
-import static request.HTTPRequestURI.*;
+import static request.HTTPResource.*;
 import static request.HTTPVersion.HTTP_1_1;
 
 public class RouterTest {
@@ -31,7 +31,7 @@ public class RouterTest {
     }
 
     @Test
-    public void fourOhFourAction() {
+    public void fourOhFourResponse() {
         HTTPRequest request = unknownResourceRequest();
         List<RouteAction> actions = router.findRouteActions(request);
         HTTPResponse response = actions.get(0).generateResponse(request, uriProcessorStub);
@@ -90,7 +90,7 @@ public class RouterTest {
         return new HTTPRequest().addRequestLine(createRequestLine(HEAD, INDEX, "", HTTP_1_1));
     }
 
-    private Map<String, String> createRequestLine(HTTPMethod method, HTTPRequestURI uri, String queryParams, HTTPVersion version) {
+    private Map<String, String> createRequestLine(HTTPMethod method, HTTPResource uri, String queryParams, HTTPVersion version) {
         Map<String, String> requestLine = new HashMap<>();
         requestLine.put("method", method.method());
         requestLine.put("uri", uri.uri());

@@ -3,7 +3,7 @@ package server;
 import org.junit.Before;
 import org.junit.Test;
 import request.HTTPMethod;
-import request.HTTPRequestURI;
+import request.HTTPResource;
 import request.HTTPVersion;
 import response.HTTPStatusCode;
 import response.HttpResponseSpy;
@@ -23,7 +23,7 @@ public class HttpClientSocketTest {
     public void setUp() {
         socketFake = new JavaSocketFake();
         clientSocket = new HttpClientSocket(socketFake);
-        requestLine = HTTPMethod.GET + " " + HTTPRequestURI.INDEX + " " + HTTPVersion.HTTP_1_1;
+        requestLine = HTTPMethod.GET + " " + HTTPResource.INDEX + " " + HTTPVersion.HTTP_1_1;
     }
 
     @Test

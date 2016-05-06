@@ -3,13 +3,13 @@ package routeActions;
 import org.junit.Test;
 import request.HTTPMethod;
 import request.HTTPRequest;
-import request.HTTPRequestURI;
+import request.HTTPResource;
 import response.HTTPResponse;
 
 import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.Assert.assertThat;
 import static request.HTTPMethod.GET;
-import static request.HTTPRequestURI.INDEX;
+import static request.HTTPResource.INDEX;
 import static request.HTTPVersion.HTTP_1_1;
 
 public class DirectoryContentsActionTest {
@@ -26,7 +26,7 @@ public class DirectoryContentsActionTest {
         return new URIProcessor(pathToPublicDirectory);
     }
 
-    private HTTPRequest newRequest(HTTPMethod method, HTTPRequestURI uri) {
+    private HTTPRequest newRequest(HTTPMethod method, HTTPResource uri) {
         return new HTTPRequest(method, uri, HTTP_1_1, null, null, null);
     }
 }
