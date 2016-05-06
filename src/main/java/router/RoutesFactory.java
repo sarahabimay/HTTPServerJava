@@ -30,6 +30,7 @@ public class RoutesFactory {
         routeActions.put(new Route(OPTIONS, OPTIONS_TWO, HTTP_1_1), new AllowOptionsAction());
         routeActions.put(new Route(GET, OPTIONS_TWO, HTTP_1_1), new GETResourceAction());
         routeActions.put(new Route(GET, TEXT_FILE, HTTP_1_1), new GETResourceAction());
+        routeActions.put(new Route(GET, PARTIAL_CONTENT, HTTP_1_1), new GETResourceAction());
         routeActions.put(new Route(DELETE, FORM, HTTP_1_1), new DeleteResourceAction());
         return routeActions;
     }

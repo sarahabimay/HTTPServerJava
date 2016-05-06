@@ -23,8 +23,8 @@ public class MethodNotAllowedAction implements RouteAction{
         return response;
     }
 
-    private Map<EntityHeaderFields,List<HTTPMethod>> allowedMethodsHeader(List<HTTPMethod> methods) {
-        Map<EntityHeaderFields, List<HTTPMethod>> allowed = new HashMap<>();
+    private Map<EntityHeaderFields,List<String>> allowedMethodsHeader(List<String> methods) {
+        Map<EntityHeaderFields, List<String>> allowed = new HashMap<>();
         allowed.put(ALLOW, methods);
         return allowed;
     }

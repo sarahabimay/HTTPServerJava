@@ -2,7 +2,6 @@ package response;
 
 import org.junit.Before;
 import org.junit.Test;
-import request.HTTPMethod;
 import request.HTTPVersion;
 
 import java.util.*;
@@ -50,14 +49,14 @@ public class HTTPResponseTest {
     }
 
     private HTTPResponse setEntityHeaders(HTTPResponse response) {
-        Map<EntityHeaderFields, List<HTTPMethod>> headers = new HashMap<>();
+        Map<EntityHeaderFields, List<String>> headers = new HashMap<>();
         headers.put(ALLOW, allowedMethods());
         response.setEntityHeaders(headers);
         return response;
     }
 
-    private ArrayList<HTTPMethod> allowedMethods() {
-        return new ArrayList<>(Arrays.asList(GET, HEAD));
+    private ArrayList<String> allowedMethods() {
+        return new ArrayList<>(Arrays.asList(GET.method(), HEAD.method()));
     }
 
     private String expectedStatusOKResponse() {

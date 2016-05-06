@@ -20,11 +20,11 @@ import static response.HTTPStatusCode.METHOD_NOT_ALLOWED;
 
 public class MethodNotAllowedActionTest {
 
-    private List<HTTPMethod> allowedMethods;
+    private List<String> allowedMethods;
 
     @Before
     public void setUp() {
-        allowedMethods = Arrays.asList(GET, PUT);
+        allowedMethods = Arrays.asList(GET.method(), PUT.method());
     }
 
     @Test
@@ -37,8 +37,8 @@ public class MethodNotAllowedActionTest {
         assertEquals(expectedAllowedMethods(), response.getEntityHeaders());
     }
 
-    private Map<EntityHeaderFields, List<HTTPMethod>> expectedAllowedMethods() {
-        Map<EntityHeaderFields, List<HTTPMethod>> allowed = new HashMap<>();
+    private Map<EntityHeaderFields, List<String>> expectedAllowedMethods() {
+        Map<EntityHeaderFields, List<String>> allowed = new HashMap<>();
         allowed.put(ALLOW, new ArrayList<>(allowedMethods));
         return allowed;
     }

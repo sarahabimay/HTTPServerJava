@@ -2,8 +2,9 @@ package response;
 
 public enum HTTPStatusCode {
     OK(200, "OK"),
+    PARTIAL_CONTENT(206, "Partial Content"),
     NOT_FOUND(404, "Not Found"),
-    METHOD_NOT_ALLOWED(405, "Method Not Allowed" ), ;
+    METHOD_NOT_ALLOWED(405, "Method Not Allowed");
 
     private final int statusCode;
     private final String reason;
