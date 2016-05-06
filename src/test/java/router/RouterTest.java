@@ -10,9 +10,10 @@ import response.HTTPResponse;
 import routeActions.RouteAction;
 import routeActions.StatusOKAction;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static functions.FunctionHelpers.insertToList;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -39,48 +40,48 @@ public class RouterTest {
     @Test
     public void fourOhFourResponse() {
         HTTPRequest request = unknownResourceRequest();
-        List<RouteAction> actions = router.findRouteActions(request);
-        HTTPResponse response = actions.get(0).generateResponse(request, router, uriProcessorStub);
+        RouteAction action = router.findRouteActions(request);
+        HTTPResponse response = action.generateResponse(request, router, uriProcessorStub);
         assertEquals(statusFourOhFourResponse, response.getStatusLine());
     }
 
     @Test
     public void methodNotAllowedResponse() {
         HTTPRequest request = bogusMethodRequest();
-        List<RouteAction> actions = router.findRouteActions(request);
-        HTTPResponse response = actions.get(0).generateResponse(request, router, uriProcessorStub);
+        RouteAction action = router.findRouteActions(request);
+        HTTPResponse response = action.generateResponse(request, router, uriProcessorStub);
         assertEquals(statusMethodNotAllowedResponse, response.getStatusLine());
     }
 
     @Test
     public void okActionForGETRequest() {
         HTTPRequest request = knownResourceGETRequest();
-        List<RouteAction> actions = router.findRouteActions(request);
-        HTTPResponse response = actions.get(0).generateResponse(request, router, uriProcessorStub);
+        RouteAction action = router.findRouteActions(request);
+        HTTPResponse response = action.generateResponse(request, router, uriProcessorStub);
         assertEquals(statusOKResponse, response.getStatusLine());
     }
 
     @Test
     public void okActionForPOSTRequest() {
         HTTPRequest request = knownResourcePOSTRequest();
-        List<RouteAction> actions = router.findRouteActions(request);
-        HTTPResponse response = actions.get(0).generateResponse(request, router, uriProcessorStub);
+        RouteAction action = router.findRouteActions(request);
+        HTTPResponse response = action.generateResponse(request, router, uriProcessorStub);
         assertEquals(statusOKResponse, response.getStatusLine());
     }
 
     @Test
     public void okActionForPUTRequest() {
         HTTPRequest request = knownResourcePUTRequest();
-        List<RouteAction> actions = router.findRouteActions(request);
-        HTTPResponse response = actions.get(0).generateResponse(request, router, uriProcessorStub);
+        RouteAction action = router.findRouteActions(request);
+        HTTPResponse response = action.generateResponse(request, router, uriProcessorStub);
         assertEquals(statusOKResponse, response.getStatusLine());
     }
 
     @Test
     public void okActionForHEADRequest() {
         HTTPRequest request = knownResourceHEADRequest();
-        List<RouteAction> actions = router.findRouteActions(request);
-        HTTPResponse response = actions.get(0).generateResponse(request, router, uriProcessorStub);
+        RouteAction action = router.findRouteActions(request);
+        HTTPResponse response = action.generateResponse(request, router, uriProcessorStub);
         assertEquals(statusOKResponse, response.getStatusLine());
     }
 
@@ -93,14 +94,14 @@ public class RouterTest {
         assertThat(methods, hasItem(PUT));
     }
 
-    public Map<Route, List<RouteAction>> routeActions() {
-        Map<Route, List<RouteAction>> routeActions = new HashMap<>();
-        routeActions.put(new Route(HEAD, INDEX, HTTP_1_1), insertToList.apply(new StatusOKAction()));
-        routeActions.put(new Route(GET, INDEX, HTTP_1_1), insertToList.apply(new StatusOKAction()));
-        routeActions.put(new Route(PUT, FORM, HTTP_1_1), insertToList.apply(new StatusOKAction()));
-        routeActions.put(new Route(POST, FORM, HTTP_1_1), insertToList.apply(new StatusOKAction()));
-        routeActions.put(new Route(OPTIONS, OPTIONS_ONE, HTTP_1_1), insertToList.apply(new StatusOKAction()));
-        routeActions.put(new Route(OPTIONS, OPTIONS_TWO, HTTP_1_1), insertToList.apply(new StatusOKAction()));
+    public Map<Route, RouteAction> routeActions() {
+        Map<Route, RouteAction> routeActions = new HashMap<>();
+        routeActions.put(new Route(HEAD, INDEX, HTTP_1_1), new StatusOKAction());
+        routeActions.put(new Route(GET, INDEX, HTTP_1_1), new StatusOKAction());
+        routeActions.put(new Route(PUT, FORM, HTTP_1_1), new StatusOKAction());
+        routeActions.put(new Route(POST, FORM, HTTP_1_1), new StatusOKAction());
+        routeActions.put(new Route(OPTIONS, OPTIONS_ONE, HTTP_1_1), new StatusOKAction());
+        routeActions.put(new Route(OPTIONS, OPTIONS_TWO, HTTP_1_1), new StatusOKAction());
         return routeActions;
     }
 
