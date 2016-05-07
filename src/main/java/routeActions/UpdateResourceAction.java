@@ -14,9 +14,10 @@ public class UpdateResourceAction implements RouteAction {
 
     @Override
     public HTTPResponse generateResponse(HTTPRequest request, Router router, URIProcessor uriProcessor) {
-        HTTPResponse response = new HTTPResponse();
-        response.setStatusLine(request.version(), OK);
         uriProcessor.create(request.uri().uri(), request.body());
+        HTTPResponse response =
+                new HTTPResponse()
+                        .setStatusLine(request.version(), OK);
         return response;
     }
 }

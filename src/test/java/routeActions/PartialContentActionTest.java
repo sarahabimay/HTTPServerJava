@@ -40,6 +40,7 @@ public class PartialContentActionTest {
             e.printStackTrace();
         }
     }
+
     @Test
     public void partialContentResponse() {
         testHelpers.createFileAtResource(rootFolder, "/partial_content.txt", payloadContent());
