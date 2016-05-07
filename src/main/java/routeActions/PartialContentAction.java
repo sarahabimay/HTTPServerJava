@@ -3,6 +3,7 @@ package routeActions;
 import request.HTTPRequest;
 import response.EntityHeaderFields;
 import response.HTTPResponse;
+import response.ResponseHTTPMessageFormatter;
 import router.Router;
 
 import java.util.Arrays;
@@ -24,11 +25,9 @@ public class PartialContentAction implements RouteAction {
     @Override
     public HTTPResponse generateResponse(HTTPRequest request, Router router, URIProcessor uriProcessor) {
         byte[] payload = uriProcessor.read(request.uri().uri());
-        HTTPResponse response =
-                new HTTPResponse()
-                        .setStatusLine(request.version(), PARTIAL_CONTENT)
-                        .setBody(getPartialContent(payload, getStartAndEndIndexes(payload, request)));
-        return response;
+        return new HTTPResponse(new ResponseHTTPMessageFormatter())
+                .setStatusLine(request.version(), PARTIAL_CONTENT)
+                .setBody(getPartialContent(payload, getStartAndEndIndexes(payload, request)));
     }
 
     private boolean getPartialContentRequest(HTTPRequest request) {

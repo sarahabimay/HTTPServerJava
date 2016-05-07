@@ -3,6 +3,7 @@ package routeActions;
 import request.HTTPRequest;
 import response.EntityHeaderFields;
 import response.HTTPResponse;
+import response.ResponseHTTPMessageFormatter;
 import router.Router;
 
 import java.util.HashMap;
@@ -21,11 +22,9 @@ public class MethodNotAllowedAction implements RouteAction {
 
     @Override
     public HTTPResponse generateResponse(HTTPRequest request, Router router, URIProcessor uriProcessor) {
-        HTTPResponse response =
-                new HTTPResponse()
-                        .setStatusLine(HTTP_1_1, METHOD_NOT_ALLOWED)
-                        .setEntityHeaders(allowedMethodsHeader(router.allowedMethods(request.uri())));
-        return response;
+        return new HTTPResponse(new ResponseHTTPMessageFormatter())
+                .setStatusLine(HTTP_1_1, METHOD_NOT_ALLOWED)
+                .setEntityHeaders(allowedMethodsHeader(router.allowedMethods(request.uri())));
     }
 
     private Map<EntityHeaderFields, List<String>> allowedMethodsHeader(List<String> methods) {

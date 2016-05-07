@@ -49,7 +49,7 @@ public class GETResourceActionTest {
         HTTPRequest getRequest = newGETRequest(GET, FORM, HTTP_1_1, null);
         HTTPResponse response = new GETResourceAction().generateResponse(getRequest, new RouterStub(), uriProcessor);
 
-        assertEquals(content, response.getBody());
+        assertEquals(content, new String(response.getBody()));
     }
 
     private HTTPRequest newGETRequest(HTTPMethod method, HTTPResource uri, HTTPVersion version, Map<EntityHeaderFields, String> headerFields) {

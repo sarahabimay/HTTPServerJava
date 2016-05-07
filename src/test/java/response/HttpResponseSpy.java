@@ -3,6 +3,10 @@ package response;
 import request.HTTPVersion;
 
 public class HttpResponseSpy extends HTTPResponse {
+    public HttpResponseSpy() {
+        super(null);
+    }
+
     @Override
     public byte[] buildResponse() {
         return new StringBuilder()

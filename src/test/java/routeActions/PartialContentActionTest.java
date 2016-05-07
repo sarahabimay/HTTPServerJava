@@ -49,7 +49,7 @@ public class PartialContentActionTest {
         HTTPRequest getRequest = newGETRequest(GET, PARTIAL_CONTENT, HTTP_1_1, partialContentRangeHeader("bytes=0-4"));
         HTTPResponse response = new PartialContentAction().generateResponse(getRequest, new RouterStub(), uriProcessor);
 
-        assertEquals("This ", response.getBody());
+        assertEquals("This ", new String(response.getBody()));
     }
 
     @Test
@@ -60,7 +60,7 @@ public class PartialContentActionTest {
         HTTPRequest getRequest = newGETRequest(GET, PARTIAL_CONTENT, HTTP_1_1, partialContentRangeHeader("bytes=-6"));
         HTTPResponse response = new PartialContentAction().generateResponse(getRequest, new RouterStub(), uriProcessor);
 
-        assertEquals("a 206.", response.getBody());
+        assertEquals("a 206.", new String(response.getBody()));
     }
 
     @Test
@@ -71,7 +71,7 @@ public class PartialContentActionTest {
         HTTPRequest getRequest = newGETRequest(GET, PARTIAL_CONTENT, HTTP_1_1, partialContentRangeHeader("bytes=4-"));
         HTTPResponse response = new PartialContentAction().generateResponse(getRequest, new RouterStub(), uriProcessor);
 
-        assertEquals(" is a file that contains text to read part of in order to fulfill a 206.", response.getBody());
+        assertEquals(" is a file that contains text to read part of in order to fulfill a 206.", new String(response.getBody()));
     }
 
     private String payloadContent() {
