@@ -13,28 +13,27 @@ import static request.HTTPMethod.GET;
 import static request.HTTPMethod.POST;
 import static request.HTTPResource.*;
 import static request.HTTPVersion.HTTP_1_1;
+import static response.EntityHeaderFields.*;
 import static response.EntityHeaderFields.RANGE;
 
 public class RequestParserTest {
     private RequestParser requestParser;
-    private ByteArrayInputStream inputStream;
-    private ClientSocketSpy socketSpy;
 
     @Before
     public void setUp() {
         requestParser = new RequestParser();
-        inputStream = new ByteArrayInputStream(buildGETRequestLine().getBytes());
-        socketSpy = new ClientSocketSpy(inputStream);
     }
 
     @Test
     public void receiveRequestFromClient() {
+        ClientSocketSpy socketSpy = new ClientSocketSpy(getInputStream(buildGETRequestLine()));
         requestParser.parseRequest(socketSpy);
         assertEquals(true, socketSpy.hasReadRequestFromInputStream());
     }
 
     @Test
     public void createRequestWithoutHeaders() {
+        ClientSocketSpy socketSpy = new ClientSocketSpy(getInputStream(buildGETRequestLine()));
         HTTPRequest HTTPRequest = requestParser.parseRequest(socketSpy);
         HTTPMethod expectedMethod = GET;
         assertEquals(expectedMethod, HTTPRequest.method());
@@ -42,37 +41,37 @@ public class RequestParserTest {
 
     @Test
     public void createRequestWithHeaderAndBody() {
-        inputStream = new ByteArrayInputStream(buildPOSTRequest().getBytes());
-        socketSpy = new ClientSocketSpy(inputStream);
+        ClientSocketSpy socketSpy = new ClientSocketSpy(getInputStream(buildPOSTRequest()));
         HTTPRequest httpRequest = requestParser.parseRequest(socketSpy);
-        Map<EntityHeaderFields, List<String>> expectedHeaders = emptyRequestHeaders();
-        expectedHeaders.put(EntityHeaderFields.CONTENT_LENGTH, new ArrayList<>(Arrays.asList("11")));
+        Map<EntityHeaderFields, String> expectedHeaders = emptyRequestHeaders();
+        expectedHeaders.put(CONTENT_LENGTH, "11");
         assertEquals("name=myname", httpRequest.body());
         assertEquals(expectedHeaders, httpRequest.headers());
     }
 
     @Test
     public void ignoreUnrecognizedHeaderFields() {
-        inputStream = new ByteArrayInputStream(buildRequestWithUnrecognizedHeaders().getBytes());
-        socketSpy = new ClientSocketSpy(inputStream);
+        ClientSocketSpy socketSpy = new ClientSocketSpy(getInputStream(buildRequestWithUnrecognizedHeaders()));
         HTTPRequest httpRequest = requestParser.parseRequest(socketSpy);
         assertEquals(emptyRequestHeaders(), httpRequest.headers());
     }
 
     @Test
     public void parseRequestWithParameters() {
-        inputStream = new ByteArrayInputStream(buildRequestWithQueryParameters().getBytes());
-        socketSpy = new ClientSocketSpy(inputStream);
+        ClientSocketSpy socketSpy = new ClientSocketSpy(getInputStream(buildRequestWithQueryParameters()));
         HTTPRequest httpRequest = requestParser.parseRequest(socketSpy);
         assertEquals(queryParameters(), httpRequest.queryParameters());
     }
 
     @Test
     public void parsePartialContentRequest() {
-        inputStream = new ByteArrayInputStream(partialContentRequest().getBytes());
-        socketSpy = new ClientSocketSpy(inputStream);
+        ClientSocketSpy socketSpy = new ClientSocketSpy(getInputStream(partialContentRequest()));
         HTTPRequest httpRequest = requestParser.parseRequest(socketSpy);
-        assertEquals(new ArrayList<>(Arrays.asList("bytes=0-4")), httpRequest.headers().get(RANGE));
+        assertEquals("bytes=0-4", httpRequest.headers().get(RANGE));
+    }
+
+    private ByteArrayInputStream getInputStream(String request) {
+        return new ByteArrayInputStream(request.getBytes());
     }
 
     private String partialContentRequest() {
@@ -117,7 +116,7 @@ public class RequestParserTest {
         return "variable_1=Operators%20%3C%2C%20%3E%2C%20%3D%2C%20!%3D%3B%20%2B%2C%20-%2C%20*%2C%20%26%2C%20%40%2C%20%23%2C%20%24%2C%20%5B%2C%20%5D%3A%20%22is%20that%20all%22%3F&variable_2=stuff";
     }
 
-    private Map<EntityHeaderFields, List<String>> emptyRequestHeaders() {
+    private Map<EntityHeaderFields, String> emptyRequestHeaders() {
         return new HashMap<>();
     }
 

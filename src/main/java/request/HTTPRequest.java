@@ -2,7 +2,6 @@ package request;
 
 import response.EntityHeaderFields;
 
-import java.util.List;
 import java.util.Map;
 
 import static request.HTTPMethod.lookupMethod;
@@ -14,7 +13,7 @@ public class HTTPRequest {
     private HTTPMethod method;
     private HTTPResource uri;
     private HTTPVersion version;
-    private Map<EntityHeaderFields, List<String>> headers;
+    private Map<EntityHeaderFields, String> headers;
     private String body;
     private String queryParameters;
 
@@ -26,7 +25,7 @@ public class HTTPRequest {
         this.queryParameters = "";
     }
 
-    public HTTPRequest(HTTPMethod method, HTTPResource uri, HTTPVersion version, String queryParameters, Map<EntityHeaderFields, List<String>> headers, String body) {
+    public HTTPRequest(HTTPMethod method, HTTPResource uri, HTTPVersion version, String queryParameters, Map<EntityHeaderFields, String> headers, String body) {
         this.method = method;
         this.uri = uri;
         this.version = version;
@@ -43,7 +42,7 @@ public class HTTPRequest {
         return new HTTPRequest(method, uri, version, queryParameters, headers, body);
     }
 
-    public HTTPRequest addRequestHeader(Map<EntityHeaderFields, List<String>> requestHeaders) {
+    public HTTPRequest addRequestHeader(Map<EntityHeaderFields, String> requestHeaders) {
         return new HTTPRequest(method, uri, version, queryParameters, requestHeaders, body);
     }
 
@@ -67,7 +66,7 @@ public class HTTPRequest {
         return version;
     }
 
-    public Map<EntityHeaderFields, List<String>> headers() {
+    public Map<EntityHeaderFields, String> headers() {
         return headers;
     }
 

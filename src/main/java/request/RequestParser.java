@@ -26,12 +26,12 @@ public class RequestParser {
     public HTTPRequest parseRequest(HttpClientSocket clientSocket) {
         Optional<BufferedReader> reader = clientSocket.getInputReader();
         Map<String, String> parsedRequestLine = parseRequestLine(getRequestLine(reader));
-        Map<EntityHeaderFields, List<String>> headers = parseRequestHeaders(reader);
+        Map<EntityHeaderFields, String> headers = parseRequestHeaders(reader);
         String body = getBody(reader, contentLengthOfBody(headers));
         return buildHTTPRequest(body, parsedRequestLine, headers);
     }
 
-    private HTTPRequest buildHTTPRequest(String body, Map<String, String> requestLine, Map<EntityHeaderFields, List<String>> headers) {
+    private HTTPRequest buildHTTPRequest(String body, Map<String, String> requestLine, Map<EntityHeaderFields, String> headers) {
         return new HTTPRequest()
                 .addRequestLine(requestLine)
                 .addRequestHeader(headers)
@@ -76,11 +76,11 @@ public class RequestParser {
         return uriAndParameters.size() == 2;
     }
 
-    private Map<EntityHeaderFields, List<String>> parseRequestHeaders(Optional<BufferedReader> reader) {
+    private Map<EntityHeaderFields, String> parseRequestHeaders(Optional<BufferedReader> reader) {
         if (reader.isPresent()) {
             BufferedReader in = reader.get();
             try {
-                Map<EntityHeaderFields, List<String>> headers = new HashMap<>();
+                Map<EntityHeaderFields, String> headers = new HashMap<>();
                 String line;
                 while ((line = in.readLine()) != null && !line.isEmpty()) {
                     parseRequestHeader(headers, line);
@@ -92,36 +92,26 @@ public class RequestParser {
         return new HashMap<>();
     }
 
-    private void parseRequestHeader(Map<EntityHeaderFields, List<String>> headers, String line) {
+    private void parseRequestHeader(Map<EntityHeaderFields, String> headers, String line) {
         String[] header = parseFieldAndValue(line);
         EntityHeaderFields fieldName = lookupHeaderField(header[0]);
-        if (!fieldName.equals(EntityHeaderFields.INVALID_HEADER)) {
-            headers.put(fieldName, parseHeaderValues(header[1]));
+        if (!fieldName.equals(INVALID_HEADER)) {
+            headers.put(fieldName, header[1].trim());
         }
-    }
-
-    private List<String> parseHeaderValues(String headerValues) {
-        String[] array = headerValues.split(COMMA);
-        array = Arrays.stream(array).map(String::trim).toArray(String[]::new);
-        return new ArrayList<>(Arrays.asList(array));
     }
 
     private String[] parseFieldAndValue(String field) {
         return field.split(COLON);
     }
 
-    private int contentLengthOfBody(Map<EntityHeaderFields, List<String>> headers) {
+    private int contentLengthOfBody(Map<EntityHeaderFields, String> headers) {
         if (headers != null && !headers.isEmpty()) {
-            List<String> contentLengthField = findHeaderField(headers, CONTENT_LENGTH);
+            String contentLengthField = headers.get(CONTENT_LENGTH);
             if (contentLengthField != null) {
-                return Integer.parseInt(contentLengthField.get(0));
+                return Integer.parseInt(contentLengthField);
             }
         }
         return 0;
-    }
-
-    private List<String> findHeaderField(Map<EntityHeaderFields, List<String>> headers, EntityHeaderFields headerField) {
-        return headers.get(headerField);
     }
 
     private String getBody(Optional<BufferedReader> reader, int lengthOfBodyContent) {

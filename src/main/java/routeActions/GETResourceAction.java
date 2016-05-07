@@ -40,7 +40,7 @@ public class GETResourceAction implements RouteAction {
     }
 
     private String[] parseByteRange(HTTPRequest request) {
-        String[] range = request.headers().get(RANGE).get(0).split("=");
+        String[] range = request.headers().get(RANGE).split("=");
         return range[1].split("-");
     }
 
