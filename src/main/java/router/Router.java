@@ -6,28 +6,28 @@ import routeActions.MethodNotAllowedAction;
 import routeActions.RouteAction;
 import routeActions.StatusNOKAction;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
-public class Router {
-    private final Map<Route, RouteAction> routeActions;
+import static java.util.Collections.singletonList;
 
-    public Router(Map<Route, RouteAction> routeActions) {
+public class Router {
+    private final Map<Route, List<RouteAction>> routeActions;
+
+    public Router(Map<Route, List<RouteAction>> routeActions) {
         this.routeActions = routeActions;
     }
 
-    public RouteAction findRouteActions(HTTPRequest request) {
-        for (Entry<Route, RouteAction> entry : routeActions.entrySet()) {
+    public List<RouteAction> findRouteActions(HTTPRequest request) {
+        for (Entry<Route, List<RouteAction>> entry : routeActions.entrySet()) {
             if (entry.getKey().isMatch(request)) {
                 return entry.getValue();
             }
         }
         if (!resourceNotFound(request.uri())) {
-            return new StatusNOKAction();
+            return singletonList(new StatusNOKAction());
         } else {
-            return new MethodNotAllowedAction();
+            return singletonList(new MethodNotAllowedAction());
         }
     }
 
@@ -37,7 +37,7 @@ public class Router {
 
     public List<String> allowedMethods(HTTPResource resource) {
         List<String> methods = new ArrayList<>();
-        for (Entry<Route, RouteAction> entry : routeActions.entrySet()) {
+        for (Entry<Route, List<RouteAction>> entry : routeActions.entrySet()) {
             if (entry.getKey().resource().uri().equals(resource.uri())) {
                 methods.add(entry.getKey().method().method());
             }

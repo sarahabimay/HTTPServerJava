@@ -6,12 +6,13 @@ import request.HTTPMethod;
 import request.HTTPRequest;
 import request.HTTPResource;
 import request.HTTPVersion;
-import response.EntityHeaderFields;
 import response.HTTPResponse;
 import routeActions.RouteAction;
 import routeActions.StatusOKAction;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -20,6 +21,7 @@ import static org.junit.Assert.assertThat;
 import static request.HTTPMethod.*;
 import static request.HTTPResource.*;
 import static request.HTTPVersion.HTTP_1_1;
+import static response.EntityHeaderFields.ALLOW;
 
 public class RouteProcessorTest {
     private String statusLineOKResponse;
@@ -67,8 +69,14 @@ public class RouteProcessorTest {
         HTTPResponse response = routeProcessor.buildResponse(request);
         String methodNotFoundResponse = "HTTP/1.1 405 Method Not Allowed";
         assertEquals(methodNotFoundResponse, response.getStatusLine());
-        assertThat(response.getEntityHeaders().get(EntityHeaderFields.ALLOW), hasItem(PUT.method()));
-        assertThat(response.getEntityHeaders().get(EntityHeaderFields.ALLOW), hasItem(POST.method()));
+        assertThat(response.getEntityHeaders().get(ALLOW), hasItem(PUT.method()));
+        assertThat(response.getEntityHeaders().get(ALLOW), hasItem(POST.method()));
+    }
+
+    @Test
+    public void appropriateRouteActionFromSelection() {
+
+
     }
 
     private HTTPRequest createRequest(HTTPMethod method, HTTPResource uri, String queryParams, HTTPVersion version) {
@@ -84,14 +92,14 @@ public class RouteProcessorTest {
         return requestLine;
     }
 
-    public Map<Route, RouteAction> routeActions() {
-        Map<Route, RouteAction> routeActions = new HashMap<>();
-        routeActions.put(new Route(HEAD, INDEX, HTTP_1_1), new StatusOKAction());
-        routeActions.put(new Route(GET, INDEX, HTTP_1_1), new StatusOKAction());
-        routeActions.put(new Route(PUT, FORM, HTTP_1_1), new StatusOKAction());
-        routeActions.put(new Route(POST, FORM, HTTP_1_1), new StatusOKAction());
-        routeActions.put(new Route(OPTIONS, OPTIONS_ONE, HTTP_1_1), new StatusOKAction());
-        routeActions.put(new Route(OPTIONS, OPTIONS_TWO, HTTP_1_1), new StatusOKAction());
+    public Map<Route, List<RouteAction>> routeActions() {
+        Map<Route, List<RouteAction>> routeActions = new HashMap<>();
+        routeActions.put(new Route(HEAD, INDEX, HTTP_1_1), Arrays.asList(new StatusOKAction()));
+        routeActions.put(new Route(GET, INDEX, HTTP_1_1), Arrays.asList(new StatusOKAction()));
+        routeActions.put(new Route(PUT, FORM, HTTP_1_1), Arrays.asList(new StatusOKAction()));
+        routeActions.put(new Route(POST, FORM, HTTP_1_1), Arrays.asList(new StatusOKAction()));
+        routeActions.put(new Route(OPTIONS, OPTIONS_ONE, HTTP_1_1), Arrays.asList(new StatusOKAction()));
+        routeActions.put(new Route(OPTIONS, OPTIONS_TWO, HTTP_1_1), Arrays.asList(new StatusOKAction()));
         return routeActions;
     }
 }

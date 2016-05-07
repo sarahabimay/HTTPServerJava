@@ -1,6 +1,5 @@
 package routeActions;
 
-import request.HTTPMethod;
 import request.HTTPRequest;
 import response.EntityHeaderFields;
 import response.HTTPResponse;
@@ -15,6 +14,11 @@ import static response.EntityHeaderFields.ALLOW;
 import static response.HTTPStatusCode.METHOD_NOT_ALLOWED;
 
 public class MethodNotAllowedAction implements RouteAction{
+    @Override
+    public boolean isAppropriate(HTTPRequest request) {
+        return true;
+    }
+
     @Override
     public HTTPResponse generateResponse(HTTPRequest request, Router router, URIProcessor uriProcessor) {
         HTTPResponse response = new HTTPResponse();

@@ -9,6 +9,7 @@ import router.RoutesFactory;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.List;
 import java.util.Map;
 
 public class HttpServerMain {
@@ -42,7 +43,7 @@ public class HttpServerMain {
         return arguments;
     }
 
-    private static Map<Route, RouteAction> routeActions() {
+    private static Map<Route, List<RouteAction>> routeActions() {
         return new RoutesFactory().routeActions();
     }
 }

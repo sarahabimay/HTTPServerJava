@@ -14,7 +14,7 @@ public class RouterFake extends Router {
     }
 
     @Override
-    public RouteAction findRouteActions(HTTPRequest request) {
+    public List<RouteAction> findRouteActions(HTTPRequest request) {
         return null;
     }
 
