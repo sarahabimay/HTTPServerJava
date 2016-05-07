@@ -5,6 +5,7 @@ import org.junit.Test;
 import routeActions.RouteAction;
 import router.*;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -40,7 +41,7 @@ public class HttpServerTest {
         assertEquals(true, executorServiceSpy.hasSubmittedATask());
     }
 
-    private Map<Route, RouteAction> routes() {
+    private Map<Route, List<RouteAction>> routes() {
         return new RoutesFactory().routeActions();
     }
 

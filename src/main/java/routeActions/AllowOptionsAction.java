@@ -1,6 +1,5 @@
 package routeActions;
 
-import request.HTTPMethod;
 import request.HTTPRequest;
 import response.EntityHeaderFields;
 import response.HTTPResponse;
@@ -10,10 +9,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static request.HTTPMethod.OPTIONS;
 import static response.EntityHeaderFields.ALLOW;
 import static response.HTTPStatusCode.OK;
 
 public class AllowOptionsAction implements RouteAction {
+
+    @Override
+    public boolean isAppropriate(HTTPRequest request) {
+        return request.method() == OPTIONS;
+    }
 
     @Override
     public HTTPResponse generateResponse(HTTPRequest request, Router router, URIProcessor uriProcessor) {
