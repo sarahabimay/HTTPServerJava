@@ -13,6 +13,7 @@ public enum HTTPResource {
     PARAMETERS("/parameters"),
     TEXT_FILE("/text-file.txt"),
     PARTIAL_CONTENT("/partial_content.txt"),
+    PATCH_CONTENT("/patch-content.txt"),
     UNRECOGNIZED("");
 
     private final String uri;

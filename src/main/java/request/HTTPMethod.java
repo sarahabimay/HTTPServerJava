@@ -7,7 +7,8 @@ public enum HTTPMethod {
     HEAD("HEAD"),
     OPTIONS("OPTIONS"),
     DELETE("DELETE"),
-    UNDEFINED("") ;
+    PATCH("PATCH"),
+    UNDEFINED("");
 
     private final String method;
 
