@@ -2,6 +2,7 @@ package routeActions;
 
 import request.HTTPRequest;
 import response.HTTPResponse;
+import response.ResponseHTTPMessageFormatter;
 import router.Router;
 
 import static response.HTTPStatusCode.NOT_FOUND;
@@ -13,9 +14,6 @@ public class StatusNOKAction implements RouteAction {
     }
 
     public HTTPResponse generateResponse(HTTPRequest request, Router router, URIProcessor uriProcessor) {
-        HTTPResponse response =
-                new HTTPResponse()
-                        .setStatusLine(request.version(), NOT_FOUND);
-        return response;
+        return new HTTPResponse(new ResponseHTTPMessageFormatter()).setStatusLine(request.version(), NOT_FOUND);
     }
 }

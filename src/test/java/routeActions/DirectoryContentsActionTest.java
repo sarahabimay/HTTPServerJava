@@ -19,7 +19,7 @@ public class DirectoryContentsActionTest {
         DirectoryContentsAction action = new DirectoryContentsAction();
         HTTPResponse response = action.generateResponse(newRequest(GET, INDEX), new RouterStub(), createURIProcessor());
         String expectedLink = "<a href='/file1'>file1</a>";
-        assertThat(response.getBody(), containsString(expectedLink));
+        assertThat(new String(response.getBody()), containsString(expectedLink));
     }
 
     private URIProcessor createURIProcessor() {

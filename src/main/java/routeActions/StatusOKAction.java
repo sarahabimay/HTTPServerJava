@@ -2,6 +2,7 @@ package routeActions;
 
 import request.HTTPRequest;
 import response.HTTPResponse;
+import response.ResponseHTTPMessageFormatter;
 import router.Router;
 
 import static response.HTTPStatusCode.OK;
@@ -14,9 +15,6 @@ public class StatusOKAction implements RouteAction {
 
     @Override
     public HTTPResponse generateResponse(HTTPRequest request, Router router, URIProcessor uriProcessor) {
-        HTTPResponse response =
-                new HTTPResponse()
-                        .setStatusLine(request.version(), OK);
-        return response;
+        return new HTTPResponse(new ResponseHTTPMessageFormatter()).setStatusLine(request.version(), OK);
     }
 }

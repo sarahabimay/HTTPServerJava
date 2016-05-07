@@ -16,7 +16,7 @@ public class ParameterDecodeActionTest {
         String pathToPublicDir = "/Users/sarahjohnston/Sarah/CobSpec/public/";
         URIProcessor uriProcessor = new URIProcessor(pathToPublicDir);
         HTTPResponse response = new ParameterDecodeAction().generateResponse(getWithParametersRequest(), new RouterStub(), uriProcessor);
-        assertEquals(expectedDecodedParams(), response.getBody());
+        assertEquals(expectedDecodedParams(), new String(response.getBody()));
     }
 
     private HTTPRequest getWithParametersRequest() {
