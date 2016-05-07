@@ -50,6 +50,7 @@ public class RoutesFactory {
         routeActions.put(new Route(PATCH, PATCH_CONTENT, HTTP_1_1), asList(new PatchContentAction()));
         routeActions.put(new Route(GET, COFFEE, HTTP_1_1), asList(new IAmATeapotAction()));
         routeActions.put(new Route(GET, TEA, HTTP_1_1), asList(new IAmATeapotAction()));
+        routeActions.put(new Route(GET, REDIRECT, HTTP_1_1), asList(new RedirectPathAction()));
         routeActions.put(new Route(DELETE, FORM, HTTP_1_1), asList(new DeleteResourceAction()));
         return routeActions;
     }

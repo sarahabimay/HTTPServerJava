@@ -14,6 +14,7 @@ public enum HTTPResource {
     PARAMETERS("/parameters"),
     PARTIAL_CONTENT("/partial_content.txt"),
     PATCH_CONTENT("/patch-content.txt"),
+    REDIRECT("/redirect"),
     TEA("/tea"),
     TEXT_FILE("/text-file.txt"),
     UNRECOGNIZED("");
