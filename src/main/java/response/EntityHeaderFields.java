@@ -5,6 +5,9 @@ public enum EntityHeaderFields {
     RANGE("Range"),
     CONTENT_LENGTH("Content-Length"),
     CONTENT_RANGE("Content-Range"),
+    CONTENT_LOCATION("Content-Location"),
+    IF_MATCH("If-Match"),
+    ETAG("Etag"),
     INVALID_HEADER("INVALID_HEADER");
 
     private final String field;
