@@ -2,12 +2,13 @@ package response;
 
 public enum EntityHeaderFields {
     ALLOW("Allow"),
-    RANGE("Range"),
     CONTENT_LENGTH("Content-Length"),
     CONTENT_RANGE("Content-Range"),
     CONTENT_LOCATION("Content-Location"),
-    IF_MATCH("If-Match"),
     ETAG("Etag"),
+    IF_MATCH("If-Match"),
+    LOCATION("Location"),
+    RANGE("Range"),
     INVALID_HEADER("INVALID_HEADER");
 
     private final String field;
