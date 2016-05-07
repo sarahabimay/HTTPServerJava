@@ -9,14 +9,26 @@ import java.util.Map;
 public class HTTPResponse {
     private final String COLON = ": ";
     private final String COMMA = ",";
-    private String statusLine;
     private Map<EntityHeaderFields, List<String>> entityHeaders;
     private byte[] body;
     private HTTPStatusCode statusCode;
+    private HTTPVersion version;
 
-    public void setStatusLine(HTTPVersion version, HTTPStatusCode statusCode) {
+    public HTTPResponse() {
+        this.statusCode = HTTPStatusCode.NOT_FOUND;
+        this.version = HTTPVersion.UNDEFINED;
+        this.entityHeaders = null;
+    }
+
+    public HTTPResponse(HTTPVersion version, HTTPStatusCode statusCode, Map<EntityHeaderFields, List<String>> entityHeaders, byte[] body) {
         this.statusCode = statusCode;
-        this.statusLine = createStatusLine(version, statusCode);
+        this.version = version;
+        this.entityHeaders = entityHeaders;
+        this.body = body;
+    }
+
+    public HTTPResponse setStatusLine(HTTPVersion version, HTTPStatusCode statusCode) {
+        return new HTTPResponse(version, statusCode, entityHeaders, body);
     }
 
     public HTTPStatusCode getStatusCode() {
@@ -24,19 +36,19 @@ public class HTTPResponse {
     }
 
     public String getStatusLine() {
-        return statusLine;
+        return createStatusLine(version, statusCode);
     }
 
-    public void setEntityHeaders(Map<EntityHeaderFields, List<String>> headers) {
-        this.entityHeaders = headers;
+    public HTTPResponse setEntityHeaders(Map<EntityHeaderFields, List<String>> headers) {
+        return new HTTPResponse(version, statusCode, headers, body);
     }
 
     public Map<EntityHeaderFields, List<String>> getEntityHeaders() {
         return entityHeaders;
     }
 
-    public void setBody(byte[] body) {
-        this.body = body;
+    public HTTPResponse setBody(byte[] body) {
+        return new HTTPResponse(version, statusCode, entityHeaders, body);
     }
 
     public String getBody() {
@@ -48,7 +60,7 @@ public class HTTPResponse {
     }
 
     private ByteBuffer addFormattedResponse(ByteBuffer byteBuffer) {
-        byteBuffer.put(statusLine.getBytes());
+        byteBuffer.put(getStatusLine().getBytes());
         byteBuffer.put(getBytes(formattedEntityHeader()));
         addBodyToByteResponse(byteBuffer);
         return byteBuffer;
@@ -63,7 +75,7 @@ public class HTTPResponse {
     }
 
     private int responseMessageLength() {
-        return statusLine.getBytes().length + lengthOfEntityHeaders() + lengthOfBody();
+        return getStatusLine().getBytes().length + lengthOfEntityHeaders() + lengthOfBody();
     }
 
     private int lengthOfEntityHeaders() {
@@ -111,7 +123,7 @@ public class HTTPResponse {
         return line == null ? new byte[0] : line.getBytes();
     }
 
-    private String doubleCRLF(){
+    private String doubleCRLF() {
         return crLF() + crLF();
     }
 

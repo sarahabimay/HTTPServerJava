@@ -12,7 +12,6 @@ import static request.HTTPMethod.HEAD;
 import static response.EntityHeaderFields.ALLOW;
 
 public class HTTPResponseTest {
-
     private HTTPResponse response;
 
     @Before
@@ -28,15 +27,19 @@ public class HTTPResponseTest {
 
     @Test
     public void generateResponseWithEmptyBody() {
-        response.setBody(new byte[0]);
-        byte[] byteResponse = response.buildResponse();
+        byte[] byteResponse =
+                response
+                        .setBody(new byte[0])
+                        .buildResponse();
         assertEquals(expectedStatusOKResponse() + doubleCarriageReturn(), new String(byteResponse));
     }
 
     @Test
     public void generateResponseWithBodyContents() {
-        response.setBody("Some Text".getBytes());
-        byte[] byteResponse = response.buildResponse();
+        byte[] byteResponse =
+                response
+                        .setBody("Some Text".getBytes())
+                        .buildResponse();
         String expectedResponse = expectedStatusOKResponse() + doubleCarriageReturn() + "Some Text";
         assertEquals(expectedResponse, new String(byteResponse));
     }
@@ -51,8 +54,7 @@ public class HTTPResponseTest {
     private HTTPResponse setEntityHeaders(HTTPResponse response) {
         Map<EntityHeaderFields, List<String>> headers = new HashMap<>();
         headers.put(ALLOW, allowedMethods());
-        response.setEntityHeaders(headers);
-        return response;
+        return response.setEntityHeaders(headers);
     }
 
     private ArrayList<String> allowedMethods() {
@@ -70,8 +72,9 @@ public class HTTPResponseTest {
     }
 
     private HTTPResponse statusOKResponse() {
-        HTTPResponse response = new HTTPResponse();
-        response.setStatusLine(HTTPVersion.HTTP_1_1, HTTPStatusCode.OK);
+        HTTPResponse response =
+                new HTTPResponse()
+                        .setStatusLine(HTTPVersion.HTTP_1_1, HTTPStatusCode.OK);
         return response;
     }
 

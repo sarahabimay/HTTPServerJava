@@ -23,10 +23,11 @@ public class PartialContentAction implements RouteAction {
 
     @Override
     public HTTPResponse generateResponse(HTTPRequest request, Router router, URIProcessor uriProcessor) {
-        HTTPResponse response = new HTTPResponse();
         byte[] payload = uriProcessor.read(request.uri().uri());
-        response.setStatusLine(request.version(), PARTIAL_CONTENT);
-        response.setBody(getPartialContent(payload, getStartAndEndIndexes(payload, request)));
+        HTTPResponse response =
+                new HTTPResponse()
+                        .setStatusLine(request.version(), PARTIAL_CONTENT)
+                        .setBody(getPartialContent(payload, getStartAndEndIndexes(payload, request)));
         return response;
     }
 

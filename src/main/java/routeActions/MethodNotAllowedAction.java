@@ -13,7 +13,7 @@ import static request.HTTPVersion.HTTP_1_1;
 import static response.EntityHeaderFields.ALLOW;
 import static response.HTTPStatusCode.METHOD_NOT_ALLOWED;
 
-public class MethodNotAllowedAction implements RouteAction{
+public class MethodNotAllowedAction implements RouteAction {
     @Override
     public boolean isAppropriate(HTTPRequest request) {
         return true;
@@ -21,13 +21,14 @@ public class MethodNotAllowedAction implements RouteAction{
 
     @Override
     public HTTPResponse generateResponse(HTTPRequest request, Router router, URIProcessor uriProcessor) {
-        HTTPResponse response = new HTTPResponse();
-        response.setStatusLine(HTTP_1_1, METHOD_NOT_ALLOWED);
-        response.setEntityHeaders(allowedMethodsHeader(router.allowedMethods(request.uri())));
+        HTTPResponse response =
+                new HTTPResponse()
+                        .setStatusLine(HTTP_1_1, METHOD_NOT_ALLOWED)
+                        .setEntityHeaders(allowedMethodsHeader(router.allowedMethods(request.uri())));
         return response;
     }
 
-    private Map<EntityHeaderFields,List<String>> allowedMethodsHeader(List<String> methods) {
+    private Map<EntityHeaderFields, List<String>> allowedMethodsHeader(List<String> methods) {
         Map<EntityHeaderFields, List<String>> allowed = new HashMap<>();
         allowed.put(ALLOW, methods);
         return allowed;
