@@ -90,13 +90,13 @@ public class GETResourceActionTest {
         return "This is a file that contains text to read part of in order to fulfill a 206.";
     }
 
-    private Map<EntityHeaderFields, List<String>> partialContentRangeHeader(String range) {
-        Map<EntityHeaderFields, List<String>> headers = new HashMap<>();
-        headers.put(EntityHeaderFields.RANGE, new ArrayList<>(Arrays.asList(range)));
+    private Map<EntityHeaderFields, String> partialContentRangeHeader(String range) {
+        Map<EntityHeaderFields, String> headers = new HashMap<>();
+        headers.put(EntityHeaderFields.RANGE, range);
         return headers;
     }
 
-    private HTTPRequest newGETRequest(HTTPMethod method, HTTPResource uri, HTTPVersion version, Map<EntityHeaderFields, List<String>> headerFields) {
+    private HTTPRequest newGETRequest(HTTPMethod method, HTTPResource uri, HTTPVersion version, Map<EntityHeaderFields, String> headerFields) {
         return new HTTPRequest(method, uri, version, null, headerFields, null);
     }
 }
