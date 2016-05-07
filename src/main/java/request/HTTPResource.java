@@ -1,19 +1,21 @@
 package request;
 
 public enum HTTPResource {
-    INDEX("/"),
+    COFFEE("/coffee"),
+    FILE1("/file1"),
     FOOBAR("/foobar"),
     FORM("/form"),
-    OPTIONS_ONE("/method_options"),
-    OPTIONS_TWO("/method_options2"),
-    FILE1("/file1"),
+    INDEX("/"),
     IMAGEJPEG("/image.jpeg"),
     IMAGEPNG("/image.png"),
     IMAGEGIF("/image.gif"),
+    OPTIONS_ONE("/method_options"),
+    OPTIONS_TWO("/method_options2"),
     PARAMETERS("/parameters"),
-    TEXT_FILE("/text-file.txt"),
     PARTIAL_CONTENT("/partial_content.txt"),
     PATCH_CONTENT("/patch-content.txt"),
+    TEA("/tea"),
+    TEXT_FILE("/text-file.txt"),
     UNRECOGNIZED("");
 
     private final String uri;
