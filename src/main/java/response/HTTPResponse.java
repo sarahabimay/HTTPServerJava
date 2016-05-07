@@ -6,13 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 public class HTTPResponse {
-    private final String COLON = ": ";
-    private final String COMMA = ",";
-    private final ResponseHTTPMessageFormatter httpFormatter;
-    private Map<EntityHeaderFields, List<String>> entityHeaders;
-    private byte[] body;
     private HTTPStatusCode statusCode;
     private HTTPVersion version;
+    private Map<EntityHeaderFields, List<String>> entityHeaders;
+    private byte[] body;
+    private final ResponseHTTPMessageFormatter httpFormatter;
 
     public HTTPResponse(HTTPVersion version, HTTPStatusCode statusCode, Map<EntityHeaderFields, List<String>> entityHeaders, byte[] body, ResponseHTTPMessageFormatter httpFormatter) {
         this.statusCode = statusCode;
@@ -57,11 +55,11 @@ public class HTTPResponse {
         return body;
     }
 
-    private String createStatusLine(HTTPVersion version, HTTPStatusCode statusCode) {
-        return String.format("%s %d %s", version.version(), statusCode.statusCode(), statusCode.reason());
-    }
-
     public byte[] buildResponse() {
         return httpFormatter.buildRawHTTPResponse(this);
+    }
+
+    private String createStatusLine(HTTPVersion version, HTTPStatusCode statusCode) {
+        return String.format("%s %d %s", version.version(), statusCode.statusCode(), statusCode.reason());
     }
 }
