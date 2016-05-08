@@ -36,6 +36,7 @@ public class DirectoryContentsAction implements RouteAction {
        return directoryContents.stream()
                .reduce("", (acc, fileName) -> acc + anchorTag(fileName));
     }
+    
     private String anchorTag(String fileName) {
         return String.format("<a href='/%s'>%s</a><br>", fileName, fileName);
     }
