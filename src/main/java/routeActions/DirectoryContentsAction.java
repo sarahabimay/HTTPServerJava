@@ -16,6 +16,10 @@ public class DirectoryContentsAction implements RouteAction {
 
     @Override
     public HTTPResponse generateResponse(HTTPRequest request, Router router, URIProcessor uriProcessor) {
+        return createDirectoryLinksResponse(request, uriProcessor);
+    }
+
+    private HTTPResponse createDirectoryLinksResponse(HTTPRequest request, URIProcessor uriProcessor) {
         return new HTTPResponse(new ResponseHTTPMessageFormatter())
                 .setStatusLine(request.version(), OK)
                 .setBody(uriProcessor.links().getBytes());

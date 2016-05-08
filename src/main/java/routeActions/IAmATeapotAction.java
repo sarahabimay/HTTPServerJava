@@ -21,12 +21,20 @@ public class IAmATeapotAction implements RouteAction {
 
     @Override
     public HTTPResponse generateResponse(HTTPRequest request, Router router, URIProcessor uriProcessor) {
-        if (request.uri() != TEA) {
-            return new HTTPResponse(new ResponseHTTPMessageFormatter())
-                    .setStatusLine(HTTP_1_1, FOUR_EIGHTEEN)
-                    .setBody(HTTPStatusCode.FOUR_EIGHTEEN.reason().getBytes());
-        } else {
-            return new HTTPResponse(new ResponseHTTPMessageFormatter()).setStatusLine(HTTP_1_1, OK);
-        }
+        return !isTeaResourceRequest(request) ? createFourEighteenResponse() : createStatusOkResponse();
+    }
+
+    private HTTPResponse createStatusOkResponse() {
+        return new HTTPResponse(new ResponseHTTPMessageFormatter()).setStatusLine(HTTP_1_1, OK);
+    }
+
+    private HTTPResponse createFourEighteenResponse() {
+        return new HTTPResponse(new ResponseHTTPMessageFormatter())
+                .setStatusLine(HTTP_1_1, FOUR_EIGHTEEN)
+                .setBody(HTTPStatusCode.FOUR_EIGHTEEN.reason().getBytes());
+    }
+
+    private boolean isTeaResourceRequest(HTTPRequest request) {
+        return request.uri() == TEA;
     }
 }

@@ -16,6 +16,10 @@ public class DeleteResourceAction implements RouteAction {
 
     public HTTPResponse generateResponse(HTTPRequest request, Router router, URIProcessor uriProcessor) {
         uriProcessor.delete(request.uri().uri());
+        return createStatusOkResponse(request);
+    }
+
+    private HTTPResponse createStatusOkResponse(HTTPRequest request) {
         return new HTTPResponse(new ResponseHTTPMessageFormatter()).setStatusLine(request.version(), OK);
     }
 }

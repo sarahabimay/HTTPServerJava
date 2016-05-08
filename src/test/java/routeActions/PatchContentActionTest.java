@@ -7,7 +7,6 @@ import org.junit.rules.TemporaryFolder;
 import request.HTTPRequest;
 import response.EntityHeaderFields;
 import response.HTTPResponse;
-import router.PatchContentAction;
 import router.RouterFake;
 import testHelper.TestHelpers;
 

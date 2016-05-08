@@ -22,6 +22,10 @@ public class MethodNotAllowedAction implements RouteAction {
 
     @Override
     public HTTPResponse generateResponse(HTTPRequest request, Router router, URIProcessor uriProcessor) {
+        return createMethodNotAllowedResponse(request, router);
+    }
+
+    private HTTPResponse createMethodNotAllowedResponse(HTTPRequest request, Router router) {
         return new HTTPResponse(new ResponseHTTPMessageFormatter())
                 .setStatusLine(HTTP_1_1, METHOD_NOT_ALLOWED)
                 .setEntityHeaders(allowedMethodsHeader(router.allowedMethods(request.uri())));
