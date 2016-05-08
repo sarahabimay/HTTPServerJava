@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 public class URIProcessor {
     private final String pathToResourceFolder;
@@ -50,19 +52,17 @@ public class URIProcessor {
         return resource;
     }
 
-    public String links() {
+    public List<String> links() {
         File[] listOfFiles = new File(pathToResourceFolder).listFiles();
-        String anchors = "";
+        List<String> anchors = new ArrayList<>();
         for (int i = 0; i < listOfFiles.length; i++) {
             if (listOfFiles[i].isFile()) {
-                anchors += createLink(listOfFiles[i].getName());
+                anchors.add(i, listOfFiles[i].getName());
             }
         }
         return anchors;
     }
 
-    private String createLink(String fileName) {
-        return String.format("<a href='/%s'>%s</a><br>", fileName, fileName);
-    }
+
 }
 

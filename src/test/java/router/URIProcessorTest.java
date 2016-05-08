@@ -11,7 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import static org.hamcrest.core.StringContains.containsString;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -76,7 +76,7 @@ public class URIProcessorTest {
     public void getDirectoryLinks() {
         String pathToPublicDirectory = "/Users/sarahjohnston/Sarah/CobSpec/public/";
         URIProcessor uriProcessor = new URIProcessor(pathToPublicDirectory);
-        String htmlLinks = uriProcessor.links();
-        assertThat(htmlLinks, containsString("<a href='/file1'>file1</a>"));
+        List<String> htmlLinks = uriProcessor.links();
+        assertThat(htmlLinks, hasItem("file1"));
     }
 }
