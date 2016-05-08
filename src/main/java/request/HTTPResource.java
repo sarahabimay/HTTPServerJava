@@ -9,14 +9,18 @@ public enum HTTPResource {
     IMAGEJPEG("/image.jpeg"),
     IMAGEPNG("/image.png"),
     IMAGEGIF("/image.gif"),
+    LOGS("/logs"),
+    LOG("/log"),
     OPTIONS_ONE("/method_options"),
     OPTIONS_TWO("/method_options2"),
     PARAMETERS("/parameters"),
     PARTIAL_CONTENT("/partial_content.txt"),
     PATCH_CONTENT("/patch-content.txt"),
     REDIRECT("/redirect"),
+    REQUESTS("/requests"),
     TEA("/tea"),
     TEXT_FILE("/text-file.txt"),
+    THESE("/these"),
     UNRECOGNIZED("");
 
     private final String uri;

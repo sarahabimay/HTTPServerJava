@@ -1,4 +1,4 @@
-package router;
+package routeActions;
 
 import request.HTTPRequest;
 import response.EntityHeaderFields;
@@ -6,6 +6,7 @@ import response.HTTPResponse;
 import response.ResponseHTTPMessageFormatter;
 import routeActions.RouteAction;
 import routeActions.URIProcessor;
+import router.Router;
 
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;

@@ -2,7 +2,9 @@ package router;
 
 import routeActions.*;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static request.HTTPMethod.*;
@@ -51,6 +53,10 @@ public class RoutesFactory {
         routeActions.put(new Route(GET, COFFEE, HTTP_1_1), asList(new IAmATeapotAction()));
         routeActions.put(new Route(GET, TEA, HTTP_1_1), asList(new IAmATeapotAction()));
         routeActions.put(new Route(GET, REDIRECT, HTTP_1_1), asList(new RedirectPathAction()));
+        routeActions.put(new Route(GET, LOGS, HTTP_1_1), asList(new AuthenticateAction()));
+        routeActions.put(new Route(GET, LOG, HTTP_1_1), asList(new AuthenticateAction()));
+        routeActions.put(new Route(PUT, THESE, HTTP_1_1), asList(new AuthenticateAction()));
+        routeActions.put(new Route(HEAD, REQUESTS, HTTP_1_1), asList(new AuthenticateAction()));
         routeActions.put(new Route(DELETE, FORM, HTTP_1_1), asList(new DeleteResourceAction()));
         return routeActions;
     }
