@@ -18,6 +18,10 @@ public class ParameterDecodeAction implements RouteAction {
 
     @Override
     public HTTPResponse generateResponse(HTTPRequest request, Router router, URIProcessor uriProcessor) {
+        return createDecodedParametersResponse(request);
+    }
+
+    private HTTPResponse createDecodedParametersResponse(HTTPRequest request) {
         return new HTTPResponse(new ResponseHTTPMessageFormatter())
                 .setStatusLine(request.version(), OK)
                 .setBody(decodeQueryParameters(formatQueryParameters(request.queryParameters())).getBytes());

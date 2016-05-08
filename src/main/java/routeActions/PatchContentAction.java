@@ -4,18 +4,13 @@ import request.HTTPRequest;
 import response.EntityHeaderFields;
 import response.HTTPResponse;
 import response.ResponseHTTPMessageFormatter;
-import routeActions.RouteAction;
-import routeActions.URIProcessor;
 import router.Router;
 
-import java.nio.ByteBuffer;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import static functions.FunctionHelpers.calculateEtag;
 import static java.util.Arrays.asList;
 import static request.HTTPMethod.PATCH;
 import static response.EntityHeaderFields.*;
@@ -30,22 +25,37 @@ public class PatchContentAction implements RouteAction {
 
     @Override
     public HTTPResponse generateResponse(HTTPRequest request, Router router, URIProcessor uriProcessor) {
-        String currentResourcePayload = new String(uriProcessor.read(request.uri().uri()));
-        if (!hasPatchEtagExpired(request, currentResourcePayload)) {
-            uriProcessor.create(request.uri().uri(), request.body());
-            return new HTTPResponse(new ResponseHTTPMessageFormatter())
-                    .setStatusLine(request.version(), NO_CONTENT)
-                    .setEntityHeaders(patchEntityHeaders(request, calculateEtag(request.body())))
-                    .setBody(uriProcessor.read(request.uri().uri()));
+        if (!hasPatchEtagExpired(request, payloadAtResource(request, uriProcessor))) {
+            updateResourcePayload(request, uriProcessor);
+            return patchSuccessResponse(request, uriProcessor);
         } else {
-            return new HTTPResponse(new ResponseHTTPMessageFormatter())
-                    .setStatusLine(request.version(), PRECONDITION_FAILED)
-                    .setEntityHeaders(patchEntityHeaders(request, calculateEtag(currentResourcePayload)));
+            return preconditionFailedResponse(request, uriProcessor);
         }
     }
 
+    private String payloadAtResource(HTTPRequest request, URIProcessor uriProcessor) {
+        return new String(uriProcessor.read(request.uri().uri()));
+    }
+
+    private void updateResourcePayload(HTTPRequest request, URIProcessor uriProcessor) {
+        uriProcessor.create(request.uri().uri(), request.body());
+    }
+
     private boolean hasPatchEtagExpired(HTTPRequest request, String currentResourcePayload) {
-        return !calculateEtag(currentResourcePayload).equals(request.headers().get(IF_MATCH));
+        return !calculateEtag.apply(currentResourcePayload).equals(request.headers().get(IF_MATCH));
+    }
+
+    private HTTPResponse patchSuccessResponse(HTTPRequest request, URIProcessor uriProcessor) {
+        return new HTTPResponse(new ResponseHTTPMessageFormatter())
+                .setStatusLine(request.version(), NO_CONTENT)
+                .setEntityHeaders(patchEntityHeaders(request, calculateEtag.apply(request.body())))
+                .setBody(uriProcessor.read(request.uri().uri()));
+    }
+
+    private HTTPResponse preconditionFailedResponse(HTTPRequest request, URIProcessor uriProcessor) {
+        return new HTTPResponse(new ResponseHTTPMessageFormatter())
+                .setStatusLine(request.version(), PRECONDITION_FAILED)
+                .setEntityHeaders(patchEntityHeaders(request, calculateEtag.apply(payloadAtResource(request, uriProcessor))));
     }
 
     private Map<EntityHeaderFields, List<String>> patchEntityHeaders(HTTPRequest request, String currentEtag) {
@@ -53,20 +63,5 @@ public class PatchContentAction implements RouteAction {
         headers.put(CONTENT_LOCATION, asList(request.uri().uri()));
         headers.put(ETAG, asList(currentEtag));
         return headers;
-    }
-
-    private String calculateEtag(String s) {
-        ByteBuffer buf = UTF_8.encode(s);
-        MessageDigest digest;
-        try {
-            digest = java.security.MessageDigest.getInstance("SHA1");
-            digest.update(buf);
-            buf.mark();
-            buf.reset();
-            return String.format("%s", javax.xml.bind.DatatypeConverter.printHexBinary(digest.digest())).toLowerCase();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return "";
     }
 }

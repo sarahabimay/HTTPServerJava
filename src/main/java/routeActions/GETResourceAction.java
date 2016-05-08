@@ -16,6 +16,10 @@ public class GETResourceAction implements RouteAction {
 
     @Override
     public HTTPResponse generateResponse(HTTPRequest request, Router router, URIProcessor uriProcessor) {
+        return createGetPayloadResponse(request, uriProcessor);
+    }
+
+    private HTTPResponse createGetPayloadResponse(HTTPRequest request, URIProcessor uriProcessor) {
         return new HTTPResponse(new ResponseHTTPMessageFormatter())
                 .setStatusLine(request.version(), OK)
                 .setBody(uriProcessor.read(request.uri().uri()));
