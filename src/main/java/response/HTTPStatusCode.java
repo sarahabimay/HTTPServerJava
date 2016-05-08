@@ -5,6 +5,7 @@ public enum HTTPStatusCode {
     NO_CONTENT(204, "No Content"),
     PARTIAL_CONTENT(206, "Partial Content"),
     FOUND(302, "Found"),
+    UNAUTHORIZED(401, "Unauthorized"),
     NOT_FOUND(404, "Not Found"),
     METHOD_NOT_ALLOWED(405, "Method Not Allowed"),
     PRECONDITION_FAILED(412, "Precondition Failed"),

@@ -2,6 +2,7 @@ package response;
 
 public enum EntityHeaderFields {
     ALLOW("Allow"),
+    AUTHORIZATION("Authorization"),
     CONTENT_LENGTH("Content-Length"),
     CONTENT_RANGE("Content-Range"),
     CONTENT_LOCATION("Content-Location"),
@@ -9,6 +10,7 @@ public enum EntityHeaderFields {
     IF_MATCH("If-Match"),
     LOCATION("Location"),
     RANGE("Range"),
+    AUTHENTICATE("WWW-Authenticate"),
     INVALID_HEADER("INVALID_HEADER");
 
     private final String field;
