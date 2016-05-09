@@ -1,13 +1,19 @@
 package routeActions;
 
 import request.HTTPRequest;
+import response.EntityHeaderFields;
 import response.HTTPResponse;
 import response.ResponseHTTPMessageFormatter;
 import router.Router;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import static java.util.Arrays.asList;
 import static request.HTTPMethod.GET;
+import static response.EntityHeaderFields.CONTENT_LENGTH;
+import static response.EntityHeaderFields.CONTENT_TYPE;
 import static response.HTTPStatusCode.OK;
 
 public class DirectoryContentsAction implements RouteAction {
@@ -22,21 +28,28 @@ public class DirectoryContentsAction implements RouteAction {
     }
 
     private HTTPResponse createDirectoryLinksResponse(HTTPRequest request, URIProcessor uriProcessor) {
+        byte[] directoryContents = formatHTMLLinks(uriProcessor.directoryContents());
         return new HTTPResponse(new ResponseHTTPMessageFormatter())
                 .setStatusLine(request.version(), OK)
-                .setBody(formatHTMLLinks(uriProcessor));
+                .setEntityHeaders(contentHeaders(directoryContents))
+                .setBody(directoryContents);
     }
 
-    private byte[] formatHTMLLinks(URIProcessor uriProcessor) {
-        List<String> directoryContents = uriProcessor.links();
+    private Map<EntityHeaderFields, List<String>> contentHeaders(byte[] payload) {
+        Map<EntityHeaderFields, List<String>> headers = new HashMap<>();
+        headers.put(CONTENT_LENGTH, asList(Integer.toString(payload.length)));
+        headers.put(CONTENT_TYPE, asList("text/html"));
+        return headers;
+    }
+
+    private byte[] formatHTMLLinks(List<String> directoryContents) {
         return createHTMLLinks(directoryContents).getBytes();
     }
 
     private String createHTMLLinks(List<String> directoryContents) {
-       return directoryContents.stream()
-               .reduce("", (acc, fileName) -> acc + anchorTag(fileName));
+       return directoryContents.stream().reduce("", (acc, fileName) -> acc + anchorTag(fileName));
     }
-    
+
     private String anchorTag(String fileName) {
         return String.format("<a href='/%s'>%s</a><br>", fileName, fileName);
     }

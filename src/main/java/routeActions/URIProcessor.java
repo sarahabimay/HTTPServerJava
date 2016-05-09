@@ -52,7 +52,7 @@ public class URIProcessor {
         return resource;
     }
 
-    public List<String> links() {
+    public List<String> directoryContents() {
         File[] listOfFiles = new File(pathToResourceFolder).listFiles();
         List<String> anchors = new ArrayList<>();
         for (int i = 0; i < listOfFiles.length; i++) {

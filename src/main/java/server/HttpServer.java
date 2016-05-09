@@ -24,14 +24,19 @@ public class HttpServer {
     }
 
     private void submitRequestToBeProcessed(Optional<HttpClientSocket> clientSocket) {
-        ExecutorService executorService;
-        if ((executorService = executorServiceCreator.create()) != null) {
-            executorService.submit(() -> {
-                ClientRequestProcessorService requestProcessorService =
-                        new ClientRequestProcessorService(clientSocket.get(), new RequestParser(), routeProcessor);
-                requestProcessorService.process();
-            });
-            executorService.shutdown();
+        if (clientSocket.isPresent()) {
+            ExecutorService executorService;
+            if ((executorService = executorServiceCreator.create()) != null) {
+                executorService.submit(() -> {
+                    RequestProcessorService requestProcessorService = requestProcessorService(clientSocket.get());
+                    requestProcessorService.process();
+                });
+                executorService.shutdown();
+            }
         }
+    }
+
+    private RequestProcessorService requestProcessorService(HttpClientSocket clientSocket) {
+        return new RequestProcessorService(clientSocket, new RequestParser(), routeProcessor);
     }
 }

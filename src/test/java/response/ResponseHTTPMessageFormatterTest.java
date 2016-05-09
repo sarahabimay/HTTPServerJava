@@ -45,7 +45,7 @@ public class ResponseHTTPMessageFormatterTest {
     public void generateResponseWithAllowContents() {
         HTTPResponse response = setEntityHeaders(statusOKResponse());
         byte[] byteResponse = responseFormatter.buildRawHTTPResponse(response);
-        assertEquals(expectedStatusOKResponse() + "\r\nAllow: GET,HEAD\r\n", new String(byteResponse));
+        assertEquals(expectedStatusOKResponse() + "\r\nAllow: GET,HEAD", new String(byteResponse));
     }
 
     private HTTPResponse setEntityHeaders(HTTPResponse response) {

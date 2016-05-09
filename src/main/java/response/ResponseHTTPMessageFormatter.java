@@ -44,7 +44,7 @@ public class ResponseHTTPMessageFormatter {
         for (Map.Entry<EntityHeaderFields, List<String>> entry : response.getEntityHeaders().entrySet()) {
             entityHeader = addFormattedField(entry, entityHeader);
         }
-        return entityHeader.append(crLF()).toString();
+        return entityHeader.toString();
     }
 
     private StringBuilder addFormattedField(Map.Entry<EntityHeaderFields, List<String>> entry, StringBuilder entityHeader) {

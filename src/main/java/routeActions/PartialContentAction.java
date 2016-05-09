@@ -1,9 +1,14 @@
 package routeActions;
 
 import request.HTTPRequest;
+import response.EntityHeaderFields;
 import response.HTTPResponse;
 import response.ResponseHTTPMessageFormatter;
 import router.Router;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static java.util.Arrays.copyOfRange;
 import static response.EntityHeaderFields.RANGE;
@@ -29,12 +34,14 @@ public class PartialContentAction implements RouteAction {
     }
 
     private HTTPResponse partialContentResponse(HTTPRequest request, byte[] currentPayload) {
+        byte[] partialContent = getPartialContent(currentPayload, startAndEndIndexes(currentPayload, request));
         return new HTTPResponse(new ResponseHTTPMessageFormatter())
                 .setStatusLine(request.version(), PARTIAL_CONTENT)
-                .setBody(getPartialContent(currentPayload, getStartAndEndIndexes(currentPayload, request)));
+                .setBody(partialContent);
     }
 
-    private Integer[] getStartAndEndIndexes(byte[] currentPayload, HTTPRequest request) {
+
+    private Integer[] startAndEndIndexes(byte[] currentPayload, HTTPRequest request) {
         String[] startAndEndByteRange = parseByteRange(request);
         Integer[] startAndEndPositions;
         if (hasStartAndEndByteProvided(startAndEndByteRange)) {

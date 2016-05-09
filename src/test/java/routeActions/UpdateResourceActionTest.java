@@ -1,6 +1,5 @@
 package routeActions;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -9,13 +8,16 @@ import request.HTTPMethod;
 import request.HTTPRequest;
 import request.HTTPResource;
 import request.HTTPVersion;
+import response.HTTPResponse;
 import router.RouterStub;
 import testHelper.TestHelpers;
 
 import java.io.File;
 import java.io.IOException;
 
+import static org.junit.Assert.assertEquals;
 import static request.HTTPMethod.POST;
+import static request.HTTPMethod.PUT;
 import static request.HTTPResource.FORM;
 import static request.HTTPVersion.HTTP_1_1;
 
@@ -44,10 +46,37 @@ public class UpdateResourceActionTest {
         URIProcessor uriProcessor = new URIProcessor(testHelpers.pathToRootFolder(temporaryFolder, testFolder));
 
         String updatedPayload = "data=heathcliff";
-        HTTPRequest getRequest = newPostRequest(POST, FORM, HTTP_1_1, updatedPayload);
+        HTTPRequest getRequest = newPostRequest(PUT, FORM, HTTP_1_1, updatedPayload);
+        HTTPResponse response = new UpdateResourceAction().generateResponse(getRequest, new RouterStub(), uriProcessor);
+
+        assertEquals("HTTP/1.1 200 OK", response.getStatusLine());
+    }
+
+    @Test
+    public void updatePayloadAtResource() {
+        String payload = "data=fatcat";
+        testHelpers.createFileAtResource(rootFolder, "/form", payload);
+        URIProcessor uriProcessor = new URIProcessor(testHelpers.pathToRootFolder(temporaryFolder, testFolder));
+
+        String updatedPayload = "data=heathcliff";
+        HTTPRequest getRequest = newPostRequest(PUT, FORM, HTTP_1_1, updatedPayload);
         new UpdateResourceAction().generateResponse(getRequest, new RouterStub(), uriProcessor);
 
-        Assert.assertEquals(updatedPayload, testHelpers.contentsAtResource(testHelpers.pathToRootFolder(temporaryFolder, testFolder), FORM.uri()).get(0));
+        assertEquals(updatedPayload, testHelpers.contentsAtResource(testHelpers.pathToRootFolder(temporaryFolder, testFolder), FORM.uri()).get(0));
+    }
+
+    @Test
+    public void createPayloadAtResource() {
+        URIProcessor uriProcessor = new URIProcessor(testHelpers.pathToRootFolder(temporaryFolder, testFolder));
+
+        String newPayload = "data=heathcliff";
+        HTTPRequest getRequest = newPostRequest(POST, FORM, HTTP_1_1, newPayload);
+        new UpdateResourceAction().generateResponse(getRequest, new RouterStub(), uriProcessor);
+
+        assertEquals(newPayload,
+                testHelpers.contentsAtResource(
+                        testHelpers.pathToRootFolder(temporaryFolder, testFolder),
+                        FORM.uri()).get(0));
     }
 
     private HTTPRequest newPostRequest(HTTPMethod method, HTTPResource uri, HTTPVersion version, String payload) {
