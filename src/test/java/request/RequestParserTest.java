@@ -1,19 +1,22 @@
 package request;
 
+import exceptions.ServerErrorHandler;
+import exceptions.ServerErrorHandlerSpy;
 import org.junit.Before;
 import org.junit.Test;
 import response.EntityHeaderFields;
+import server.ClientSocketFake;
 import server.ClientSocketSpy;
 
 import java.io.ByteArrayInputStream;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static request.HTTPMethod.GET;
-import static request.HTTPMethod.POST;
+import static request.HTTPMethod.*;
 import static request.HTTPResource.*;
 import static request.HTTPVersion.HTTP_1_1;
-import static response.EntityHeaderFields.*;
+import static response.EntityHeaderFields.CONTENT_LENGTH;
 import static response.EntityHeaderFields.RANGE;
 
 public class RequestParserTest {
@@ -21,7 +24,7 @@ public class RequestParserTest {
 
     @Before
     public void setUp() {
-        requestParser = new RequestParser();
+        requestParser = new RequestParser(new ServerErrorHandler());
     }
 
     @Test
@@ -29,6 +32,46 @@ public class RequestParserTest {
         ClientSocketSpy socketSpy = new ClientSocketSpy(getInputStream(buildGETRequestLine()));
         requestParser.parseRequest(socketSpy);
         assertEquals(true, socketSpy.hasReadRequestFromInputStream());
+    }
+
+    @Test
+    public void noInputStreamError() {
+        ClientSocketFake socketFake = new ClientSocketFake(null);
+        ServerErrorHandlerSpy errorHandlerSpy = new ServerErrorHandlerSpy();
+        RequestParser requestParser = new RequestParser(errorHandlerSpy);
+        HTTPRequest request = requestParser.parseRequest(socketFake);
+        assertEquals(true, errorHandlerSpy.hasInvalidRequestBeenBuilt());
+        assertEquals(UNDEFINED, request.method());
+    }
+
+    @Test
+    public void readErroneousRequestLineFromInputStream() {
+        ClientSocketFake socketFake = new ClientSocketFake(getInputStream(buildRequestWithErroneousRequestLine()));
+        ServerErrorHandlerSpy errorHandlerSpy = new ServerErrorHandlerSpy();
+        RequestParser requestParser = new RequestParser(errorHandlerSpy);
+        HTTPRequest request = requestParser.parseRequest(socketFake);
+        assertEquals(true, errorHandlerSpy.hasInvalidRequestBeenBuilt());
+        assertEquals(UNDEFINED, request.method());
+    }
+
+    @Test
+    public void readErroneousRequestHeaderFromInputStream() {
+        ClientSocketFake socketFake = new ClientSocketFake(getInputStream(buildRequestWithErroneousHeader()));
+        ServerErrorHandlerSpy errorHandlerSpy = new ServerErrorHandlerSpy();
+        RequestParser requestParser = new RequestParser(errorHandlerSpy);
+        HTTPRequest request = requestParser.parseRequest(socketFake);
+        assertEquals(true, errorHandlerSpy.hasInvalidRequestBeenBuilt());
+        assertEquals(UNDEFINED, request.method());
+    }
+
+    @Test
+    public void readErroneousBodyFromInputStream() {
+        ClientSocketFake socketFake = new ClientSocketFake(getInputStream(buildRequestWithErroneousBody()));
+        ServerErrorHandlerSpy errorHandlerSpy = new ServerErrorHandlerSpy();
+        RequestParser requestParser = new RequestParser(errorHandlerSpy);
+        HTTPRequest request = requestParser.parseRequest(socketFake);
+        assertEquals(true, errorHandlerSpy.hasInvalidRequestBeenBuilt());
+        assertEquals(UNDEFINED, request.method());
     }
 
     @Test
@@ -188,6 +231,40 @@ public class RequestParserTest {
                 .append(INDEX)
                 .append(" ")
                 .append(HTTP_1_1)
+                .toString();
+    }
+
+    private String buildRequestWithErroneousRequestLine() {
+        return new StringBuilder()
+                .append(erroneousInput())
+                .toString();
+    }
+
+    private String buildRequestWithErroneousHeader() {
+        return new StringBuilder()
+                .append(buildGETRequestLine())
+                .append("\n")
+                .append(erroneousInput())
+                .toString();
+    }
+
+    private String buildRequestWithErroneousBody() {
+        return new StringBuilder()
+                .append(buildGETRequestLine())
+                .append("\n")
+                .append(postHeaders())
+                .append("\r\n\r\n")
+                .append(erroneousInput())
+                .toString();
+    }
+
+    private String erroneousInput() {
+        return "ERRONEOUS INPUT";
+    }
+
+    private String erroneousRequestHeaders() {
+        return new StringBuilder()
+                .append("ERRONEOUS INPUT")
                 .toString();
     }
 }

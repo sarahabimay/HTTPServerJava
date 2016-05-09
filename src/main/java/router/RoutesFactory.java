@@ -1,5 +1,6 @@
 package router;
 
+import request.HTTPVersion;
 import routeActions.*;
 
 import java.util.HashMap;
@@ -58,6 +59,7 @@ public class RoutesFactory {
         routeActions.put(new Route(PUT, THESE, HTTP_1_1), asList(new AuthenticateAction()));
         routeActions.put(new Route(HEAD, REQUESTS, HTTP_1_1), asList(new AuthenticateAction()));
         routeActions.put(new Route(DELETE, FORM, HTTP_1_1), asList(new DeleteResourceAction()));
+        routeActions.put(new Route(UNDEFINED, UNRECOGNIZED, HTTPVersion.UNDEFINED), asList(new InternalServerErrorAction()));
         return routeActions;
     }
 }
