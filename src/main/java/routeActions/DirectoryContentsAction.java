@@ -14,6 +14,7 @@ import static java.util.Arrays.asList;
 import static request.HTTPMethod.GET;
 import static response.EntityHeaderFields.CONTENT_LENGTH;
 import static response.EntityHeaderFields.CONTENT_TYPE;
+import static response.EntityHeaderFields.CONTENT_TYPE_HTML;
 import static response.HTTPStatusCode.OK;
 
 public class DirectoryContentsAction implements RouteAction {
@@ -24,11 +25,10 @@ public class DirectoryContentsAction implements RouteAction {
 
     @Override
     public HTTPResponse generateResponse(HTTPRequest request, Router router, URIProcessor uriProcessor) {
-        return createDirectoryLinksResponse(request, uriProcessor);
+        return createDirectoryLinksResponse(request, formatHTMLLinks(uriProcessor.directoryContents()));
     }
 
-    private HTTPResponse createDirectoryLinksResponse(HTTPRequest request, URIProcessor uriProcessor) {
-        byte[] directoryContents = formatHTMLLinks(uriProcessor.directoryContents());
+    private HTTPResponse createDirectoryLinksResponse(HTTPRequest request, byte[] directoryContents) {
         return new HTTPResponse(new ResponseHTTPMessageFormatter())
                 .setStatusLine(request.version(), OK)
                 .setEntityHeaders(contentHeaders(directoryContents))
@@ -38,7 +38,7 @@ public class DirectoryContentsAction implements RouteAction {
     private Map<EntityHeaderFields, List<String>> contentHeaders(byte[] payload) {
         Map<EntityHeaderFields, List<String>> headers = new HashMap<>();
         headers.put(CONTENT_LENGTH, asList(Integer.toString(payload.length)));
-        headers.put(CONTENT_TYPE, asList("text/html"));
+        headers.put(CONTENT_TYPE, asList(CONTENT_TYPE_HTML.field()));
         return headers;
     }
 

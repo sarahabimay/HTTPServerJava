@@ -6,11 +6,11 @@ import response.HTTPResponse;
 import response.ResponseHTTPMessageFormatter;
 import router.Router;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Arrays.asList;
 import static request.HTTPMethod.GET;
 import static response.EntityHeaderFields.*;
 import static response.HTTPStatusCode.OK;
@@ -36,8 +36,8 @@ public class GETResourceAction implements RouteAction {
 
     private Map<EntityHeaderFields, List<String>> contentHeaders(byte[] payload) {
         Map<EntityHeaderFields, List<String>> headers = new HashMap<>();
-        headers.put(CONTENT_LENGTH, Arrays.asList(Integer.toString(payload.length)));
-        headers.put(CONTENT_TYPE, Arrays.asList("text/plain"));
+        headers.put(CONTENT_LENGTH, asList(Integer.toString(payload.length)));
+        headers.put(CONTENT_TYPE, asList(CONTENT_TYPE_PLAIN.field()));
         return headers;
     }
 }

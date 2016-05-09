@@ -2,7 +2,6 @@ package routeActions;
 
 import request.HTTPRequest;
 import response.HTTPResponse;
-import response.HTTPStatusCode;
 import response.ResponseHTTPMessageFormatter;
 import router.Router;
 
@@ -31,7 +30,7 @@ public class IAmATeapotAction implements RouteAction {
     private HTTPResponse createFourEighteenResponse() {
         return new HTTPResponse(new ResponseHTTPMessageFormatter())
                 .setStatusLine(HTTP_1_1, FOUR_EIGHTEEN)
-                .setBody(HTTPStatusCode.FOUR_EIGHTEEN.reason().getBytes());
+                .setBody(FOUR_EIGHTEEN.reason().getBytes());
     }
 
     private boolean isTeaResourceRequest(HTTPRequest request) {
