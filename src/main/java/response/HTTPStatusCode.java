@@ -9,7 +9,8 @@ public enum HTTPStatusCode {
     NOT_FOUND(404, "Not Found"),
     METHOD_NOT_ALLOWED(405, "Method Not Allowed"),
     PRECONDITION_FAILED(412, "Precondition Failed"),
-    FOUR_EIGHTEEN(418, "I'm a teapot");
+    FOUR_EIGHTEEN(418, "I'm a teapot"),
+    SERVER_ERROR(500, "Internal Server Error");
 
     private final int statusCode;
     private final String reason;

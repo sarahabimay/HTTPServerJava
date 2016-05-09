@@ -1,27 +1,32 @@
 package request;
 
+import exceptions.ServerErrorHandler;
+import exceptions.ServerErrorHandlerSpy;
 import org.junit.Before;
 import org.junit.Test;
 import response.EntityHeaderFields;
+import server.ClientSocketFake;
 import server.ClientSocketSpy;
 
 import java.io.ByteArrayInputStream;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static request.HTTPMethod.GET;
-import static request.HTTPMethod.POST;
+import static request.HTTPMethod.*;
 import static request.HTTPResource.*;
 import static request.HTTPVersion.HTTP_1_1;
-import static response.EntityHeaderFields.*;
+import static response.EntityHeaderFields.CONTENT_LENGTH;
 import static response.EntityHeaderFields.RANGE;
 
 public class RequestParserTest {
     private RequestParser requestParser;
+    private ServerErrorHandlerSpy errorHandlerSpy;
 
     @Before
     public void setUp() {
-        requestParser = new RequestParser();
+        requestParser = new RequestParser(new ServerErrorHandler());
+        errorHandlerSpy = new ServerErrorHandlerSpy();
     }
 
     @Test
@@ -32,11 +37,46 @@ public class RequestParserTest {
     }
 
     @Test
+    public void noInputStreamError() {
+        ClientSocketFake socketFake = new ClientSocketFake(null);
+        RequestParser requestParser = new RequestParser(errorHandlerSpy);
+        HTTPRequest request = requestParser.parseRequest(socketFake);
+        assertEquals(true, errorHandlerSpy.hasInvalidRequestBeenBuilt());
+        assertEquals(UNDEFINED, request.method());
+    }
+
+    @Test
+    public void readErroneousRequestLineFromInputStream() {
+        ClientSocketFake socketFake = new ClientSocketFake(getInputStream(buildRequestWithErroneousRequestLine()));
+        RequestParser requestParser = new RequestParser(errorHandlerSpy);
+        HTTPRequest request = requestParser.parseRequest(socketFake);
+        assertEquals(true, errorHandlerSpy.hasInvalidRequestBeenBuilt());
+        assertEquals(UNDEFINED, request.method());
+    }
+
+    @Test
+    public void readErroneousRequestHeaderFromInputStream() {
+        ClientSocketFake socketFake = new ClientSocketFake(getInputStream(buildRequestWithErroneousHeader()));
+        RequestParser requestParser = new RequestParser(errorHandlerSpy);
+        HTTPRequest request = requestParser.parseRequest(socketFake);
+        assertEquals(true, errorHandlerSpy.hasInvalidRequestBeenBuilt());
+        assertEquals(UNDEFINED, request.method());
+    }
+
+    @Test
+    public void readErroneousBodyFromInputStream() {
+        ClientSocketFake socketFake = new ClientSocketFake(getInputStream(buildRequestWithErroneousBody()));
+        RequestParser requestParser = new RequestParser(errorHandlerSpy);
+        HTTPRequest request = requestParser.parseRequest(socketFake);
+        assertEquals(true, errorHandlerSpy.hasInvalidRequestBeenBuilt());
+        assertEquals(UNDEFINED, request.method());
+    }
+
+    @Test
     public void createRequestWithoutHeaders() {
         ClientSocketSpy socketSpy = new ClientSocketSpy(getInputStream(buildGETRequestLine()));
         HTTPRequest HTTPRequest = requestParser.parseRequest(socketSpy);
-        HTTPMethod expectedMethod = GET;
-        assertEquals(expectedMethod, HTTPRequest.method());
+        assertEquals(GET, HTTPRequest.method());
     }
 
     @Test
@@ -116,10 +156,6 @@ public class RequestParserTest {
         return "variable_1=Operators%20%3C%2C%20%3E%2C%20%3D%2C%20!%3D%3B%20%2B%2C%20-%2C%20*%2C%20%26%2C%20%40%2C%20%23%2C%20%24%2C%20%5B%2C%20%5D%3A%20%22is%20that%20all%22%3F&variable_2=stuff";
     }
 
-    private Map<EntityHeaderFields, String> emptyRequestHeaders() {
-        return new HashMap<>();
-    }
-
     private String buildRequestWithUnrecognizedHeaders() {
         return new StringBuilder()
                 .append(optionRequestLine())
@@ -189,5 +225,37 @@ public class RequestParserTest {
                 .append(" ")
                 .append(HTTP_1_1)
                 .toString();
+    }
+
+    private String buildRequestWithErroneousRequestLine() {
+        return new StringBuilder()
+                .append(erroneousInput())
+                .toString();
+    }
+
+    private String buildRequestWithErroneousHeader() {
+        return new StringBuilder()
+                .append(buildGETRequestLine())
+                .append("\n")
+                .append(erroneousInput())
+                .toString();
+    }
+
+    private String buildRequestWithErroneousBody() {
+        return new StringBuilder()
+                .append(buildGETRequestLine())
+                .append("\n")
+                .append(postHeaders())
+                .append("\r\n\r\n")
+                .append(erroneousInput())
+                .toString();
+    }
+
+    private String erroneousInput() {
+        return "ERRONEOUS INPUT";
+    }
+
+    private Map<EntityHeaderFields, String> emptyRequestHeaders() {
+        return new HashMap<>();
     }
 }

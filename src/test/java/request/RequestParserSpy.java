@@ -7,6 +7,7 @@ public class RequestParserSpy extends RequestParser {
     private boolean hasRequestBeenParsed = false;
 
     public RequestParserSpy(HTTPRequest fakeHTTPRequest) {
+        super(null);
         this.fakeHTTPRequest = fakeHTTPRequest;
     }
 

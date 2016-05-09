@@ -1,6 +1,7 @@
 package server;
 
 import request.RequestParser;
+import exceptions.ServerErrorHandler;
 import router.RouteProcessor;
 
 import java.util.Optional;
@@ -37,6 +38,6 @@ public class HttpServer {
     }
 
     private RequestProcessorService requestProcessorService(HttpClientSocket clientSocket) {
-        return new RequestProcessorService(clientSocket, new RequestParser(), routeProcessor);
+        return new RequestProcessorService(clientSocket, new RequestParser(new ServerErrorHandler()), routeProcessor);
     }
 }

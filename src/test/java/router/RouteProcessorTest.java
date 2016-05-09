@@ -36,7 +36,15 @@ public class RouteProcessorTest {
     }
 
     @Test
-    public void buildStatusOyKResponse() {
+    public void buildInternalServerErrorResponse() {
+        HTTPRequest request = createRequest(UNDEFINED, UNRECOGNIZED, "Some Error Message", HTTPVersion.UNDEFINED);
+        RouteProcessor routeProcessor = new RouteProcessor(new Router(new RoutesFactory().routeActions()), new URIProcessorStub());
+        HTTPResponse response = routeProcessor.buildResponse(request);
+        assertEquals("HTTP/1.1 500 Internal Server Error", response.getStatusLine());
+    }
+
+    @Test
+    public void buildStatusOKResponse() {
         HTTPRequest request = createRequest(GET, INDEX, "", HTTP_1_1);
         HTTPResponse response = routeProcessor.buildResponse(request);
         assertEquals(statusLineOKResponse, response.getStatusLine());
@@ -71,12 +79,6 @@ public class RouteProcessorTest {
         assertEquals(methodNotFoundResponse, response.getStatusLine());
         assertThat(response.getEntityHeaders().get(ALLOW), hasItem(PUT.method()));
         assertThat(response.getEntityHeaders().get(ALLOW), hasItem(POST.method()));
-    }
-
-    @Test
-    public void appropriateRouteActionFromSelection() {
-
-
     }
 
     private HTTPRequest createRequest(HTTPMethod method, HTTPResource uri, String queryParams, HTTPVersion version) {
