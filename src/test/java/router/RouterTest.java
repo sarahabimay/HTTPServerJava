@@ -6,9 +6,7 @@ import request.HTTPMethod;
 import request.HTTPRequest;
 import request.HTTPResource;
 import request.HTTPVersion;
-import response.HTTPResponse;
-import routeActions.RouteAction;
-import routeActions.StatusOKAction;
+import routeActions.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,66 +22,93 @@ import static request.HTTPVersion.HTTP_1_1;
 
 public class RouterTest {
     private Router router;
-    private String statusOKResponse;
-    private String statusFourOhFourResponse;
-    private String statusMethodNotAllowedResponse;
-    private URIProcessorStub uriProcessorStub;
-
     @Before
     public void setUp() {
         router = new Router(new RoutesFactory().routeActions());
-        statusOKResponse = "HTTP/1.1 200 OK";
-        statusFourOhFourResponse = "HTTP/1.1 404 Not Found";
-        statusMethodNotAllowedResponse = "HTTP/1.1 405 Method Not Allowed";
-        uriProcessorStub = new URIProcessorStub();
     }
 
     @Test
-    public void fourOhFourResponse() {
+    public void fourOhFourRouteActionForResourceNotFound() {
         HTTPRequest request = unknownResourceRequest();
         List<RouteAction> actions = router.findRouteActions(request);
-        HTTPResponse response = actions.get(0).generateResponse(request, router, uriProcessorStub);
-        assertEquals(statusFourOhFourResponse, response.getStatusLine());
+        assertEquals(StatusNOKAction.class, actions.get(0).getClass());
     }
 
     @Test
-    public void methodNotAllowedResponse() {
-        HTTPRequest request = bogusMethodRequest();
-        List<RouteAction> actions = router.findRouteActions(request);
-        HTTPResponse response = actions.get(0).generateResponse(request, router, uriProcessorStub);
-        assertEquals(statusMethodNotAllowedResponse, response.getStatusLine());
-    }
-
-    @Test
-    public void okActionForGETRequest() {
+    public void okActionFoundForGETRequest() {
         HTTPRequest request = knownResourceGETRequest();
         List<RouteAction> actions = router.findRouteActions(request);
-        HTTPResponse response = actions.get(0).generateResponse(request, router, uriProcessorStub);
-        assertEquals(statusOKResponse, response.getStatusLine());
+        assertEquals(GETResourceAction.class, actions.get(0).getClass());
     }
 
     @Test
-    public void okActionForPOSTRequest() {
+    public void methodNotAllowedActionFound() {
+        HTTPRequest request = bogusMethodRequest();
+        List<RouteAction> actions = router.findRouteActions(request);
+        assertEquals(MethodNotAllowedAction.class, actions.get(0).getClass());
+    }
+
+    @Test
+    public void updateResourceActionFoundForPOSTRequest() {
         HTTPRequest request = knownResourcePOSTRequest();
         List<RouteAction> actions = router.findRouteActions(request);
-        HTTPResponse response = actions.get(0).generateResponse(request, router, uriProcessorStub);
-        assertEquals(statusOKResponse, response.getStatusLine());
+        assertEquals(UpdateResourceAction.class, actions.get(0).getClass());
     }
 
     @Test
-    public void okActionForPUTRequest() {
+    public void updateResourceActionFoundForPUTRequest() {
         HTTPRequest request = knownResourcePUTRequest();
         List<RouteAction> actions = router.findRouteActions(request);
-        HTTPResponse response = actions.get(0).generateResponse(request, router, uriProcessorStub);
-        assertEquals(statusOKResponse, response.getStatusLine());
+        assertEquals(UpdateResourceAction.class, actions.get(0).getClass());
     }
 
     @Test
-    public void okActionForHEADRequest() {
+    public void directoryContentsActionFound() {
+        HTTPRequest request = getIndexResourceRequest();
+        List<RouteAction> actions = router.findRouteActions(request);
+        assertEquals(DirectoryContentsAction.class, actions.get(0).getClass());
+    }
+
+    @Test
+    public void partialContentActionFound() {
+        HTTPRequest request = getResourceAllowingPartialContentRequest();
+        List<RouteAction> actions = router.findRouteActions(request);
+        assertEquals(PartialContentAction.class, actions.get(0).getClass());
+    }
+
+    @Test
+    public void parameterDecodeActionFound() {
+        HTTPRequest request = getParameterRequest();
+        List<RouteAction> actions = router.findRouteActions(request);
+        assertEquals(ParameterDecodeAction.class, actions.get(0).getClass());
+    }
+
+    @Test
+    public void patchContentActionFound() {
+        HTTPRequest request = getResourceAllowingPatch();
+        List<RouteAction> actions = router.findRouteActions(request);
+        assertEquals(PatchContentAction.class, actions.get(0).getClass());
+    }
+
+    @Test
+    public void authenticateActionFound() {
+        HTTPRequest request = getResourceRequiringAuth();
+        List<RouteAction> actions = router.findRouteActions(request);
+        assertEquals(AuthenticateAction.class, actions.get(0).getClass());
+    }
+
+    @Test
+    public void teapotActionFound() {
+        HTTPRequest request = getCoffeeResource();
+        List<RouteAction> actions = router.findRouteActions(request);
+        assertEquals(IAmATeapotAction.class, actions.get(0).getClass());
+    }
+
+    @Test
+    public void okActionForHEADFound() {
         HTTPRequest request = knownResourceHEADRequest();
         List<RouteAction> actions = router.findRouteActions(request);
-        HTTPResponse response = actions.get(0).generateResponse(request, router, uriProcessorStub);
-        assertEquals(statusOKResponse, response.getStatusLine());
+        assertEquals(StatusOKAction.class, actions.get(0).getClass());
     }
 
     @Test
@@ -107,7 +132,31 @@ public class RouterTest {
     }
 
     private HTTPRequest knownResourceGETRequest() {
+        return new HTTPRequest().addRequestLine(createRequestLine(GET, PATCH_CONTENT, "", HTTP_1_1));
+    }
+
+    private HTTPRequest getIndexResourceRequest() {
         return new HTTPRequest().addRequestLine(createRequestLine(GET, INDEX, "", HTTP_1_1));
+    }
+
+    private HTTPRequest getResourceAllowingPartialContentRequest() {
+        return new HTTPRequest().addRequestLine(createRequestLine(GET, FILE1, "", HTTP_1_1));
+    }
+
+    private HTTPRequest getParameterRequest() {
+        return new HTTPRequest().addRequestLine(createRequestLine(GET, PARAMETERS, "", HTTP_1_1));
+    }
+
+    private HTTPRequest getCoffeeResource() {
+        return new HTTPRequest().addRequestLine(createRequestLine(GET, COFFEE, "", HTTP_1_1));
+    }
+
+    private HTTPRequest getResourceRequiringAuth() {
+        return new HTTPRequest().addRequestLine(createRequestLine(GET, LOGS, "", HTTP_1_1));
+    }
+
+    private HTTPRequest getResourceAllowingPatch() {
+        return new HTTPRequest().addRequestLine(createRequestLine(PATCH, PATCH_CONTENT, "", HTTP_1_1));
     }
 
     private HTTPRequest knownResourcePOSTRequest() {

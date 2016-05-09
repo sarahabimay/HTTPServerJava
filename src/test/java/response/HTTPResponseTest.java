@@ -28,7 +28,7 @@ public class HTTPResponseTest {
                         .setStatusLine(HTTPVersion.HTTP_1_1, HTTPStatusCode.OK)
                         .setEntityHeaders(setEntityHeaders())
                         .buildResponse();
-        assertEquals(expectedStatusOKResponse() + "\r\nAllow: GET,HEAD\r\n", new String(httpResponse));
+        assertEquals(expectedStatusOKResponse() + "\r\nAllow: GET,HEAD", new String(httpResponse));
     }
 
     private Map<EntityHeaderFields, List<String>> setEntityHeaders() {
@@ -49,9 +49,5 @@ public class HTTPResponseTest {
                 .append(" ")
                 .append(HTTPStatusCode.OK.reason())
                 .toString();
-    }
-
-    private String doubleCarriageReturn() {
-        return "\r\n\r\n";
     }
 }

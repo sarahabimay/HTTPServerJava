@@ -12,10 +12,10 @@ import java.io.ByteArrayInputStream;
 
 import static org.junit.Assert.assertEquals;
 
-public class ClientRequestProcessorServiceTest {
+public class RequestProcessorServiceTest {
     private ClientSocketSpy clientSocketSpy;
     private RequestParserSpy requestParserSpy;
-    private ClientRequestProcessorService clientRequestProcessorService;
+    private RequestProcessorService requestProcessorService;
     private ByteArrayInputStream inputStream;
     private RouteProcessorSpy routeProcessorSpy;
 
@@ -25,7 +25,7 @@ public class ClientRequestProcessorServiceTest {
         clientSocketSpy = new ClientSocketSpy(inputStream);
         requestParserSpy = new RequestParserSpy(new HTTPRequestFake());
         routeProcessorSpy = new RouteProcessorSpy(new RouterStub(), new URIProcessorStub());
-        clientRequestProcessorService = new ClientRequestProcessorService(
+        requestProcessorService = new RequestProcessorService(
                 clientSocketSpy,
                 requestParserSpy,
                 routeProcessorSpy);
@@ -33,25 +33,25 @@ public class ClientRequestProcessorServiceTest {
 
     @Test
     public void requestHasBeenReceivedFromClient() {
-        clientRequestProcessorService.process();
+        requestProcessorService.process();
         assertEquals(true, clientSocketSpy.hasReadRequestFromInputStream());
     }
 
     @Test
     public void requestHasBeenParsed() {
-        clientRequestProcessorService.process();
+        requestProcessorService.process();
         Assert.assertEquals(true, requestParserSpy.hasRequestBeenParsed());
     }
 
     @Test
     public void responseHasBeenCreated() {
-        clientRequestProcessorService.process();
+        requestProcessorService.process();
         assertEquals(true, routeProcessorSpy.hasRequestBeenParsed());
     }
 
     @Test
     public void responseSentToClient() {
-        clientRequestProcessorService.process();
+        requestProcessorService.process();
         assertEquals(true, clientSocketSpy.hasSentResponseToClient());
     }
 

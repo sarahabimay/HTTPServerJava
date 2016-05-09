@@ -76,7 +76,7 @@ public class URIProcessorTest {
     public void getDirectoryLinks() {
         String pathToPublicDirectory = "/Users/sarahjohnston/Sarah/CobSpec/public/";
         URIProcessor uriProcessor = new URIProcessor(pathToPublicDirectory);
-        List<String> htmlLinks = uriProcessor.links();
+        List<String> htmlLinks = uriProcessor.directoryContents();
         assertThat(htmlLinks, hasItem("file1"));
     }
 }

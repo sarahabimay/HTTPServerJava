@@ -16,8 +16,7 @@ public class HttpClientSocket {
 
     public Optional<BufferedReader> getInputReader() {
         try {
-            return Optional.of(new BufferedReader(
-                    new InputStreamReader(socket.getInputStream())));
+            return Optional.of(new BufferedReader( new InputStreamReader(socket.getInputStream())));
         } catch (IOException e) {
             return Optional.empty();
         }
