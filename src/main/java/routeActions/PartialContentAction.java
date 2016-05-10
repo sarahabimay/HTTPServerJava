@@ -10,8 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Arrays.asList;
 import static java.util.Arrays.copyOfRange;
-import static response.EntityHeaderFields.RANGE;
+import static response.EntityHeaderFields.*;
 import static response.HTTPStatusCode.PARTIAL_CONTENT;
 
 public class PartialContentAction implements RouteAction {
@@ -25,7 +26,10 @@ public class PartialContentAction implements RouteAction {
 
     @Override
     public HTTPResponse generateResponse(HTTPRequest request, Router router, URIProcessor uriProcessor) {
-        return partialContentResponse(request, payloadAtResource(request, uriProcessor));
+        byte[] currentPayload = payloadAtResource(request, uriProcessor);
+        Integer[] startAndEndIndexes = startAndEndIndexes(currentPayload, request);
+        byte[] partialContent = getPartialContent(currentPayload, startAndEndIndexes);
+        return partialContentResponse(request, partialContent, startAndEndIndexes);
     }
 
     private boolean isPartialContentRequest(HTTPRequest request) {
@@ -36,13 +40,24 @@ public class PartialContentAction implements RouteAction {
         return uriProcessor.read(request.uri().uri());
     }
 
-    private HTTPResponse partialContentResponse(HTTPRequest request, byte[] currentPayload) {
-        byte[] partialContent = getPartialContent(currentPayload, startAndEndIndexes(currentPayload, request));
+    private HTTPResponse partialContentResponse(HTTPRequest request, byte[] partialContent, Integer[] startAndEndIndexes) {
         return new HTTPResponse(new ResponseHTTPMessageFormatter())
                 .setStatusLine(request.version(), PARTIAL_CONTENT)
+                .setEntityHeaders(contentHeaders(startAndEndIndexes, partialContent))
                 .setBody(partialContent);
     }
 
+    private Map<EntityHeaderFields, List<String>> contentHeaders(Integer[] startAndEndRange, byte[] partialPayload) {
+        Map<EntityHeaderFields, List<String>> headers = new HashMap<>();
+        headers.put(CONTENT_LENGTH, asList(String.valueOf(partialPayload.length)));
+        headers.put(CONTENT_TYPE, asList(CONTENT_TYPE_PLAIN.field()));
+        headers.put(CONTENT_RANGE, asList(formatContentRangeValue(startAndEndRange)));
+        return headers;
+    }
+
+    private String formatContentRangeValue(Integer[] startAndEndRange) {
+        return String.format("bytes %d-%d", startAndEndRange[0], startAndEndRange[1]);
+    }
 
     private Integer[] startAndEndIndexes(byte[] currentPayload, HTTPRequest request) {
         String[] startAndEndByteRange = parseByteRange(request);
@@ -79,7 +94,7 @@ public class PartialContentAction implements RouteAction {
     private Integer[] startAndEndByteProvided(byte[] currentPayload, String[] startAndEndByteRange) {
         Integer[] startAndEndPositions;
         int startIndex = convertToInt(startAndEndByteRange[0]);
-        int endIndex = endPosition(currentPayload.length, oneIndexed(convertToInt(startAndEndByteRange[1])));
+        int endIndex = endPosition(payloadEndPosition(currentPayload), convertToInt(startAndEndByteRange[1]));
         startAndEndPositions = createStartAndEndRange(startIndex, endIndex);
         return startAndEndPositions;
     }
@@ -87,7 +102,7 @@ public class PartialContentAction implements RouteAction {
     private Integer[] providedStartAndCalculatedEndIndex(byte[] currentPayload, String value) {
         Integer[] startAndEndPositions;
         int startIndex = convertToInt(value);
-        int endIndex = currentPayload.length;
+        int endIndex = payloadEndPosition(currentPayload);
         startAndEndPositions = createStartAndEndRange(startIndex, endIndex);
         return startAndEndPositions;
     }
@@ -95,7 +110,7 @@ public class PartialContentAction implements RouteAction {
     private Integer[] calculatedStartAndEndIndexes(byte[] currentPayload, String startPosition) {
         Integer[] startAndEndPositions;
         int startIndex = reverseStartPosition(currentPayload, startPosition);
-        int endIndex = currentPayload.length;
+        int endIndex = payloadEndPosition(currentPayload);
         startAndEndPositions = createStartAndEndRange(startIndex, endIndex);
         return startAndEndPositions;
     }
@@ -105,7 +120,7 @@ public class PartialContentAction implements RouteAction {
     }
 
     private byte[] getPartialContent(byte[] payload, Integer[] startAndEndIndexes) {
-        return copyOfRange(payload, startAndEndIndexes[0], endPosition(payload.length, startAndEndIndexes[1]));
+        return copyOfRange(payload, startAndEndIndexes[0], oneIndexed(startAndEndIndexes[1]));
     }
 
     private int reverseStartPosition(byte[] payload, String startPosition) {
@@ -120,8 +135,12 @@ public class PartialContentAction implements RouteAction {
         }
     }
 
-    private int endPosition(int payloadLength, int endPosition) {
-        return (payloadLength - endPosition) <= 0 ? payloadLength : endPosition;
+    private int payloadEndPosition(byte[] currentPayload) {
+        return currentPayload.length -1;
+    }
+
+    private int endPosition(int payloadLength, int endIndex) {
+        return (payloadLength - endIndex) <= 0 ? payloadLength : endIndex;
     }
 
     private int oneIndexed(int zeroIndexPosition) {

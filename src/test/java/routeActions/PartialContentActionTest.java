@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static request.HTTPMethod.GET;
 import static request.HTTPResource.PARTIAL_CONTENT;
@@ -43,7 +44,7 @@ public class PartialContentActionTest {
     }
 
     @Test
-    public void partialContentWithStartAndEndRange() {
+    public void startAndEndRangeProvided() {
         testHelpers.createFileAtResource(rootFolder, "/partial_content.txt", payloadContent());
         URIProcessor uriProcessor = new URIProcessor(testHelpers.pathToRootFolder(temporaryFolder, testFolder));
 
@@ -54,7 +55,31 @@ public class PartialContentActionTest {
     }
 
     @Test
-    public void partialContentWithReversedStartByteOnlyResponse() {
+    public void partialContentResponseHasCorrectHeaders() {
+        testHelpers.createFileAtResource(rootFolder, "/partial_content.txt", payloadContent());
+        URIProcessor uriProcessor = new URIProcessor(testHelpers.pathToRootFolder(temporaryFolder, testFolder));
+
+        HTTPRequest getRequest = newGETRequest(GET, PARTIAL_CONTENT, HTTP_1_1, partialContentHeaders("bytes=0-4"));
+        HTTPResponse response = new PartialContentAction().generateResponse(getRequest, new RouterStub(), uriProcessor);
+
+        assertEquals(asList("text/plain"), response.getEntityHeaders().get(CONTENT_TYPE));
+        assertEquals(asList("5"), response.getEntityHeaders().get(CONTENT_LENGTH));
+        assertEquals(asList("bytes 0-4"), response.getEntityHeaders().get(CONTENT_RANGE));
+    }
+
+    @Test
+    public void endRangeValueOutOfBounds() {
+        testHelpers.createFileAtResource(rootFolder, "/partial_content.txt", payloadContent());
+        URIProcessor uriProcessor = new URIProcessor(testHelpers.pathToRootFolder(temporaryFolder, testFolder));
+
+        HTTPRequest getRequest = newGETRequest(GET, PARTIAL_CONTENT, HTTP_1_1, partialContentHeaders("bytes=0-77"));
+        HTTPResponse response = new PartialContentAction().generateResponse(getRequest, new RouterStub(), uriProcessor);
+
+        assertEquals(payloadContent(), new String(response.getBody()));
+    }
+
+    @Test
+    public void onlyReversedStartByteProvided() {
         testHelpers.createFileAtResource(rootFolder, "/partial_content.txt", payloadContent());
         URIProcessor uriProcessor = new URIProcessor(testHelpers.pathToRootFolder(temporaryFolder, testFolder));
 
@@ -65,7 +90,7 @@ public class PartialContentActionTest {
     }
 
     @Test
-    public void partialContentWithStartByteOnlyResponse() {
+    public void onlyStartByteProvided() {
         testHelpers.createFileAtResource(rootFolder, "/partial_content.txt", payloadContent());
         URIProcessor uriProcessor = new URIProcessor(testHelpers.pathToRootFolder(temporaryFolder, testFolder));
 
