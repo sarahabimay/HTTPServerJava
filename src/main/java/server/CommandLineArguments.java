@@ -20,13 +20,13 @@ public class CommandLineArguments {
     }
 
     private static void publicClassPath(int index, String[] args) {
-        if (args[index] == "-d") {
+        if (args[index].equals("-d")) {
             currentPublicClassPath = args[index + 1];
         }
     }
 
     private static void portNumber(int index, String[] args) {
-        if (args[index] == "-p") {
+        if (args[index].equals("-p")) {
             currentPort = Integer.parseInt(args[index + 1]);
         }
     }
