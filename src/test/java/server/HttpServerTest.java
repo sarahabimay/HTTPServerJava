@@ -1,7 +1,9 @@
 package server;
 
+import exceptions.ServerErrorHandler;
 import org.junit.Before;
 import org.junit.Test;
+import request.RequestParser;
 import routeActions.RouteAction;
 import router.*;
 
@@ -17,14 +19,17 @@ public class HttpServerTest {
     private HttpClientSocketStub clientSocketSpy;
     private HttpServerSocketFake serverSocketFake;
     private RouteProcessor routeProcessor;
+    private RequestParser requestParser;
 
     @Before
     public void setUp() {
-        routeProcessor = new RouteProcessor(new Router(routes()), new URIProcessorStub());
         clientSocketSpy = new HttpClientSocketStub();
         serverSocketFake = new HttpServerSocketFake(clientSocketSpy);
         executorServiceCreatorSpy = new ExecutorServiceCreatorSpy(1);
-        server = new HttpServer(serverSocketFake, executorServiceCreatorSpy, routeProcessor);
+        ServerErrorHandler errorHandler = new ServerErrorHandler();
+        requestParser = new RequestParser(errorHandler);
+        routeProcessor = new RouteProcessor(new Router(routes()), new URIProcessorStub(), errorHandler);
+        server = new HttpServer(serverSocketFake, executorServiceCreatorSpy, requestParser, routeProcessor);
     }
 
     @Test

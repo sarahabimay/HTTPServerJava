@@ -1,7 +1,6 @@
 package server;
 
 import request.RequestParser;
-import exceptions.ServerErrorHandler;
 import router.RouteProcessor;
 
 import java.util.Optional;
@@ -11,10 +10,12 @@ public class HttpServer {
     private Optional<HttpServerSocket> serverSocket = Optional.empty();
     private ExecutorServiceCreator executorServiceCreator;
     private RouteProcessor routeProcessor;
+    private final RequestParser requestParser;
 
-    public HttpServer(HttpServerSocket serverSocket, ExecutorServiceCreator executorServiceCreator, RouteProcessor routeProcessor) {
+    public HttpServer(HttpServerSocket serverSocket, ExecutorServiceCreator executorServiceCreator, RequestParser requestParser, RouteProcessor routeProcessor) {
         this.serverSocket = Optional.of(serverSocket);
         this.executorServiceCreator = executorServiceCreator;
+        this.requestParser = requestParser;
         this.routeProcessor = routeProcessor;
     }
 
@@ -38,6 +39,6 @@ public class HttpServer {
     }
 
     private RequestProcessorService requestProcessorService(HttpClientSocket clientSocket) {
-        return new RequestProcessorService(clientSocket, new RequestParser(new ServerErrorHandler()), routeProcessor);
+        return new RequestProcessorService( clientSocket, requestParser, routeProcessor);
     }
 }

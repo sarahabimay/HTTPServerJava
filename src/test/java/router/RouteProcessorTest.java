@@ -1,5 +1,7 @@
 package router;
 
+import exceptions.ResourceManagementException;
+import exceptions.ServerErrorHandler;
 import org.junit.Before;
 import org.junit.Test;
 import request.HTTPMethod;
@@ -7,14 +9,16 @@ import request.HTTPRequest;
 import request.HTTPResource;
 import request.HTTPVersion;
 import response.HTTPResponse;
+import routeActions.InternalServerErrorAction;
 import routeActions.RouteAction;
 import routeActions.StatusOKAction;
+import routeActions.URIProcessor;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -22,6 +26,7 @@ import static request.HTTPMethod.*;
 import static request.HTTPResource.*;
 import static request.HTTPVersion.HTTP_1_1;
 import static response.EntityHeaderFields.ALLOW;
+import static response.HTTPStatusCode.SERVER_ERROR;
 
 public class RouteProcessorTest {
     private String statusLineOKResponse;
@@ -32,13 +37,16 @@ public class RouteProcessorTest {
     public void setUp() {
         statusLineOKResponse = "HTTP/1.1 200 OK";
         statusLineFourOhFourResponse = "HTTP/1.1 404 Not Found";
-        routeProcessor = new RouteProcessor(new Router(routeActions()), new URIProcessorStub());
+        routeProcessor = new RouteProcessor(
+                new Router(routeActions()),
+                new URIProcessorStub(),
+                new ServerErrorHandler());
     }
 
     @Test
     public void buildInternalServerErrorResponse() {
-        HTTPRequest request = createRequest(UNDEFINED, UNRECOGNIZED, "Some Error Message", HTTPVersion.UNDEFINED);
-        RouteProcessor routeProcessor = new RouteProcessor(new Router(new RoutesFactory().routeActions()), new URIProcessorStub());
+        HTTPRequest request =
+                createRequest(UNDEFINED, UNRECOGNIZED, "Some Error Message", HTTPVersion.UNDEFINED);
         HTTPResponse response = routeProcessor.buildResponse(request);
         assertEquals("HTTP/1.1 500 Internal Server Error", response.getStatusLine());
     }
@@ -81,6 +89,17 @@ public class RouteProcessorTest {
         assertThat(response.getEntityHeaders().get(ALLOW), hasItem(POST.method()));
     }
 
+    @Test
+    public void resourceManagementExceptionCaught() {
+        RouteProcessor routeProcessor = new RouteProcessor(
+                new Router(routeActionsForExceptionTest()),
+                new URIProcessorStub(),
+                new ServerErrorHandler());
+        HTTPRequest request = new HTTPRequest(HEAD, INDEX, HTTP_1_1, null, null, null);
+        HTTPResponse response = routeProcessor.buildResponse(request);
+        assertEquals(SERVER_ERROR, response.getStatusCode());
+    }
+
     private HTTPRequest createRequest(HTTPMethod method, HTTPResource uri, String queryParams, HTTPVersion version) {
         return new HTTPRequest().addRequestLine(createRequestLine(method, uri, queryParams, version));
     }
@@ -94,14 +113,38 @@ public class RouteProcessorTest {
         return requestLine;
     }
 
+    public Map<Route, List<RouteAction>> routeActionsForExceptionTest() {
+        Map<Route, List<RouteAction>> routeActions = new HashMap<>();
+        routeActions.put(new Route(HEAD, INDEX, HTTP_1_1), asList(new ThrowExceptionActionFake()));
+        routeActions.put(
+                new Route(UNDEFINED, UNRECOGNIZED, HTTPVersion.UNDEFINED),
+                asList(new InternalServerErrorAction()));
+        return routeActions;
+    }
+
     public Map<Route, List<RouteAction>> routeActions() {
         Map<Route, List<RouteAction>> routeActions = new HashMap<>();
-        routeActions.put(new Route(HEAD, INDEX, HTTP_1_1), Arrays.asList(new StatusOKAction()));
-        routeActions.put(new Route(GET, INDEX, HTTP_1_1), Arrays.asList(new StatusOKAction()));
-        routeActions.put(new Route(PUT, FORM, HTTP_1_1), Arrays.asList(new StatusOKAction()));
-        routeActions.put(new Route(POST, FORM, HTTP_1_1), Arrays.asList(new StatusOKAction()));
-        routeActions.put(new Route(OPTIONS, OPTIONS_ONE, HTTP_1_1), Arrays.asList(new StatusOKAction()));
-        routeActions.put(new Route(OPTIONS, OPTIONS_TWO, HTTP_1_1), Arrays.asList(new StatusOKAction()));
+        routeActions.put(new Route(HEAD, INDEX, HTTP_1_1), asList(new StatusOKAction()));
+        routeActions.put(new Route(GET, INDEX, HTTP_1_1), asList(new StatusOKAction()));
+        routeActions.put(new Route(PUT, FORM, HTTP_1_1), asList(new StatusOKAction()));
+        routeActions.put(new Route(POST, FORM, HTTP_1_1), asList(new StatusOKAction()));
+        routeActions.put(new Route(OPTIONS, OPTIONS_ONE, HTTP_1_1), asList(new StatusOKAction()));
+        routeActions.put(new Route(OPTIONS, OPTIONS_TWO, HTTP_1_1), asList(new StatusOKAction()));
+        routeActions.put(
+                new Route(UNDEFINED, UNRECOGNIZED, HTTPVersion.UNDEFINED),
+                asList(new InternalServerErrorAction()));
         return routeActions;
+    }
+
+    private class ThrowExceptionActionFake implements RouteAction {
+        @Override
+        public boolean isAppropriate(HTTPRequest request) {
+            return true;
+        }
+
+        @Override
+        public HTTPResponse generateResponse(HTTPRequest request, Router router, URIProcessor uriProcessor) {
+            throw new ResourceManagementException("Fake Exception");
+        }
     }
 }

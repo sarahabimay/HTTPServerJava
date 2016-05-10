@@ -1,5 +1,7 @@
 package routeActions;
 
+import exceptions.ResourceManagementException;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,13 +17,13 @@ public class URIProcessor {
         this.pathToResourceFolder = pathToResourceFolder;
     }
 
-    public void create(String resource, String data) {
+    public void create(String resource, String newContent) {
         Path root = Paths.get(pathToResourceFolder);
         Path resourcePath = root.resolve(removeLeadingBackslash(resource));
         try {
-            Files.write(resourcePath, data.getBytes());
+            Files.write(resourcePath, newContent.getBytes());
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new ResourceManagementException(e.getMessage());
         }
     }
 
@@ -31,7 +33,7 @@ public class URIProcessor {
         try {
             Files.delete(resourcePath);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new ResourceManagementException(e.getMessage());
         }
     }
 
@@ -41,7 +43,7 @@ public class URIProcessor {
         try {
             return Files.readAllBytes(resourcePath);
         } catch (IOException e) {
-            return new byte[0];
+            throw new ResourceManagementException(e.getMessage());
         }
     }
 
@@ -62,7 +64,5 @@ public class URIProcessor {
         }
         return anchors;
     }
-
-
 }
 

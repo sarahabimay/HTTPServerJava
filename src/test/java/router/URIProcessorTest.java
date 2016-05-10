@@ -1,8 +1,10 @@
 package router;
 
+import exceptions.ResourceManagementException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 import routeActions.URIProcessor;
 import testHelper.TestHelpers;
@@ -19,10 +21,13 @@ public class URIProcessorTest {
     private File rootFolder;
     private String parentFolder;
     private URIProcessor uriProcessor;
+    private TestHelpers testHelpers;
 
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
-    private TestHelpers testHelpers;
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -78,5 +83,47 @@ public class URIProcessorTest {
         URIProcessor uriProcessor = new URIProcessor(pathToPublicDirectory);
         List<String> htmlLinks = uriProcessor.directoryContents();
         assertThat(htmlLinks, hasItem("file1"));
+    }
+
+    @Test
+    public void expectedExceptionThrownOnRead() {
+        expectedException.expect(ResourceManagementException.class);
+        expectedException.expectMessage("Error Occurred Managing a Resource: \n" + "Read Resource Exception");
+
+        String pathToRoot = temporaryFolder.getRoot().getAbsolutePath();
+        URIProcessor resourceHandler = new URIProcessor(pathToRoot) {
+            public byte[] read(String resource) {
+                throw new ResourceManagementException("Read Resource Exception");
+            }
+        };
+        resourceHandler.read("/anything");
+    }
+
+    @Test
+    public void expectedExceptionThrownOnCreate() {
+        expectedException.expect(ResourceManagementException.class);
+        expectedException.expectMessage("Error Occurred Managing a Resource: \n" + "Create Resource Exception");
+
+        String pathToRoot = temporaryFolder.getRoot().getAbsolutePath();
+        URIProcessor resourceHandler = new URIProcessor(pathToRoot) {
+            public void create(String resource, String newContent) {
+                throw new ResourceManagementException("Create Resource Exception");
+            }
+        };
+        resourceHandler.create("/anything", "new content");
+    }
+
+    @Test
+    public void expectedExceptionThrownOnDelete() {
+        expectedException.expect(ResourceManagementException.class);
+        expectedException.expectMessage("Error Occurred Managing a Resource: \n" + "Delete Resource Exception");
+
+        String pathToRoot = temporaryFolder.getRoot().getAbsolutePath();
+        URIProcessor resourceHandler = new URIProcessor(pathToRoot) {
+            public void delete(String resource) {
+                throw new ResourceManagementException("Delete Resource Exception");
+            }
+        };
+        resourceHandler.delete("/anything");
     }
 }
