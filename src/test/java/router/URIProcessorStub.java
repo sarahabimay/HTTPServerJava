@@ -8,7 +8,7 @@ public class URIProcessorStub extends URIProcessor {
     }
 
     @Override
-    public void create(String resource, String data) {
+    public void create(String resource, String newContent) {
     }
 
     @Override

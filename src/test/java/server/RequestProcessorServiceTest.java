@@ -1,5 +1,6 @@
 package server;
 
+import exceptions.ServerErrorHandler;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +25,8 @@ public class RequestProcessorServiceTest {
         inputStream = new ByteArrayInputStream(buildGETRequestLine().getBytes());
         clientSocketSpy = new ClientSocketSpy(inputStream);
         requestParserSpy = new RequestParserSpy(new HTTPRequestFake());
-        routeProcessorSpy = new RouteProcessorSpy(new RouterStub(), new URIProcessorStub());
+        routeProcessorSpy = new RouteProcessorSpy(
+                new RouterStub(), new URIProcessorStub(), new ServerErrorHandler());
         requestProcessorService = new RequestProcessorService(
                 clientSocketSpy,
                 requestParserSpy,

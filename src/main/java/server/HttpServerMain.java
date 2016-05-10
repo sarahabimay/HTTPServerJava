@@ -1,5 +1,7 @@
 package server;
 
+import exceptions.ServerErrorHandler;
+import request.RequestParser;
 import routeActions.RouteAction;
 import routeActions.URIProcessor;
 import router.Route;
@@ -19,10 +21,12 @@ public class HttpServerMain {
     public static void main(String[] args) {
         CommandLineArguments arguments = commandLineArguments(args);
         try {
+            ServerErrorHandler errorHandler = new ServerErrorHandler();
             HttpServer server = new HttpServer(
                     new HttpServerSocket(new ServerSocket(arguments.portNumber())),
                     new ExecutorServiceCreator(NUMBER_OF_THREADS),
-                    new RouteProcessor(new Router(routeActions()), new URIProcessor(arguments.publicClassPath())));
+                    new RequestParser(errorHandler),
+                    new RouteProcessor(new Router(routeActions()), new URIProcessor(arguments.publicClassPath()), errorHandler));
 
             startServer(server);
 
