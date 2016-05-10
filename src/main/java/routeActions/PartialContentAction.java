@@ -40,25 +40,6 @@ public class PartialContentAction implements RouteAction {
         return uriProcessor.read(request.uri().uri());
     }
 
-    private HTTPResponse partialContentResponse(HTTPRequest request, byte[] partialContent, Integer[] startAndEndIndexes) {
-        return new HTTPResponse(new ResponseHTTPMessageFormatter())
-                .setStatusLine(request.version(), PARTIAL_CONTENT)
-                .setEntityHeaders(contentHeaders(startAndEndIndexes, partialContent))
-                .setBody(partialContent);
-    }
-
-    private Map<EntityHeaderFields, List<String>> contentHeaders(Integer[] startAndEndRange, byte[] partialPayload) {
-        Map<EntityHeaderFields, List<String>> headers = new HashMap<>();
-        headers.put(CONTENT_LENGTH, asList(String.valueOf(partialPayload.length)));
-        headers.put(CONTENT_TYPE, asList(CONTENT_TYPE_PLAIN.field()));
-        headers.put(CONTENT_RANGE, asList(formatContentRangeValue(startAndEndRange)));
-        return headers;
-    }
-
-    private String formatContentRangeValue(Integer[] startAndEndRange) {
-        return String.format("bytes %d-%d", startAndEndRange[0], startAndEndRange[1]);
-    }
-
     private Integer[] startAndEndIndexes(byte[] currentPayload, HTTPRequest request) {
         String[] startAndEndByteRange = parseByteRange(request);
         Integer[] startAndEndPositions;
@@ -113,6 +94,25 @@ public class PartialContentAction implements RouteAction {
         int endIndex = payloadEndPosition(currentPayload);
         startAndEndPositions = createStartAndEndRange(startIndex, endIndex);
         return startAndEndPositions;
+    }
+
+    private HTTPResponse partialContentResponse(HTTPRequest request, byte[] partialContent, Integer[] startAndEndIndexes) {
+        return new HTTPResponse(new ResponseHTTPMessageFormatter())
+                .setStatusLine(request.version(), PARTIAL_CONTENT)
+                .setEntityHeaders(contentHeaders(startAndEndIndexes, partialContent))
+                .setBody(partialContent);
+    }
+
+    private Map<EntityHeaderFields, List<String>> contentHeaders(Integer[] startAndEndRange, byte[] partialPayload) {
+        Map<EntityHeaderFields, List<String>> headers = new HashMap<>();
+        headers.put(CONTENT_LENGTH, asList(String.valueOf(partialPayload.length)));
+        headers.put(CONTENT_TYPE, asList(CONTENT_TYPE_PLAIN.field()));
+        headers.put(CONTENT_RANGE, asList(formatContentRangeValue(startAndEndRange)));
+        return headers;
+    }
+
+    private String formatContentRangeValue(Integer[] startAndEndRange) {
+        return String.format("bytes %d-%d", startAndEndRange[0], startAndEndRange[1]);
     }
 
     private Integer[] createStartAndEndRange(int startIndex, int endIndex) {
