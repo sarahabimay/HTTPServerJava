@@ -31,6 +31,7 @@ public class PartialContentActionTest {
     private File rootFolder;
     private TestHelpers testHelpers;
     private String testFolder;
+    private URIProcessor uriProcessor;
 
     @Before
     public void setUp() {
@@ -38,6 +39,8 @@ public class PartialContentActionTest {
         testHelpers = new TestHelpers();
         try {
             rootFolder = temporaryFolder.newFolder(testFolder);
+            testHelpers.createFileAtResource(rootFolder, "/partial_content.txt", payloadContent());
+            uriProcessor = new URIProcessor(testHelpers.pathToRootFolder(temporaryFolder, testFolder));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -45,9 +48,6 @@ public class PartialContentActionTest {
 
     @Test
     public void startAndEndRangeProvided() {
-        testHelpers.createFileAtResource(rootFolder, "/partial_content.txt", payloadContent());
-        URIProcessor uriProcessor = new URIProcessor(testHelpers.pathToRootFolder(temporaryFolder, testFolder));
-
         HTTPRequest getRequest = newGETRequest(GET, PARTIAL_CONTENT, HTTP_1_1, partialContentHeaders("bytes=0-4"));
         HTTPResponse response = new PartialContentAction().generateResponse(getRequest, new RouterStub(), uriProcessor);
 
@@ -56,9 +56,6 @@ public class PartialContentActionTest {
 
     @Test
     public void partialContentResponseHasCorrectHeaders() {
-        testHelpers.createFileAtResource(rootFolder, "/partial_content.txt", payloadContent());
-        URIProcessor uriProcessor = new URIProcessor(testHelpers.pathToRootFolder(temporaryFolder, testFolder));
-
         HTTPRequest getRequest = newGETRequest(GET, PARTIAL_CONTENT, HTTP_1_1, partialContentHeaders("bytes=0-4"));
         HTTPResponse response = new PartialContentAction().generateResponse(getRequest, new RouterStub(), uriProcessor);
 
@@ -69,9 +66,6 @@ public class PartialContentActionTest {
 
     @Test
     public void endRangeValueOutOfBounds() {
-        testHelpers.createFileAtResource(rootFolder, "/partial_content.txt", payloadContent());
-        URIProcessor uriProcessor = new URIProcessor(testHelpers.pathToRootFolder(temporaryFolder, testFolder));
-
         HTTPRequest getRequest = newGETRequest(GET, PARTIAL_CONTENT, HTTP_1_1, partialContentHeaders("bytes=0-77"));
         HTTPResponse response = new PartialContentAction().generateResponse(getRequest, new RouterStub(), uriProcessor);
 
@@ -80,9 +74,6 @@ public class PartialContentActionTest {
 
     @Test
     public void onlyReversedStartByteProvided() {
-        testHelpers.createFileAtResource(rootFolder, "/partial_content.txt", payloadContent());
-        URIProcessor uriProcessor = new URIProcessor(testHelpers.pathToRootFolder(temporaryFolder, testFolder));
-
         HTTPRequest getRequest = newGETRequest(GET, PARTIAL_CONTENT, HTTP_1_1, partialContentHeaders("bytes=-6"));
         HTTPResponse response = new PartialContentAction().generateResponse(getRequest, new RouterStub(), uriProcessor);
 
@@ -91,9 +82,6 @@ public class PartialContentActionTest {
 
     @Test
     public void onlyStartByteProvided() {
-        testHelpers.createFileAtResource(rootFolder, "/partial_content.txt", payloadContent());
-        URIProcessor uriProcessor = new URIProcessor(testHelpers.pathToRootFolder(temporaryFolder, testFolder));
-
         HTTPRequest getRequest = newGETRequest(GET, PARTIAL_CONTENT, HTTP_1_1, partialContentHeaders("bytes=4-"));
         HTTPResponse response = new PartialContentAction().generateResponse(getRequest, new RouterStub(), uriProcessor);
 
