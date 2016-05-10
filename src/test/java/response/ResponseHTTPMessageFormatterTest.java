@@ -5,12 +5,15 @@ import org.junit.Test;
 
 import java.util.*;
 
+import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static request.HTTPMethod.GET;
 import static request.HTTPMethod.HEAD;
 import static request.HTTPVersion.HTTP_1_1;
-import static response.EntityHeaderFields.ALLOW;
-import static response.HTTPStatusCode.*;
+import static response.EntityHeaderFields.*;
+import static response.HTTPStatusCode.OK;
+import static response.HTTPStatusCode.PARTIAL_CONTENT;
 
 public class ResponseHTTPMessageFormatterTest {
     private ResponseHTTPMessageFormatter responseFormatter;
@@ -43,15 +46,39 @@ public class ResponseHTTPMessageFormatterTest {
 
     @Test
     public void generateResponseWithAllowContents() {
-        HTTPResponse response = setEntityHeaders(statusOKResponse());
+        HTTPResponse response = responseWithAllowHeader();
         byte[] byteResponse = responseFormatter.buildRawHTTPResponse(response);
         assertEquals(expectedStatusOKResponse() + "\r\nAllow: GET,HEAD", new String(byteResponse));
     }
 
-    private HTTPResponse setEntityHeaders(HTTPResponse response) {
+    @Test
+    public void generatePartialContentResponse() {
+        HTTPResponse response = partialContentResponse();
+        byte[] byteResponse = responseFormatter.buildRawHTTPResponse(response);
+        assertThat(new String(byteResponse), containsString("Content-Length: 5"));
+        assertThat(new String(byteResponse), containsString("Content-Range: bytes 0-4"));
+        assertThat(new String(byteResponse), containsString("Content-Type: text/plain"));
+    }
+
+    private HTTPResponse partialContentResponse() {
+        return new HTTPResponse(new ResponseHTTPMessageFormatter())
+                .setStatusLine(HTTP_1_1, PARTIAL_CONTENT)
+                .setEntityHeaders(fakePartialContentResponse())
+                .setBody("This ".getBytes());
+    }
+
+    private Map<EntityHeaderFields, List<String>> fakePartialContentResponse() {
+        Map<EntityHeaderFields, List<String>> headerFields = new HashMap<>();
+        headerFields.put(CONTENT_LENGTH, Arrays.asList("5"));
+        headerFields.put(CONTENT_TYPE, Arrays.asList(CONTENT_TYPE_PLAIN.field()));
+        headerFields.put(CONTENT_RANGE, Arrays.asList("bytes 0-4"));
+        return headerFields;
+    }
+
+    private HTTPResponse responseWithAllowHeader() {
         Map<EntityHeaderFields, List<String>> headers = new HashMap<>();
         headers.put(ALLOW, allowedMethods());
-        return response.setEntityHeaders(headers);
+        return statusOKResponse().setEntityHeaders(headers);
     }
 
     private ArrayList<String> allowedMethods() {
