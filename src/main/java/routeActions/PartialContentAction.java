@@ -15,6 +15,9 @@ import static response.EntityHeaderFields.RANGE;
 import static response.HTTPStatusCode.PARTIAL_CONTENT;
 
 public class PartialContentAction implements RouteAction {
+
+    private final String EQUAL = "=";
+
     @Override
     public boolean isAppropriate(HTTPRequest request) {
         return isPartialContentRequest(request);
@@ -57,7 +60,7 @@ public class PartialContentAction implements RouteAction {
     }
 
     private String[] parseByteRange(HTTPRequest request) {
-        String[] range = request.headers().get(RANGE).split("=");
+        String[] range = request.headers().get(RANGE).split(EQUAL);
         return range[1].split("-");
     }
 
@@ -105,10 +108,6 @@ public class PartialContentAction implements RouteAction {
         return copyOfRange(payload, startAndEndIndexes[0], endPosition(payload.length, startAndEndIndexes[1]));
     }
 
-    private int oneIndexed(int zeroIndexPosition) {
-        return zeroIndexPosition + 1;
-    }
-
     private int reverseStartPosition(byte[] payload, String startPosition) {
         return payload.length - convertToInt(startPosition);
     }
@@ -123,5 +122,9 @@ public class PartialContentAction implements RouteAction {
 
     private int endPosition(int payloadLength, int endPosition) {
         return (payloadLength - endPosition) <= 0 ? payloadLength : endPosition;
+    }
+
+    private int oneIndexed(int zeroIndexPosition) {
+        return zeroIndexPosition + 1;
     }
 }

@@ -8,6 +8,7 @@ import router.Router;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static response.HTTPStatusCode.OK;
 
 public class ParameterDecodeAction implements RouteAction {
@@ -30,7 +31,7 @@ public class ParameterDecodeAction implements RouteAction {
     private String decodeQueryParameters(String queryParameters) {
         String decodedParams = "";
         try {
-            decodedParams = URLDecoder.decode(queryParameters, "UTF-8");
+            decodedParams = URLDecoder.decode(queryParameters, UTF_8.toString());
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }

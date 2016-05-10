@@ -7,6 +7,8 @@ public enum EntityHeaderFields {
     CONTENT_LOCATION("Content-Location"),
     CONTENT_RANGE("Content-Range"),
     CONTENT_TYPE("Content-Type"),
+    CONTENT_TYPE_HTML("text/html"),
+    CONTENT_TYPE_PLAIN("text/plain"),
     ETAG("Etag"),
     IF_MATCH("If-Match"),
     LOCATION("Location"),
