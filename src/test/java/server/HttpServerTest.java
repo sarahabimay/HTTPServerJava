@@ -1,14 +1,14 @@
 package server;
 
+import configuration.Configuration;
 import exceptions.ServerErrorHandler;
 import org.junit.Before;
 import org.junit.Test;
 import request.RequestParser;
-import routeActions.RouteAction;
-import router.*;
+import router.RouteProcessor;
+import router.RoutesFactory;
+import router.URIProcessorStub;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
@@ -20,6 +20,7 @@ public class HttpServerTest {
     private HttpServerSocketFake serverSocketFake;
     private RouteProcessor routeProcessor;
     private RequestParser requestParser;
+    private Configuration configuration;
 
     @Before
     public void setUp() {
@@ -28,7 +29,11 @@ public class HttpServerTest {
         executorServiceCreatorSpy = new ExecutorServiceCreatorSpy(1);
         ServerErrorHandler errorHandler = new ServerErrorHandler();
         requestParser = new RequestParser(errorHandler);
-        routeProcessor = new RouteProcessor(new Router(routes()), new URIProcessorStub(), errorHandler);
+        configuration = new Configuration();
+        routeProcessor = new RouteProcessor(
+                new RoutesFactory(new URIProcessorStub(), configuration),
+                configuration,
+                errorHandler);
         server = new HttpServer(serverSocketFake, executorServiceCreatorSpy, requestParser, routeProcessor);
     }
 
@@ -44,10 +49,6 @@ public class HttpServerTest {
         executorServiceCreatorSpy.setExecutorService(executorServiceSpy);
         server.serverUp();
         assertEquals(true, executorServiceSpy.hasSubmittedATask());
-    }
-
-    private Map<Route, List<RouteAction>> routes() {
-        return new RoutesFactory().routeActions();
     }
 
     private class HttpServerSocketFake extends HttpServerSocket {

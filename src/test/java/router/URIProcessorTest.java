@@ -44,6 +44,12 @@ public class URIProcessorTest {
     }
 
     @Test
+    public void fileDoesNOTExist() {
+        String resourceToFind = "/not_found";
+        assertEquals(false, uriProcessor.exists(resourceToFind));
+    }
+
+    @Test
     public void readContentsAtURI() {
         String resourceToRead = "/read_me";
         testHelpers.createFileAtResource(rootFolder, resourceToRead, "data=fatcat");

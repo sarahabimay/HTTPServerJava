@@ -3,7 +3,6 @@ package routeActions;
 import request.HTTPRequest;
 import response.HTTPResponse;
 import response.ResponseHTTPMessageFormatter;
-import router.Router;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -14,11 +13,11 @@ import static response.HTTPStatusCode.OK;
 public class ParameterDecodeAction implements RouteAction {
     @Override
     public boolean isAppropriate(HTTPRequest request) {
-        return true;
+        return request.queryParameters() != null && decodeQueryParameters(request.queryParameters()) != "";
     }
 
     @Override
-    public HTTPResponse generateResponse(HTTPRequest request, Router router, URIProcessor uriProcessor) {
+    public HTTPResponse generateResponse(HTTPRequest request) {
         return createDecodedParametersResponse(request);
     }
 

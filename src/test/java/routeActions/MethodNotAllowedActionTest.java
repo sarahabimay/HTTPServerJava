@@ -1,55 +1,67 @@
 package routeActions;
 
+import configuration.Configuration;
 import org.junit.Before;
 import org.junit.Test;
-import request.HTTPMethod;
 import request.HTTPRequest;
-import response.EntityHeaderFields;
 import response.HTTPResponse;
-import router.RouterFake;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
-import static request.HTTPMethod.GET;
-import static request.HTTPMethod.PUT;
+import static request.HTTPMethod.*;
+import static request.HTTPResource.FILE1;
 import static request.HTTPResource.FORM;
 import static request.HTTPVersion.HTTP_1_1;
 import static response.EntityHeaderFields.ALLOW;
 import static response.HTTPStatusCode.METHOD_NOT_ALLOWED;
 
 public class MethodNotAllowedActionTest {
-    private URIProcessor uriProcessor;
+    private MethodNotAllowedAction action;
 
     @Before
     public void setUp() {
-        uriProcessor = new URIProcessor("/Users/sarahjohnston/Sarah/CobSpec/public/");
+        action = new MethodNotAllowedAction(new Configuration());
     }
 
     @Test
-    public void generateMethodNotFoundResponse() {
-        RouterFake routerFake = new RouterFake();
-        routerFake.setFakeResourceMethods(allowedMethods());
-        MethodNotAllowedAction action = new MethodNotAllowedAction();
-        HTTPResponse response =  action.generateResponse(bogusRequest(), routerFake, uriProcessor);
-        assertEquals(METHOD_NOT_ALLOWED, response.getStatusCode());
-        assertEquals(expectedAllowedMethods(), response.getEntityHeaders());
+    public void methodNotAllowedForResource() {
+        HTTPRequest request = new HTTPRequest(PUT, FILE1, HTTP_1_1, null, null, null);
+        assertEquals(true, action.isAppropriate(request));
     }
 
-    private Map<EntityHeaderFields, List<String>> expectedAllowedMethods() {
-        Map<EntityHeaderFields, List<String>> allowed = new HashMap<>();
-        allowed.put(ALLOW, allowedMethods());
-        return allowed;
+    @Test
+    public void methodAllowedForResource() {
+        HTTPRequest request = new HTTPRequest(GET, FILE1, HTTP_1_1, null, null, null);
+        assertEquals(false, action.isAppropriate(request));
+    }
+
+    @Test
+    public void bogusMethodRequestHasNoAllowedMethods() {
+        HTTPResponse response =  action.generateResponse(bogusRequest());
+        assertEquals(METHOD_NOT_ALLOWED, response.getStatusCode());
+        assertEquals(noAllowedMethods(), response.getEntityHeaders().get(ALLOW));
+    }
+
+    @Test
+    public void responseHasAllowedMethods() {
+        HTTPRequest request = new HTTPRequest(PUT, FILE1, HTTP_1_1, null, null, null);
+        HTTPResponse response =  action.generateResponse(request);
+        assertEquals(METHOD_NOT_ALLOWED, response.getStatusCode());
+        assertEquals(allowedMethods(), response.getEntityHeaders().get(ALLOW));
     }
 
     private HTTPRequest bogusRequest() {
-        return new HTTPRequest(HTTPMethod.UNDEFINED, FORM, HTTP_1_1, null, null, null);
+        return new HTTPRequest(UNDEFINED, FORM, HTTP_1_1, null, null, null);
+    }
+
+    private List<String> noAllowedMethods() {
+        return new ArrayList<>();
     }
 
     private List<String> allowedMethods() {
-        return asList(GET.method(), PUT.method());
+        return asList(GET.method(), POST.method(), HEAD.method(), OPTIONS.method(), DELETE.method(), PATCH.method());
     }
 }

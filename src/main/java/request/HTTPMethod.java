@@ -1,5 +1,9 @@
 package request;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public enum HTTPMethod {
     GET("GET"),
     PUT("PUT"),
@@ -8,7 +12,8 @@ public enum HTTPMethod {
     OPTIONS("OPTIONS"),
     DELETE("DELETE"),
     PATCH("PATCH"),
-    UNDEFINED("");
+    UNDEFINED("UNDEFINED"),
+    ERROR("ERROR");
 
     private final String method;
 
@@ -28,5 +33,13 @@ public enum HTTPMethod {
             }
         }
         return UNDEFINED;
+    }
+
+    public static List<String> httpMethods() {
+        return Arrays.asList(values())
+                .stream()
+                .filter(httpMethod -> (httpMethod != HTTPMethod.ERROR && httpMethod != UNDEFINED))
+                .map(HTTPMethod::method)
+                .collect(Collectors.toList());
     }
 }

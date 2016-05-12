@@ -1,15 +1,15 @@
 package router;
 
+import configuration.Configuration;
 import exceptions.ServerErrorHandler;
 import request.HTTPRequest;
 import response.HTTPResponse;
-import routeActions.URIProcessor;
 
 public class RouteProcessorSpy extends RouteProcessor {
     private boolean hasRequestBeenParsed = false;
 
-    public RouteProcessorSpy(Router router, URIProcessor uriProcessor, ServerErrorHandler errorHandler) {
-        super(router, uriProcessor, errorHandler);
+    public RouteProcessorSpy(RoutesFactory routesFactory, Configuration configuration, ServerErrorHandler errorHandler) {
+        super(routesFactory, configuration, null);
     }
 
     @Override

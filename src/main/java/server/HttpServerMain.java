@@ -1,24 +1,21 @@
 package server;
 
+import configuration.Configuration;
 import exceptions.ServerErrorHandler;
 import request.RequestParser;
-import routeActions.RouteAction;
 import routeActions.URIProcessor;
-import router.Route;
 import router.RouteProcessor;
-import router.Router;
 import router.RoutesFactory;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.util.List;
-import java.util.Map;
 
 public class HttpServerMain {
 
     private static final int NUMBER_OF_THREADS = 200;
 
     public static void main(String[] args) {
+        Configuration configuration = new Configuration();
         CommandLineArguments arguments = commandLineArguments(args);
         try {
             ServerErrorHandler errorHandler = new ServerErrorHandler();
@@ -26,8 +23,10 @@ public class HttpServerMain {
                     new HttpServerSocket(new ServerSocket(arguments.portNumber())),
                     new ExecutorServiceCreator(NUMBER_OF_THREADS),
                     new RequestParser(errorHandler),
-                    new RouteProcessor(new Router(routeActions()), new URIProcessor(arguments.publicClassPath()), errorHandler));
-
+                    new RouteProcessor(
+                            new RoutesFactory(new URIProcessor(arguments.publicClassPath()), configuration),
+                            configuration,
+                            errorHandler));
             startServer(server);
 
         } catch (IOException e) {
@@ -36,7 +35,7 @@ public class HttpServerMain {
     }
 
     private static void startServer(HttpServer server) {
-        while(true) {
+        while (true) {
             server.serverUp();
         }
     }
@@ -45,9 +44,5 @@ public class HttpServerMain {
         CommandLineArguments arguments = new CommandLineArguments();
         arguments.process_arguments(args);
         return arguments;
-    }
-
-    private static Map<Route, List<RouteAction>> routeActions() {
-        return new RoutesFactory().routeActions();
     }
 }

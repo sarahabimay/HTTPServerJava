@@ -1,9 +1,9 @@
 package routeActions;
 
+import org.junit.Before;
 import org.junit.Test;
 import request.HTTPRequest;
 import response.HTTPResponse;
-import router.RouterStub;
 
 import static org.junit.Assert.assertEquals;
 import static request.HTTPMethod.GET;
@@ -11,16 +11,31 @@ import static request.HTTPResource.PARAMETERS;
 import static request.HTTPVersion.HTTP_1_1;
 
 public class ParameterDecodeActionTest {
-    @Test
-    public void decodeQueryParameters() {
-        String pathToPublicDir = "/Users/sarahjohnston/Sarah/CobSpec/public/";
-        URIProcessor uriProcessor = new URIProcessor(pathToPublicDir);
-        HTTPResponse response = new ParameterDecodeAction().generateResponse(getWithParametersRequest(), new RouterStub(), uriProcessor);
-        assertEquals(expectedDecodedParams(), new String(response.getBody()));
+
+    private ParameterDecodeAction action;
+
+    @Before
+    public void setUp() {
+        action = new ParameterDecodeAction();
     }
 
-    private HTTPRequest getWithParametersRequest() {
-        return new HTTPRequest(GET, PARAMETERS, HTTP_1_1, queryParameters(), null, null );
+    @Test
+    public void requestHasQueryParametersToDecode() {
+        HTTPRequest request = new HTTPRequest(GET, PARAMETERS, HTTP_1_1, queryParameters(), null, null );
+        assertEquals(true, action.isAppropriate(request));
+    }
+
+    @Test
+    public void requestHasNoQueryParametersToDecode() {
+        HTTPRequest request = new HTTPRequest(GET, PARAMETERS, HTTP_1_1, null, null, null );
+        assertEquals(false, action.isAppropriate(request));
+    }
+
+    @Test
+    public void decodeQueryParameters() {
+        HTTPRequest request = new HTTPRequest(GET, PARAMETERS, HTTP_1_1, queryParameters(), null, null );
+        HTTPResponse response = action.generateResponse(request);
+        assertEquals(expectedDecodedParams(), new String(response.getBody()));
     }
 
     private String queryParameters() {

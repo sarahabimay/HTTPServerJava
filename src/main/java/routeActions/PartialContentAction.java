@@ -4,7 +4,6 @@ import request.HTTPRequest;
 import response.EntityHeaderFields;
 import response.HTTPResponse;
 import response.ResponseHTTPMessageFormatter;
-import router.Router;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,8 +15,12 @@ import static response.EntityHeaderFields.*;
 import static response.HTTPStatusCode.PARTIAL_CONTENT;
 
 public class PartialContentAction implements RouteAction {
-
     private final String EQUAL = "=";
+    private final URIProcessor uriProcessor;
+
+    public PartialContentAction(URIProcessor uriProcessor) {
+        this.uriProcessor = uriProcessor;
+    }
 
     @Override
     public boolean isAppropriate(HTTPRequest request) {
@@ -25,7 +28,7 @@ public class PartialContentAction implements RouteAction {
     }
 
     @Override
-    public HTTPResponse generateResponse(HTTPRequest request, Router router, URIProcessor uriProcessor) {
+    public HTTPResponse generateResponse(HTTPRequest request) {
         byte[] currentPayload = payloadAtResource(request, uriProcessor);
         Integer[] startAndEndIndexes = startAndEndIndexes(currentPayload, request);
         byte[] partialContent = getPartialContent(currentPayload, startAndEndIndexes);
