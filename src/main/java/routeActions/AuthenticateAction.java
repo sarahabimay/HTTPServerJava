@@ -1,17 +1,15 @@
 package routeActions;
 
 import request.HTTPRequest;
+import request.HTTPResource;
 import response.EntityHeaderFields;
 import response.HTTPResponse;
 import response.ResponseHTTPMessageFormatter;
-import router.Router;
 
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.Arrays.asList;
+import static request.HTTPResource.*;
 import static request.HTTPVersion.HTTP_1_1;
 import static response.EntityHeaderFields.AUTHENTICATE;
 import static response.EntityHeaderFields.AUTHORIZATION;
@@ -19,13 +17,19 @@ import static response.HTTPStatusCode.OK;
 import static response.HTTPStatusCode.UNAUTHORIZED;
 
 public class AuthenticateAction implements RouteAction {
-    @Override
-    public boolean isAppropriate(HTTPRequest request) {
-        return true;
+    private final ArrayList<HTTPResource> authorizedResources;
+
+    public AuthenticateAction() {
+        this.authorizedResources = new ArrayList<>(Arrays.asList(LOGS, LOG, THESE, REQUESTS));
     }
 
     @Override
-    public HTTPResponse generateResponse(HTTPRequest request, Router router, URIProcessor uriProcessor) {
+    public boolean isAppropriate(HTTPRequest request) {
+        return authorizedResources.contains(request.uri());
+    }
+
+    @Override
+    public HTTPResponse generateResponse(HTTPRequest request) {
         return isAuthorized(request) ? createProtectionSpaceResponse() : createUnauthorizedResponse();
     }
 

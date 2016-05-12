@@ -9,7 +9,6 @@ import request.HTTPRequest;
 import request.HTTPResource;
 import request.HTTPVersion;
 import response.HTTPResponse;
-import router.RouterStub;
 import testHelper.TestHelpers;
 
 import java.io.File;
@@ -47,7 +46,7 @@ public class UpdateResourceActionTest {
 
         String updatedPayload = "data=heathcliff";
         HTTPRequest getRequest = newPostRequest(PUT, FORM, HTTP_1_1, updatedPayload);
-        HTTPResponse response = new UpdateResourceAction().generateResponse(getRequest, new RouterStub(), uriProcessor);
+        HTTPResponse response = new UpdateResourceAction(uriProcessor).generateResponse(getRequest);
 
         assertEquals("HTTP/1.1 200 OK", response.getStatusLine());
     }
@@ -60,7 +59,7 @@ public class UpdateResourceActionTest {
 
         String updatedPayload = "data=heathcliff";
         HTTPRequest getRequest = newPostRequest(PUT, FORM, HTTP_1_1, updatedPayload);
-        new UpdateResourceAction().generateResponse(getRequest, new RouterStub(), uriProcessor);
+        new UpdateResourceAction(uriProcessor).generateResponse(getRequest);
 
         assertEquals(updatedPayload, testHelpers.contentsAtResource(testHelpers.pathToRootFolder(temporaryFolder, testFolder), FORM.uri()).get(0));
     }
@@ -71,7 +70,7 @@ public class UpdateResourceActionTest {
 
         String newPayload = "data=heathcliff";
         HTTPRequest getRequest = newPostRequest(POST, FORM, HTTP_1_1, newPayload);
-        new UpdateResourceAction().generateResponse(getRequest, new RouterStub(), uriProcessor);
+        new UpdateResourceAction(uriProcessor).generateResponse(getRequest);
 
         assertEquals(newPayload,
                 testHelpers.contentsAtResource(

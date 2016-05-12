@@ -8,15 +8,14 @@ import request.HTTPResource;
 import request.HTTPVersion;
 import response.EntityHeaderFields;
 import response.HTTPResponse;
-import router.RouterStub;
-import router.URIProcessorStub;
 
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static request.HTTPMethod.*;
-import static request.HTTPResource.*;
-import static request.HTTPVersion.*;
+import static request.HTTPMethod.GET;
+import static request.HTTPResource.COFFEE;
+import static request.HTTPResource.TEA;
+import static request.HTTPVersion.HTTP_1_1;
 
 public class IAmATeapotActionTest {
 
@@ -36,9 +35,8 @@ public class IAmATeapotActionTest {
     @Test
     public void requestCoffeeButGetsFourEighteen() {
         HTTPResponse response = action.generateResponse(
-                newGETRequest(GET, COFFEE, HTTP_1_1, null),
-                new RouterStub(),
-                new URIProcessorStub());
+                newGETRequest(GET, COFFEE, HTTP_1_1, null)
+        );
         assertEquals("HTTP/1.1 418 I'm a teapot", response.getStatusLine());
         assertEquals("I'm a teapot", new String(response.getBody()));
     }
@@ -46,9 +44,8 @@ public class IAmATeapotActionTest {
     @Test
     public void requestTeaIsSuccessful() {
         HTTPResponse response = action.generateResponse(
-                newGETRequest(GET, TEA, HTTP_1_1, null),
-                new RouterStub(),
-                new URIProcessorStub());
+                newGETRequest(GET, TEA, HTTP_1_1, null)
+        );
         assertEquals("HTTP/1.1 200 OK", response.getStatusLine());
     }
 

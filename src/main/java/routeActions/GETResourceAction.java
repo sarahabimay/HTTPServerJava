@@ -4,7 +4,6 @@ import request.HTTPRequest;
 import response.EntityHeaderFields;
 import response.HTTPResponse;
 import response.ResponseHTTPMessageFormatter;
-import router.Router;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,17 +15,23 @@ import static response.EntityHeaderFields.*;
 import static response.HTTPStatusCode.OK;
 
 public class GETResourceAction implements RouteAction {
+    private final URIProcessor uriProcessor;
+
+    public GETResourceAction(URIProcessor uriProcessor) {
+        this.uriProcessor = uriProcessor;
+    }
+
     @Override
     public boolean isAppropriate(HTTPRequest request) {
-        return request.method() == GET;
+        return request.method() == GET && uriProcessor.exists(request.uri().uri());
     }
 
     @Override
-    public HTTPResponse generateResponse(HTTPRequest request, Router router, URIProcessor uriProcessor) {
-        return createGetPayloadResponse(request, uriProcessor);
+    public HTTPResponse generateResponse(HTTPRequest request) {
+        return createGetPayloadResponse(request );
     }
 
-    private HTTPResponse createGetPayloadResponse(HTTPRequest request, URIProcessor uriProcessor) {
+    private HTTPResponse createGetPayloadResponse(HTTPRequest request) {
         byte[] payload = uriProcessor.read(request.uri().uri());
         return new HTTPResponse(new ResponseHTTPMessageFormatter())
                 .setStatusLine(request.version(), OK)

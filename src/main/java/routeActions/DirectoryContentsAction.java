@@ -1,10 +1,10 @@
 package routeActions;
 
 import request.HTTPRequest;
+import request.HTTPResource;
 import response.EntityHeaderFields;
 import response.HTTPResponse;
 import response.ResponseHTTPMessageFormatter;
-import router.Router;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,19 +12,26 @@ import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static request.HTTPMethod.GET;
-import static response.EntityHeaderFields.CONTENT_LENGTH;
-import static response.EntityHeaderFields.CONTENT_TYPE;
-import static response.EntityHeaderFields.CONTENT_TYPE_HTML;
+import static request.HTTPResource.INDEX;
+import static response.EntityHeaderFields.*;
 import static response.HTTPStatusCode.OK;
 
 public class DirectoryContentsAction implements RouteAction {
-    @Override
-    public boolean isAppropriate(HTTPRequest request) {
-        return request.method() == GET;
+    private final URIProcessor uriProcessor;
+    private final HTTPResource contentsResource;
+
+    public DirectoryContentsAction(URIProcessor uriProcessor) {
+        this.uriProcessor = uriProcessor;
+        this.contentsResource = INDEX;
     }
 
     @Override
-    public HTTPResponse generateResponse(HTTPRequest request, Router router, URIProcessor uriProcessor) {
+    public boolean isAppropriate(HTTPRequest request) {
+        return request.method() == GET && contentsResource == request.uri();
+    }
+
+    @Override
+    public HTTPResponse generateResponse(HTTPRequest request) {
         return createDirectoryLinksResponse(request, formatHTMLLinks(uriProcessor.directoryContents()));
     }
 

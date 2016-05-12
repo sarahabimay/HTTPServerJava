@@ -1,14 +1,17 @@
 package routeActions;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import request.HTTPMethod;
 import request.HTTPRequest;
 import request.HTTPResource;
 import request.HTTPVersion;
 import response.HTTPResponse;
-import router.RouterStub;
-import router.URIProcessorStub;
+import testHelper.TestHelpers;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,10 +22,22 @@ import static request.HTTPVersion.HTTP_1_1;
 import static response.HTTPStatusCode.NOT_FOUND;
 
 public class StatusNOKActionTest {
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    private File rootFolder;
+    private TestHelpers testHelpers;
+
     @Test
     public void createStatusNOKResponse() {
-        StatusNOKAction action = new StatusNOKAction();
-        HTTPResponse response = action.generateResponse(unavailableResourceRequest(), new RouterStub() , new URIProcessorStub());
+        testHelpers = new TestHelpers();
+        try {
+            rootFolder = temporaryFolder.newFolder("test");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        URIProcessor uriProcessor = new URIProcessor(rootFolder.getAbsolutePath());
+        StatusNOKAction action = new StatusNOKAction(uriProcessor);
+        HTTPResponse response = action.generateResponse(unavailableResourceRequest());
         assertEquals(statusNOKResponseLine(), response.getStatusLine());
     }
 

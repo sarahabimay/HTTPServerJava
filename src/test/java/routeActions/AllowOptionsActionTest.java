@@ -1,17 +1,16 @@
 package routeActions;
 
+import configuration.Configuration;
 import org.junit.Test;
 import request.HTTPRequest;
 import response.HTTPResponse;
-import router.RouterFake;
-import router.URIProcessorStub;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static request.HTTPMethod.*;
 import static request.HTTPResource.OPTIONS_ONE;
 import static request.HTTPVersion.HTTP_1_1;
@@ -20,13 +19,14 @@ import static response.EntityHeaderFields.ALLOW;
 public class AllowOptionsActionTest {
     @Test
     public void createOptionResponse() {
-        RouterFake router = new RouterFake();
-        router.setFakeResourceMethods(new ArrayList<>(Arrays.asList(GET.method(), HEAD.method())));
-        URIProcessorStub uriProcessorStub = new URIProcessorStub();
-        HTTPResponse response = new AllowOptionsAction().generateResponse(createOptionsRequest(), router , uriProcessorStub);
+        HTTPResponse response = new AllowOptionsAction(new Configuration()).generateResponse(createOptionsRequest());
         assertEquals("HTTP/1.1 200 OK", response.getStatusLine());
         assertEquals(ALLOW, response.getEntityHeaders().keySet().toArray()[0]);
-        assertEquals(2, response.getEntityHeaders().values().toString().split(",").length);
+        assertThat(response.getEntityHeaders().get(ALLOW), hasItem(HEAD.method()));
+        assertThat(response.getEntityHeaders().get(ALLOW), hasItem(POST.method()));
+        assertThat(response.getEntityHeaders().get(ALLOW), hasItem(PUT.method()));
+        assertThat(response.getEntityHeaders().get(ALLOW), hasItem(GET.method()));
+        assertThat(response.getEntityHeaders().get(ALLOW), hasItem(OPTIONS.method()));
     }
 
     private HTTPRequest createOptionsRequest() {
