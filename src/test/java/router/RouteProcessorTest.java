@@ -3,6 +3,7 @@ package router;
 import configuration.Configuration;
 import exceptions.ResourceManagementException;
 import exceptions.ServerErrorHandler;
+import messages.EntityHeaderBuilder;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -31,7 +32,7 @@ import static org.junit.Assert.assertThat;
 import static request.HTTPMethod.*;
 import static request.HTTPResource.*;
 import static request.HTTPVersion.HTTP_1_1;
-import static response.EntityHeaderFields.ALLOW;
+import static messages.EntityHeaderFields.ALLOW;
 import static response.HTTPStatusCode.SERVER_ERROR;
 
 public class RouteProcessorTest {
@@ -44,6 +45,7 @@ public class RouteProcessorTest {
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
     private File rootFolder;
     private TestHelpers testHelpers;
+    private RoutesFactory routesFactory;
 
     @Before
     public void setUp() {
@@ -57,11 +59,21 @@ public class RouteProcessorTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        configuration = new Configuration();
+        configuration = new Configuration().addMethodsNotAllowed(methodsNotAllowed());
+        routesFactory = new RoutesFactory(
+                new URIProcessor(rootFolder.getAbsolutePath()),
+                configuration,
+                new EntityHeaderBuilder(configuration));
         routeProcessor = new RouteProcessor(
-                new RoutesFactory(new URIProcessor(rootFolder.getAbsolutePath()), new Configuration()),
+                routesFactory,
                 configuration,
                 new ServerErrorHandler());
+    }
+
+    private Map<HTTPResource, List<String>> methodsNotAllowed() {
+        Map<HTTPResource, List<String>> methodsNotAllowed = new HashMap<>();
+        methodsNotAllowed.put(FILE1, asList(PUT.method()));
+        return methodsNotAllowed;
     }
 
     @Test
@@ -118,7 +130,7 @@ public class RouteProcessorTest {
     }
 
     @Test
-    public void methodNotAllowedWithAllowedMethods() {
+    public void methodNotAllowedWithALLOWHeader() {
         String content = "data=fatcat";
         testHelpers.createFileAtResource(rootFolder, "/file1", content);
         HTTPRequest request = createRequest(PUT, FILE1, "", HTTP_1_1);
@@ -126,6 +138,17 @@ public class RouteProcessorTest {
         String methodNotFoundResponse = "HTTP/1.1 405 Method Not Allowed";
         assertEquals(methodNotFoundResponse, response.getStatusLine());
         assertThat(response.getEntityHeaders().get(ALLOW), hasItem(POST.method()));
+    }
+
+    @Test
+    public void undefinedMethodNotAllowed() {
+        String content = "data=fatcat";
+        testHelpers.createFileAtResource(rootFolder, "/file1", content);
+        HTTPRequest request = createRequest(UNDEFINED, FILE1, "", HTTP_1_1);
+        HTTPResponse response = routeProcessor.buildResponse(request);
+        String methodNotFoundResponse = "HTTP/1.1 405 Method Not Allowed";
+        assertEquals(methodNotFoundResponse, response.getStatusLine());
+        assertEquals(0, response.getEntityHeaders().size());
     }
 
     @Test

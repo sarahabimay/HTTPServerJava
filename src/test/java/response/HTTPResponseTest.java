@@ -1,5 +1,6 @@
 package response;
 
+import messages.EntityHeaderFields;
 import org.junit.Test;
 import request.HTTPVersion;
 
@@ -8,7 +9,7 @@ import java.util.*;
 import static junit.framework.TestCase.assertEquals;
 import static request.HTTPMethod.GET;
 import static request.HTTPMethod.HEAD;
-import static response.EntityHeaderFields.ALLOW;
+import static messages.EntityHeaderFields.ALLOW;
 
 public class HTTPResponseTest {
 

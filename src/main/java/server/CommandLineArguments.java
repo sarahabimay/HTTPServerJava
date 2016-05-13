@@ -4,11 +4,12 @@ public class CommandLineArguments {
     public int currentPort = 5000;
     public String currentPublicClassPath = "/Users/sarahjohnston/Sarah/CobSpec/public/";
 
-    public void process_arguments(String[] args) {
+    public CommandLineArguments process_arguments(String[] args) {
         for (int i = 0; i < args.length; i++) {
             portNumber(i, args);
             publicClassPath(i, args);
         }
+        return this;
     }
 
     public int portNumber() {

@@ -41,6 +41,6 @@ public class RouteProcessor {
 
     private RouteAction selectRouteAction(List<RouteAction> routeActions, HTTPRequest request) {
         Optional<RouteAction> action = routeActions.stream().filter(routeAction -> routeAction.isAppropriate(request)).findFirst();
-        return action.isPresent() ? action.get() : new MethodNotAllowedAction(configuration);
+        return action.isPresent() ? action.get() : new MethodNotAllowedAction(routesFactory.entityHeaderBuilder(), configuration);
     }
 }

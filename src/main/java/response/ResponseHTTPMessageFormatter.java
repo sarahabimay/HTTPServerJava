@@ -1,5 +1,7 @@
 package response;
 
+import messages.EntityHeaderFields;
+
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Map;

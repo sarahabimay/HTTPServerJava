@@ -4,7 +4,7 @@ import exceptions.ServerErrorHandler;
 import exceptions.ServerErrorHandlerSpy;
 import org.junit.Before;
 import org.junit.Test;
-import response.EntityHeaderFields;
+import messages.EntityHeaderFields;
 import server.ClientSocketFake;
 import server.ClientSocketSpy;
 
@@ -16,8 +16,8 @@ import static org.junit.Assert.assertEquals;
 import static request.HTTPMethod.*;
 import static request.HTTPResource.*;
 import static request.HTTPVersion.HTTP_1_1;
-import static response.EntityHeaderFields.CONTENT_LENGTH;
-import static response.EntityHeaderFields.RANGE;
+import static messages.EntityHeaderFields.CONTENT_LENGTH;
+import static messages.EntityHeaderFields.RANGE;
 
 public class RequestParserTest {
     private RequestParser requestParser;

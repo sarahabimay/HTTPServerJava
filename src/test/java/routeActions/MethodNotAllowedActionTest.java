@@ -1,21 +1,24 @@
 package routeActions;
 
 import configuration.Configuration;
+import messages.EntityHeaderBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import request.HTTPRequest;
+import request.HTTPResource;
 import response.HTTPResponse;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.Arrays.asList;
+import static messages.EntityHeaderFields.ALLOW;
 import static org.junit.Assert.assertEquals;
 import static request.HTTPMethod.*;
 import static request.HTTPResource.FILE1;
 import static request.HTTPResource.FORM;
 import static request.HTTPVersion.HTTP_1_1;
-import static response.EntityHeaderFields.ALLOW;
 import static response.HTTPStatusCode.METHOD_NOT_ALLOWED;
 
 public class MethodNotAllowedActionTest {
@@ -23,7 +26,8 @@ public class MethodNotAllowedActionTest {
 
     @Before
     public void setUp() {
-        action = new MethodNotAllowedAction(new Configuration());
+        Configuration configuration = new Configuration().addMethodsNotAllowed(methodsNotAllowed());
+        action = new MethodNotAllowedAction(new EntityHeaderBuilder(configuration), configuration);
     }
 
     @Test
@@ -42,7 +46,7 @@ public class MethodNotAllowedActionTest {
     public void bogusMethodRequestHasNoAllowedMethods() {
         HTTPResponse response =  action.generateResponse(bogusRequest());
         assertEquals(METHOD_NOT_ALLOWED, response.getStatusCode());
-        assertEquals(noAllowedMethods(), response.getEntityHeaders().get(ALLOW));
+        assertEquals(null, response.getEntityHeaders().get(ALLOW));
     }
 
     @Test
@@ -57,11 +61,20 @@ public class MethodNotAllowedActionTest {
         return new HTTPRequest(UNDEFINED, FORM, HTTP_1_1, null, null, null);
     }
 
-    private List<String> noAllowedMethods() {
-        return new ArrayList<>();
+    private List<String> allowedMethods() {
+        return asList(
+                GET.method(),
+                POST.method(),
+                HEAD.method(),
+                OPTIONS.method(),
+                DELETE.method(),
+                PATCH.method());
     }
 
-    private List<String> allowedMethods() {
-        return asList(GET.method(), POST.method(), HEAD.method(), OPTIONS.method(), DELETE.method(), PATCH.method());
+    private Map<HTTPResource, List<String>> methodsNotAllowed() {
+        Map<HTTPResource, List<String>> methodsNotAllowed = new HashMap<>();
+        methodsNotAllowed.put(FILE1, asList(PUT.method()));
+        methodsNotAllowed.put(FILE1, asList(PUT.method()));
+        return methodsNotAllowed;
     }
 }

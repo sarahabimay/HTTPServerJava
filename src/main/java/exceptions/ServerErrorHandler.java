@@ -3,7 +3,7 @@ package exceptions;
 import request.HTTPMethod;
 import request.HTTPRequest;
 import request.HTTPVersion;
-import response.EntityHeaderFields;
+import messages.EntityHeaderFields;
 
 import java.util.HashMap;
 import java.util.Map;

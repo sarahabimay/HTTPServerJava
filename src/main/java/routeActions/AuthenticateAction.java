@@ -1,31 +1,33 @@
 package routeActions;
 
+import configuration.Configuration;
+import messages.EntityHeaderFields;
 import request.HTTPRequest;
-import request.HTTPResource;
-import response.EntityHeaderFields;
 import response.HTTPResponse;
 import response.ResponseHTTPMessageFormatter;
 
-import java.util.*;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static java.util.Arrays.asList;
-import static request.HTTPResource.*;
+import static messages.EntityHeaderFields.AUTHENTICATE;
+import static messages.EntityHeaderFields.AUTHORIZATION;
 import static request.HTTPVersion.HTTP_1_1;
-import static response.EntityHeaderFields.AUTHENTICATE;
-import static response.EntityHeaderFields.AUTHORIZATION;
 import static response.HTTPStatusCode.OK;
 import static response.HTTPStatusCode.UNAUTHORIZED;
 
 public class AuthenticateAction implements RouteAction {
-    private final ArrayList<HTTPResource> authorizedResources;
+    private final Configuration configuration;
 
-    public AuthenticateAction() {
-        this.authorizedResources = new ArrayList<>(Arrays.asList(LOGS, LOG, THESE, REQUESTS));
+    public AuthenticateAction(Configuration configuration) {
+        this.configuration = configuration;
     }
 
     @Override
     public boolean isAppropriate(HTTPRequest request) {
-        return authorizedResources.contains(request.uri());
+        return configuration.authorizedResources().contains(request.uri());
     }
 
     @Override
@@ -47,7 +49,7 @@ public class AuthenticateAction implements RouteAction {
 
     private boolean isAuthorized(HTTPRequest request) {
         if (request.headers().containsKey(AUTHORIZATION)) {
-            return parseAuthorization(request.headers().get(AUTHORIZATION)).equals("admin:hunter2");
+            return parseAuthorization(request.headers().get(AUTHORIZATION)).equals(configuration.authorisationCredentials());
         }
         return false;
     }

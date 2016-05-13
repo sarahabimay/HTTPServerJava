@@ -8,7 +8,7 @@ import request.HTTPMethod;
 import request.HTTPRequest;
 import request.HTTPResource;
 import request.HTTPVersion;
-import response.EntityHeaderFields;
+import messages.EntityHeaderFields;
 import response.HTTPResponse;
 import testHelper.TestHelpers;
 
@@ -23,7 +23,7 @@ import static request.HTTPMethod.GET;
 import static request.HTTPResource.*;
 import static request.HTTPResource.PARTIAL_CONTENT;
 import static request.HTTPVersion.HTTP_1_1;
-import static response.EntityHeaderFields.*;
+import static messages.EntityHeaderFields.*;
 
 public class PartialContentActionTest {
     @Rule
