@@ -3,7 +3,7 @@ package routeActions;
 import request.HTTPRequest;
 import request.HTTPResource;
 import request.HTTPVersion;
-import response.EntityHeaderFields;
+import messages.EntityHeaderFields;
 import response.HTTPResponse;
 import response.HTTPStatusCode;
 import response.ResponseHTTPMessageFormatter;

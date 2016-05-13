@@ -5,7 +5,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import request.HTTPRequest;
-import response.EntityHeaderFields;
+import messages.EntityHeaderFields;
 import response.HTTPResponse;
 import testHelper.TestHelpers;
 
@@ -24,8 +24,8 @@ import static org.junit.Assert.assertThat;
 import static request.HTTPMethod.PATCH;
 import static request.HTTPResource.PATCH_CONTENT;
 import static request.HTTPVersion.HTTP_1_1;
-import static response.EntityHeaderFields.CONTENT_LOCATION;
-import static response.EntityHeaderFields.ETAG;
+import static messages.EntityHeaderFields.CONTENT_LOCATION;
+import static messages.EntityHeaderFields.ETAG;
 
 public class PatchContentActionTest {
     @Rule

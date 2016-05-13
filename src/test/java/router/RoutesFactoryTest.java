@@ -1,6 +1,7 @@
 package router;
 
 import configuration.Configuration;
+import messages.EntityHeaderBuilder;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -27,9 +28,12 @@ import static response.HTTPStatusCode.*;
 
 public class RoutesFactoryTest {
     private File rootFolder;
+    private RoutesFactory routesFactory;
     private TestHelpers testHelpers;
+
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    private Map<HTTPMethod, List<RouteAction>> actions;
 
     @Before
     public void setUp() {
@@ -40,14 +44,19 @@ public class RoutesFactoryTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        Configuration configuration = new Configuration();
+        routesFactory = new RoutesFactory(
+                new URIProcessor(rootFolder.getAbsolutePath()),
+                configuration,
+                new EntityHeaderBuilder(configuration));
+        actions = routesFactory.routeActions();
     }
 
     @Test
     public void bogusMethodRequestReceivesMethodNotAllowed() {
         String content = "data=fatcat";
         testHelpers.createFileAtResource(rootFolder, "/file1", content);
-        Map<HTTPMethod, List<RouteAction>> actions =
-                new RoutesFactory(new URIProcessor(rootFolder.getAbsolutePath()), new Configuration()).routeActions();
         HTTPRequest request = new HTTPRequest(UNDEFINED, FILE1, HTTP_1_1, null, null, null);
         RouteAction action = selectRouteAction(actions.get(UNDEFINED), request);
         assertEquals(METHOD_NOT_ALLOWED, action.generateResponse(request).getStatusCode());
@@ -57,8 +66,6 @@ public class RoutesFactoryTest {
     public void errorMethodRequestReceivesInternalServerError() {
         String content = "data=fatcat";
         testHelpers.createFileAtResource(rootFolder, "/file1", content);
-        Map<HTTPMethod, List<RouteAction>> actions =
-                new RoutesFactory(new URIProcessor(rootFolder.getAbsolutePath()), new Configuration() ).routeActions();
         HTTPRequest request = new HTTPRequest(ERROR, FILE1, HTTP_1_1, null, null, null);
         RouteAction action = selectRouteAction(actions.get(ERROR), request);
         assertEquals(SERVER_ERROR, action.generateResponse(request).getStatusCode());
@@ -66,8 +73,6 @@ public class RoutesFactoryTest {
 
     @Test
     public void getIAmATeapotAction() {
-        Map<HTTPMethod, List<RouteAction>> actions =
-                new RoutesFactory(new URIProcessor(rootFolder.getAbsolutePath()), new Configuration() ).routeActions();
         HTTPRequest request = new HTTPRequest(GET, COFFEE, HTTP_1_1, null, null, null);
         RouteAction action = selectRouteAction(actions.get(GET), request);
         assertEquals(FOUR_EIGHTEEN, action.generateResponse(request).getStatusCode());
@@ -75,8 +80,6 @@ public class RoutesFactoryTest {
 
     @Test
     public void parameterDecodeAction() {
-        Map<HTTPMethod, List<RouteAction>> actions =
-                new RoutesFactory(new URIProcessor(rootFolder.getAbsolutePath()), new Configuration()).routeActions();
         HTTPRequest request = new HTTPRequest(GET, COFFEE, HTTP_1_1, null, null, null);
         RouteAction action = selectRouteAction(actions.get(GET), request);
         assertEquals(FOUR_EIGHTEEN, action.generateResponse(request).getStatusCode());
@@ -86,8 +89,6 @@ public class RoutesFactoryTest {
     public void putMethodnNotAllowed() {
         String content = "data=fatcat";
         testHelpers.createFileAtResource(rootFolder, "/file1", content);
-        Map<HTTPMethod, List<RouteAction>> actions =
-                new RoutesFactory(new URIProcessor(rootFolder.getAbsolutePath()), new Configuration()).routeActions();
         HTTPRequest request = new HTTPRequest(PUT, FILE1, HTTP_1_1, null, null, null);
         RouteAction action = selectRouteAction(actions.get(GET), request);
         assertEquals(METHOD_NOT_ALLOWED, action.generateResponse(request).getStatusCode());
@@ -95,6 +96,6 @@ public class RoutesFactoryTest {
 
     private RouteAction selectRouteAction(List<RouteAction> routeActions, HTTPRequest request) {
         Optional<RouteAction> action = routeActions.stream().filter(routeAction -> routeAction.isAppropriate(request)).findFirst();
-        return action.isPresent() ? action.get() : new MethodNotAllowedAction(new Configuration());
+        return action.isPresent() ? action.get() : new MethodNotAllowedAction(new EntityHeaderBuilder(new Configuration()), new Configuration());
     }
 }

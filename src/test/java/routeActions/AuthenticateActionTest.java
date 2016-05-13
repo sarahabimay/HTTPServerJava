@@ -1,20 +1,22 @@
 package routeActions;
 
+import configuration.Configuration;
+import messages.EntityHeaderFields;
 import org.junit.Before;
 import org.junit.Test;
 import request.HTTPRequest;
-import response.EntityHeaderFields;
 import response.HTTPResponse;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import static messages.EntityHeaderFields.AUTHENTICATE;
+import static messages.EntityHeaderFields.AUTHORIZATION;
 import static org.junit.Assert.assertEquals;
 import static request.HTTPMethod.GET;
 import static request.HTTPResource.*;
 import static request.HTTPVersion.HTTP_1_1;
-import static response.EntityHeaderFields.AUTHENTICATE;
-import static response.EntityHeaderFields.AUTHORIZATION;
 import static response.HTTPStatusCode.OK;
 
 public class AuthenticateActionTest {
@@ -23,7 +25,9 @@ public class AuthenticateActionTest {
 
     @Before
     public void setUp() {
-        action = new AuthenticateAction();
+        action = new AuthenticateAction(new Configuration()
+                .addAuthorisationCredentials("admin:hunter2")
+                .addResourcesRequiringAuth(Arrays.asList(LOGS, LOG, THESE, REQUESTS)));
     }
 
     @Test
@@ -87,7 +91,7 @@ public class AuthenticateActionTest {
         return headers;
     }
 
-    private Map<EntityHeaderFields,String> emptyCredentials() {
+    private Map<EntityHeaderFields, String> emptyCredentials() {
         return new HashMap<>();
     }
 }

@@ -8,7 +8,7 @@ import request.HTTPMethod;
 import request.HTTPRequest;
 import request.HTTPResource;
 import request.HTTPVersion;
-import response.EntityHeaderFields;
+import messages.EntityHeaderFields;
 import response.HTTPResponse;
 import testHelper.TestHelpers;
 

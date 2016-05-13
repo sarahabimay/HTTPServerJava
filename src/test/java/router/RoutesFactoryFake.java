@@ -10,7 +10,7 @@ public class RoutesFactoryFake extends RoutesFactory {
     private final Map<HTTPMethod, List<RouteAction>> routeActions;
 
     public RoutesFactoryFake(Map<HTTPMethod, List<RouteAction>> routeActions) {
-        super(null, null);
+        super(null, null, null);
         this.routeActions = routeActions;
     }
 

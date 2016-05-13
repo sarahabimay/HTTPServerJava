@@ -1,5 +1,6 @@
 package response;
 
+import messages.EntityHeaderFields;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -11,7 +12,7 @@ import static org.junit.Assert.assertThat;
 import static request.HTTPMethod.GET;
 import static request.HTTPMethod.HEAD;
 import static request.HTTPVersion.HTTP_1_1;
-import static response.EntityHeaderFields.*;
+import static messages.EntityHeaderFields.*;
 import static response.HTTPStatusCode.OK;
 import static response.HTTPStatusCode.PARTIAL_CONTENT;
 

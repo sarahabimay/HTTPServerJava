@@ -1,5 +1,6 @@
 package response;
 
+import messages.EntityHeaderFields;
 import request.HTTPVersion;
 
 import java.util.List;

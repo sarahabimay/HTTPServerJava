@@ -2,7 +2,7 @@ package request;
 
 import exceptions.RequestParsingException;
 import exceptions.ServerErrorHandler;
-import response.EntityHeaderFields;
+import messages.EntityHeaderFields;
 import server.HttpClientSocket;
 
 import java.io.BufferedReader;
@@ -14,8 +14,8 @@ import static request.HTTPMethod.lookupMethod;
 import static request.HTTPResource.*;
 import static request.HTTPVersion.*;
 import static exceptions.RequestErrors.*;
-import static response.EntityHeaderFields.*;
-import static response.EntityHeaderFields.CONTENT_LENGTH;
+import static messages.EntityHeaderFields.*;
+import static messages.EntityHeaderFields.CONTENT_LENGTH;
 
 public class RequestParser {
     private static final String COLON = ":";

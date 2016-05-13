@@ -14,7 +14,7 @@ import static request.HTTPResource.*;
 import static request.HTTPResource.INDEX;
 import static request.HTTPResource.REDIRECT;
 import static request.HTTPVersion.HTTP_1_1;
-import static response.EntityHeaderFields.LOCATION;
+import static messages.EntityHeaderFields.LOCATION;
 
 public class RedirectPathActionTest {
 

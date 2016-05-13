@@ -26,7 +26,7 @@ public enum HTTPMethod {
     }
 
     public static HTTPMethod lookupMethod(String method) {
-        HTTPMethod[] methods = HTTPMethod.values();
+        HTTPMethod[] methods = values();
         for (HTTPMethod methodName : methods) {
             if (methodName.toString().equals(method)) {
                 return methodName;
@@ -38,8 +38,12 @@ public enum HTTPMethod {
     public static List<String> httpMethods() {
         return Arrays.asList(values())
                 .stream()
-                .filter(httpMethod -> (httpMethod != HTTPMethod.ERROR && httpMethod != UNDEFINED))
+                .filter(httpMethod -> isValidHTTPMethod(httpMethod))
                 .map(HTTPMethod::method)
                 .collect(Collectors.toList());
+    }
+
+    private static boolean isValidHTTPMethod(HTTPMethod httpMethod) {
+        return httpMethod != ERROR && httpMethod != UNDEFINED;
     }
 }

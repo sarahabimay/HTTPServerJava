@@ -1,7 +1,7 @@
 package routeActions;
 
 import request.HTTPRequest;
-import response.EntityHeaderFields;
+import messages.EntityHeaderFields;
 import response.HTTPResponse;
 import response.ResponseHTTPMessageFormatter;
 
@@ -12,7 +12,7 @@ import java.util.Map;
 import static functions.FunctionHelpers.calculateEtag;
 import static java.util.Arrays.asList;
 import static request.HTTPMethod.PATCH;
-import static response.EntityHeaderFields.*;
+import static messages.EntityHeaderFields.*;
 import static response.HTTPStatusCode.NO_CONTENT;
 import static response.HTTPStatusCode.PRECONDITION_FAILED;
 

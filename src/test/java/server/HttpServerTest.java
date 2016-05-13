@@ -2,6 +2,7 @@ package server;
 
 import configuration.Configuration;
 import exceptions.ServerErrorHandler;
+import messages.EntityHeaderBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import request.RequestParser;
@@ -16,22 +17,26 @@ import static org.junit.Assert.assertEquals;
 public class HttpServerTest {
     private ExecutorServiceCreatorSpy executorServiceCreatorSpy;
     private HttpServer server;
-    private HttpClientSocketStub clientSocketSpy;
     private HttpServerSocketFake serverSocketFake;
     private RouteProcessor routeProcessor;
     private RequestParser requestParser;
     private Configuration configuration;
+    private RoutesFactory routesFactory;
+    private ServerErrorHandler errorHandler;
 
     @Before
     public void setUp() {
-        clientSocketSpy = new HttpClientSocketStub();
-        serverSocketFake = new HttpServerSocketFake(clientSocketSpy);
+        serverSocketFake = new HttpServerSocketFake(new HttpClientSocketStub());
         executorServiceCreatorSpy = new ExecutorServiceCreatorSpy(1);
-        ServerErrorHandler errorHandler = new ServerErrorHandler();
+        errorHandler = new ServerErrorHandler();
         requestParser = new RequestParser(errorHandler);
         configuration = new Configuration();
+        routesFactory = new RoutesFactory(
+                new URIProcessorStub(),
+                configuration,
+                new EntityHeaderBuilder(configuration));
         routeProcessor = new RouteProcessor(
-                new RoutesFactory(new URIProcessorStub(), configuration),
+                routesFactory,
                 configuration,
                 errorHandler);
         server = new HttpServer(serverSocketFake, executorServiceCreatorSpy, requestParser, routeProcessor);
