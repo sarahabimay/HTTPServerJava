@@ -59,7 +59,7 @@ public class RouteProcessorTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        configuration = new Configuration();
+        configuration = new Configuration().addMethodsNotAllowed(methodsNotAllowed());
         routesFactory = new RoutesFactory(
                 new URIProcessor(rootFolder.getAbsolutePath()),
                 configuration,
@@ -68,6 +68,12 @@ public class RouteProcessorTest {
                 routesFactory,
                 configuration,
                 new ServerErrorHandler());
+    }
+
+    private Map<HTTPResource, List<String>> methodsNotAllowed() {
+        Map<HTTPResource, List<String>> methodsNotAllowed = new HashMap<>();
+        methodsNotAllowed.put(FILE1, asList(PUT.method()));
+        return methodsNotAllowed;
     }
 
     @Test

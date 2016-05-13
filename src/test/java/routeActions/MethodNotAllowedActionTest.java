@@ -5,17 +5,20 @@ import messages.EntityHeaderBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import request.HTTPRequest;
+import request.HTTPResource;
 import response.HTTPResponse;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.Arrays.asList;
+import static messages.EntityHeaderFields.ALLOW;
 import static org.junit.Assert.assertEquals;
 import static request.HTTPMethod.*;
 import static request.HTTPResource.FILE1;
 import static request.HTTPResource.FORM;
 import static request.HTTPVersion.HTTP_1_1;
-import static messages.EntityHeaderFields.ALLOW;
 import static response.HTTPStatusCode.METHOD_NOT_ALLOWED;
 
 public class MethodNotAllowedActionTest {
@@ -23,7 +26,7 @@ public class MethodNotAllowedActionTest {
 
     @Before
     public void setUp() {
-        Configuration configuration = new Configuration();
+        Configuration configuration = new Configuration().addMethodsNotAllowed(methodsNotAllowed());
         action = new MethodNotAllowedAction(new EntityHeaderBuilder(configuration), configuration);
     }
 
@@ -59,6 +62,19 @@ public class MethodNotAllowedActionTest {
     }
 
     private List<String> allowedMethods() {
-        return asList(GET.method(), POST.method(), HEAD.method(), OPTIONS.method(), DELETE.method(), PATCH.method());
+        return asList(
+                GET.method(),
+                POST.method(),
+                HEAD.method(),
+                OPTIONS.method(),
+                DELETE.method(),
+                PATCH.method());
+    }
+
+    private Map<HTTPResource, List<String>> methodsNotAllowed() {
+        Map<HTTPResource, List<String>> methodsNotAllowed = new HashMap<>();
+        methodsNotAllowed.put(FILE1, asList(PUT.method()));
+        methodsNotAllowed.put(FILE1, asList(PUT.method()));
+        return methodsNotAllowed;
     }
 }

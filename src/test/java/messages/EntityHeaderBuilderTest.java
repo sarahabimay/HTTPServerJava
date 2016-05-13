@@ -35,6 +35,7 @@ public class EntityHeaderBuilderTest {
     private List<String> expectedALLOWHeader() {
         return asList(
                 GET.method(),
+                PUT.method(),
                 POST.method(),
                 HEAD.method(),
                 OPTIONS.method(),
