@@ -13,7 +13,6 @@ import request.HTTPRequest;
 import request.HTTPResource;
 import request.HTTPVersion;
 import response.HTTPResponse;
-import routeActions.HEADAction;
 import routeActions.InternalServerErrorAction;
 import routeActions.RouteAction;
 import routeActions.URIProcessor;
@@ -26,13 +25,13 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
+import static messages.EntityHeaderFields.ALLOW;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static request.HTTPMethod.*;
 import static request.HTTPResource.*;
 import static request.HTTPVersion.HTTP_1_1;
-import static messages.EntityHeaderFields.ALLOW;
 import static response.HTTPStatusCode.SERVER_ERROR;
 
 public class RouteProcessorTest {
@@ -179,20 +178,6 @@ public class RouteProcessorTest {
         Map<HTTPMethod, List<RouteAction>> routeActions = new HashMap<>();
         routeActions.put(HEAD, asList(new ThrowExceptionActionFake()));
         routeActions.put(ERROR, asList(new InternalServerErrorAction()));
-        return routeActions;
-    }
-
-    public Map<Route, List<RouteAction>> routeActions() {
-        Map<Route, List<RouteAction>> routeActions = new HashMap<>();
-        routeActions.put(new Route(HEAD, INDEX, HTTP_1_1), asList(new HEADAction()));
-        routeActions.put(new Route(GET, INDEX, HTTP_1_1), asList(new HEADAction()));
-        routeActions.put(new Route(PUT, FORM, HTTP_1_1), asList(new HEADAction()));
-        routeActions.put(new Route(POST, FORM, HTTP_1_1), asList(new HEADAction()));
-        routeActions.put(new Route(OPTIONS, OPTIONS_ONE, HTTP_1_1), asList(new HEADAction()));
-        routeActions.put(new Route(OPTIONS, OPTIONS_TWO, HTTP_1_1), asList(new HEADAction()));
-        routeActions.put(
-                new Route(ERROR, UNRECOGNIZED, HTTPVersion.UNDEFINED),
-                asList(new InternalServerErrorAction()));
         return routeActions;
     }
 
