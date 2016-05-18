@@ -3,17 +3,22 @@ package routeActions;
 import request.HTTPRequest;
 import response.HTTPResponse;
 import response.ResponseHTTPMessageFormatter;
-import router.Router;
 
 import static response.HTTPStatusCode.NOT_FOUND;
 
 public class StatusNOKAction implements RouteAction {
-    @Override
-    public boolean isAppropriate(HTTPRequest request) {
-        return true;
+    private final URIProcessor uriProcessor;
+
+    public StatusNOKAction(URIProcessor uriProcessor) {
+        this.uriProcessor = uriProcessor;
     }
 
-    public HTTPResponse generateResponse(HTTPRequest request, Router router, URIProcessor uriProcessor) {
+    @Override
+    public boolean isAppropriate(HTTPRequest request) {
+        return !uriProcessor.exists(request.uri().uri());
+    }
+
+    public HTTPResponse generateResponse(HTTPRequest request) {
         return new HTTPResponse(new ResponseHTTPMessageFormatter()).setStatusLine(request.version(), NOT_FOUND);
     }
 }

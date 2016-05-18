@@ -12,13 +12,14 @@ import java.util.List;
 
 public class URIProcessor {
     private final String pathToResourceFolder;
+    private final Path root;
 
     public URIProcessor(String pathToResourceFolder) {
         this.pathToResourceFolder = pathToResourceFolder;
+        this.root = Paths.get(pathToResourceFolder);
     }
 
     public void create(String resource, String newContent) {
-        Path root = Paths.get(pathToResourceFolder);
         Path resourcePath = root.resolve(removeLeadingBackslash(resource));
         try {
             Files.write(resourcePath, newContent.getBytes());
@@ -28,7 +29,6 @@ public class URIProcessor {
     }
 
     public void delete(String resource) {
-        Path root = Paths.get(pathToResourceFolder);
         Path resourcePath = root.resolve(removeLeadingBackslash(resource));
         try {
             Files.delete(resourcePath);
@@ -38,20 +38,12 @@ public class URIProcessor {
     }
 
     public byte[] read(String resource) {
-        Path root = Paths.get(pathToResourceFolder);
         Path resourcePath = root.resolve(removeLeadingBackslash(resource));
         try {
             return Files.readAllBytes(resourcePath);
         } catch (IOException e) {
             throw new ResourceManagementException(e.getMessage());
         }
-    }
-
-    private String removeLeadingBackslash(String resource) {
-        if (resource.charAt(0) == '/') {
-            return resource.substring(1, resource.length());
-        }
-        return resource;
     }
 
     public List<String> directoryContents() {
@@ -63,6 +55,22 @@ public class URIProcessor {
             }
         }
         return anchors;
+    }
+
+    public boolean exists(String resource) {
+        Path resourcePath = root.resolve(removeLeadingBackslash(resource));
+        try {
+            return Files.exists(resourcePath);
+        } catch(Exception e) {
+            return false;
+        }
+    }
+
+    private String removeLeadingBackslash(String resource) {
+        if (!resource.isEmpty() && resource.charAt(0) == '/') {
+            return resource.substring(1, resource.length());
+        }
+        return resource;
     }
 }
 

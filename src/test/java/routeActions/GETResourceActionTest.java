@@ -8,9 +8,8 @@ import request.HTTPMethod;
 import request.HTTPRequest;
 import request.HTTPResource;
 import request.HTTPVersion;
-import response.EntityHeaderFields;
+import messages.EntityHeaderFields;
 import response.HTTPResponse;
-import router.RouterStub;
 import testHelper.TestHelpers;
 
 import java.io.File;
@@ -47,7 +46,7 @@ public class GETResourceActionTest {
         URIProcessor uriProcessor = new URIProcessor(testHelpers.pathToRootFolder(temporaryFolder, testFolder));
 
         HTTPRequest getRequest = newGETRequest(GET, FORM, HTTP_1_1, null);
-        HTTPResponse response = new GETResourceAction().generateResponse(getRequest, new RouterStub(), uriProcessor);
+        HTTPResponse response = new GETResourceAction(uriProcessor).generateResponse(getRequest);
 
         assertEquals(content, new String(response.getBody()));
     }

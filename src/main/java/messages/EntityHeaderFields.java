@@ -1,4 +1,4 @@
-package response;
+package messages;
 
 public enum EntityHeaderFields {
     ALLOW("Allow"),

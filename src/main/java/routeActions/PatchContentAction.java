@@ -1,10 +1,9 @@
 package routeActions;
 
 import request.HTTPRequest;
-import response.EntityHeaderFields;
+import messages.EntityHeaderFields;
 import response.HTTPResponse;
 import response.ResponseHTTPMessageFormatter;
-import router.Router;
 
 import java.util.HashMap;
 import java.util.List;
@@ -13,18 +12,24 @@ import java.util.Map;
 import static functions.FunctionHelpers.calculateEtag;
 import static java.util.Arrays.asList;
 import static request.HTTPMethod.PATCH;
-import static response.EntityHeaderFields.*;
+import static messages.EntityHeaderFields.*;
 import static response.HTTPStatusCode.NO_CONTENT;
 import static response.HTTPStatusCode.PRECONDITION_FAILED;
 
 public class PatchContentAction implements RouteAction {
+    private final URIProcessor uriProcessor;
+
+    public PatchContentAction(URIProcessor uriProcessor) {
+        this.uriProcessor = uriProcessor;
+    }
+
     @Override
     public boolean isAppropriate(HTTPRequest request) {
         return request.method() == PATCH;
     }
 
     @Override
-    public HTTPResponse generateResponse(HTTPRequest request, Router router, URIProcessor uriProcessor) {
+    public HTTPResponse generateResponse(HTTPRequest request) {
         if (!hasPatchEtagExpired(request, payloadAtResource(request, uriProcessor))) {
             updateResourcePayload(request, uriProcessor);
             return patchSuccessResponse(request, uriProcessor);

@@ -1,20 +1,25 @@
 package routeActions;
 
+import messages.EntityHeaderBuilder;
+import messages.EntityHeaderFields;
+import request.HTTPMethod;
 import request.HTTPRequest;
-import response.EntityHeaderFields;
+import request.HTTPResource;
 import response.HTTPResponse;
 import response.ResponseHTTPMessageFormatter;
-import router.Router;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static request.HTTPMethod.OPTIONS;
-import static response.EntityHeaderFields.ALLOW;
 import static response.HTTPStatusCode.OK;
 
 public class AllowOptionsAction implements RouteAction {
+    private final EntityHeaderBuilder headerBuilder;
+
+    public AllowOptionsAction(EntityHeaderBuilder entityHeaderBuilder) {
+        this.headerBuilder = entityHeaderBuilder;
+    }
 
     @Override
     public boolean isAppropriate(HTTPRequest request) {
@@ -22,15 +27,13 @@ public class AllowOptionsAction implements RouteAction {
     }
 
     @Override
-    public HTTPResponse generateResponse(HTTPRequest request, Router router, URIProcessor uriProcessor) {
+    public HTTPResponse generateResponse(HTTPRequest request) {
         return new HTTPResponse(new ResponseHTTPMessageFormatter())
                 .setStatusLine(request.version(), OK)
-                .setEntityHeaders(allowedMethodsHeader(router.allowedMethods(request.uri())));
+                .setEntityHeaders(allowHeader(request.method(), request.uri()));
     }
 
-    private Map<EntityHeaderFields, List<String>> allowedMethodsHeader(List<String> methods) {
-        Map<EntityHeaderFields, List<String>> allowed = new HashMap<>();
-        allowed.put(ALLOW, methods);
-        return allowed;
+    private Map<EntityHeaderFields, List<String>> allowHeader(HTTPMethod method, HTTPResource resource) {
+        return headerBuilder.createALLOWHeader(method, resource).buildAllHeaders();
     }
 }

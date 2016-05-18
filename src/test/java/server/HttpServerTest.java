@@ -1,14 +1,15 @@
 package server;
 
+import configuration.Configuration;
 import exceptions.ServerErrorHandler;
+import messages.EntityHeaderBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import request.RequestParser;
-import routeActions.RouteAction;
-import router.*;
+import router.RouteProcessor;
+import router.RoutesFactory;
+import router.URIProcessorStub;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
@@ -16,19 +17,28 @@ import static org.junit.Assert.assertEquals;
 public class HttpServerTest {
     private ExecutorServiceCreatorSpy executorServiceCreatorSpy;
     private HttpServer server;
-    private HttpClientSocketStub clientSocketSpy;
     private HttpServerSocketFake serverSocketFake;
     private RouteProcessor routeProcessor;
     private RequestParser requestParser;
+    private Configuration configuration;
+    private RoutesFactory routesFactory;
+    private ServerErrorHandler errorHandler;
 
     @Before
     public void setUp() {
-        clientSocketSpy = new HttpClientSocketStub();
-        serverSocketFake = new HttpServerSocketFake(clientSocketSpy);
+        serverSocketFake = new HttpServerSocketFake(new HttpClientSocketStub());
         executorServiceCreatorSpy = new ExecutorServiceCreatorSpy(1);
-        ServerErrorHandler errorHandler = new ServerErrorHandler();
+        errorHandler = new ServerErrorHandler();
         requestParser = new RequestParser(errorHandler);
-        routeProcessor = new RouteProcessor(new Router(routes()), new URIProcessorStub(), errorHandler);
+        configuration = new Configuration();
+        routesFactory = new RoutesFactory(
+                new URIProcessorStub(),
+                configuration,
+                new EntityHeaderBuilder(configuration));
+        routeProcessor = new RouteProcessor(
+                routesFactory,
+                configuration,
+                errorHandler);
         server = new HttpServer(serverSocketFake, executorServiceCreatorSpy, requestParser, routeProcessor);
     }
 
@@ -44,10 +54,6 @@ public class HttpServerTest {
         executorServiceCreatorSpy.setExecutorService(executorServiceSpy);
         server.serverUp();
         assertEquals(true, executorServiceSpy.hasSubmittedATask());
-    }
-
-    private Map<Route, List<RouteAction>> routes() {
-        return new RoutesFactory().routeActions();
     }
 
     private class HttpServerSocketFake extends HttpServerSocket {

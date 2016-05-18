@@ -1,21 +1,22 @@
 package routeActions;
 
+import configuration.Configuration;
+import messages.EntityHeaderFields;
 import org.junit.Before;
 import org.junit.Test;
 import request.HTTPRequest;
-import response.EntityHeaderFields;
 import response.HTTPResponse;
-import router.RouterStub;
-import router.URIProcessorStub;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import static messages.EntityHeaderFields.AUTHENTICATE;
+import static messages.EntityHeaderFields.AUTHORIZATION;
 import static org.junit.Assert.assertEquals;
 import static request.HTTPMethod.GET;
-import static request.HTTPResource.LOGS;
+import static request.HTTPResource.*;
 import static request.HTTPVersion.HTTP_1_1;
-import static response.EntityHeaderFields.*;
 import static response.HTTPStatusCode.OK;
 
 public class AuthenticateActionTest {
@@ -24,32 +25,59 @@ public class AuthenticateActionTest {
 
     @Before
     public void setUp() {
-        action = new AuthenticateAction();
+        action = new AuthenticateAction(new Configuration()
+                .addAuthorisationCredentials("admin:hunter2")
+                .addResourcesRequiringAuth(Arrays.asList(LOGS, LOG, THESE, REQUESTS)));
     }
 
     @Test
-    public void authenticationCanBeAppliedToAnyRoute() {
-        assertEquals(true, action.isAppropriate(new HTTPRequest()));
+    public void authenticationRequiredForLOGSResource() {
+        HTTPRequest request = new HTTPRequest(GET, LOGS, HTTP_1_1, null, emptyCredentials(), null);
+        assertEquals(true, action.isAppropriate(request));
+    }
+
+    @Test
+    public void authenticationRequiredForLOGResource() {
+        HTTPRequest request = new HTTPRequest(GET, LOG, HTTP_1_1, null, emptyCredentials(), null);
+        assertEquals(true, action.isAppropriate(request));
+    }
+
+    @Test
+    public void authenticationRequiredForTHESEResource() {
+        HTTPRequest request = new HTTPRequest(GET, THESE, HTTP_1_1, null, emptyCredentials(), null);
+        assertEquals(true, action.isAppropriate(request));
+    }
+
+    @Test
+    public void authenticationRequiredForREQUESTResource() {
+        HTTPRequest request = new HTTPRequest(GET, REQUESTS, HTTP_1_1, null, emptyCredentials(), null);
+        assertEquals(true, action.isAppropriate(request));
+    }
+
+    @Test
+    public void authenticationNotRequiredForResource() {
+        HTTPRequest request = new HTTPRequest(GET, FORM, HTTP_1_1, null, emptyCredentials(), null);
+        assertEquals(false, action.isAppropriate(request));
     }
 
     @Test
     public void requestReceivedWithoutCredentials() {
         HTTPRequest request = new HTTPRequest(GET, LOGS, HTTP_1_1, null, emptyCredentials(), null);
-        HTTPResponse response = action.generateResponse(request, new RouterStub(), new URIProcessorStub());
+        HTTPResponse response = action.generateResponse(request);
         assertEquals(true, response.getEntityHeaders().containsKey(AUTHENTICATE));
     }
 
     @Test
     public void requestReceivedWithCredentials() {
         HTTPRequest request = new HTTPRequest(GET, LOGS, HTTP_1_1, null, base64Credentials(), null);
-        HTTPResponse response = action.generateResponse(request, new RouterStub(), new URIProcessorStub());
+        HTTPResponse response = action.generateResponse(request);
         assertEquals(OK, response.getStatusCode());
     }
 
     @Test
     public void authorizedRequestRespondsWithBody() {
         HTTPRequest request = new HTTPRequest(GET, LOGS, HTTP_1_1, null, base64Credentials(), null);
-        HTTPResponse response = action.generateResponse(request, new RouterStub(), new URIProcessorStub());
+        HTTPResponse response = action.generateResponse(request);
         assertEquals(expectedBodyContainsProtectionSpace(), new String(response.getBody()));
     }
 
@@ -63,7 +91,7 @@ public class AuthenticateActionTest {
         return headers;
     }
 
-    private Map<EntityHeaderFields,String> emptyCredentials() {
+    private Map<EntityHeaderFields, String> emptyCredentials() {
         return new HashMap<>();
     }
 }

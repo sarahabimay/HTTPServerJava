@@ -1,5 +1,7 @@
 package response;
 
+import messages.EntityHeaderFields;
+
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +65,11 @@ public class ResponseHTTPMessageFormatter {
     }
 
     private String join(List<String> methods, String characters) {
-        String combined = methods.stream().map(String::toString).reduce("", (acc, method) -> acc + method + characters);
+        String combined = "";
+        if (methods.size() == 0) {
+            return combined;
+        }
+        combined = methods.stream().map(String::toString).reduce("", (acc, method) -> acc + method + characters);
         combined = combined.substring(0, combined.length() - characters.length());
         return combined;
     }

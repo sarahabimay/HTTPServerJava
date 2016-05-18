@@ -1,28 +1,36 @@
 package routeActions;
 
 import request.HTTPRequest;
+import request.HTTPResource;
 import request.HTTPVersion;
-import response.EntityHeaderFields;
+import messages.EntityHeaderFields;
 import response.HTTPResponse;
 import response.HTTPStatusCode;
 import response.ResponseHTTPMessageFormatter;
-import router.Router;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static request.HTTPResource.INDEX;
+import static request.HTTPResource.REDIRECT;
 
 public class RedirectPathAction implements RouteAction {
-    @Override
-    public boolean isAppropriate(HTTPRequest request) {
-        return true;
+    private final ArrayList<HTTPResource> resourcesToRedirect;
+
+    public RedirectPathAction() {
+        this.resourcesToRedirect = new ArrayList<>(asList(REDIRECT));
     }
 
     @Override
-    public HTTPResponse generateResponse(HTTPRequest request, Router router, URIProcessor uriProcessor) {
+    public boolean isAppropriate(HTTPRequest request) {
+        return resourcesToRedirect.contains(request.uri());
+    }
+
+    @Override
+    public HTTPResponse generateResponse(HTTPRequest request) {
         return new HTTPResponse(new ResponseHTTPMessageFormatter())
                 .setStatusLine(HTTPVersion.HTTP_1_1, HTTPStatusCode.FOUND)
                 .setEntityHeaders(locationHeader());

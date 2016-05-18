@@ -1,6 +1,6 @@
 package request;
 
-import response.EntityHeaderFields;
+import messages.EntityHeaderFields;
 
 import java.util.Map;
 

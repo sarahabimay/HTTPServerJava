@@ -5,9 +5,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import request.HTTPRequest;
-import response.EntityHeaderFields;
+import messages.EntityHeaderFields;
 import response.HTTPResponse;
-import router.RouterFake;
 import testHelper.TestHelpers;
 
 import java.io.File;
@@ -25,8 +24,8 @@ import static org.junit.Assert.assertThat;
 import static request.HTTPMethod.PATCH;
 import static request.HTTPResource.PATCH_CONTENT;
 import static request.HTTPVersion.HTTP_1_1;
-import static response.EntityHeaderFields.CONTENT_LOCATION;
-import static response.EntityHeaderFields.ETAG;
+import static messages.EntityHeaderFields.CONTENT_LOCATION;
+import static messages.EntityHeaderFields.ETAG;
 
 public class PatchContentActionTest {
     @Rule
@@ -53,7 +52,7 @@ public class PatchContentActionTest {
         URIProcessor uriProcessor = new URIProcessor(testHelpers.pathToRootFolder(temporaryFolder, testFolder));
 
         String patchedContent = "patched content";
-        HTTPResponse response = new PatchContentAction().generateResponse(createPatchRequest(patchedContent), new RouterFake(), uriProcessor);
+        HTTPResponse response = new PatchContentAction(uriProcessor).generateResponse(createPatchRequest(patchedContent));
 
         assertEquals("HTTP/1.1 204 No Content", response.getStatusLine());
         assertThat(response.getEntityHeaders().get(ETAG), hasItem(calculateEtag(patchedContent)));
@@ -68,7 +67,7 @@ public class PatchContentActionTest {
         URIProcessor uriProcessor = new URIProcessor(testHelpers.pathToRootFolder(temporaryFolder, testFolder));
 
         String patchedContent = "patched content";
-        HTTPResponse response = new PatchContentAction().generateResponse(createPatchRequest(patchedContent), new RouterFake(), uriProcessor);
+        HTTPResponse response = new PatchContentAction(uriProcessor).generateResponse(createPatchRequest(patchedContent));
 
         assertEquals("HTTP/1.1 412 Precondition Failed", response.getStatusLine());
         assertThat(response.getEntityHeaders().get(ETAG), hasItem(getResourceEtagValue(resourceContents)));

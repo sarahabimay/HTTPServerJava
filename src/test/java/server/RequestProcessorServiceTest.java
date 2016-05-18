@@ -1,13 +1,13 @@
 package server;
 
+import configuration.Configuration;
 import exceptions.ServerErrorHandler;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import request.*;
 import router.RouteProcessorSpy;
-import router.RouterStub;
-import router.URIProcessorStub;
+import router.RoutesFactoryFake;
 
 import java.io.ByteArrayInputStream;
 
@@ -26,7 +26,9 @@ public class RequestProcessorServiceTest {
         clientSocketSpy = new ClientSocketSpy(inputStream);
         requestParserSpy = new RequestParserSpy(new HTTPRequestFake());
         routeProcessorSpy = new RouteProcessorSpy(
-                new RouterStub(), new URIProcessorStub(), new ServerErrorHandler());
+                new RoutesFactoryFake(null),
+                new Configuration(),
+                new ServerErrorHandler());
         requestProcessorService = new RequestProcessorService(
                 clientSocketSpy,
                 requestParserSpy,

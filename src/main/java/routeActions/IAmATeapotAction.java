@@ -3,7 +3,6 @@ package routeActions;
 import request.HTTPRequest;
 import response.HTTPResponse;
 import response.ResponseHTTPMessageFormatter;
-import router.Router;
 
 import static request.HTTPMethod.GET;
 import static request.HTTPResource.COFFEE;
@@ -19,7 +18,7 @@ public class IAmATeapotAction implements RouteAction {
     }
 
     @Override
-    public HTTPResponse generateResponse(HTTPRequest request, Router router, URIProcessor uriProcessor) {
+    public HTTPResponse generateResponse(HTTPRequest request) {
         return !isTeaResourceRequest(request) ? createFourEighteenResponse() : createStatusOkResponse();
     }
 

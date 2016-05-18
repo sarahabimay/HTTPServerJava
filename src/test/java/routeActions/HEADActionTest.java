@@ -6,8 +6,6 @@ import request.HTTPRequest;
 import request.HTTPResource;
 import request.HTTPVersion;
 import response.HTTPResponse;
-import router.RouterStub;
-import router.URIProcessorStub;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,11 +15,11 @@ import static request.HTTPMethod.HEAD;
 import static request.HTTPResource.INDEX;
 import static request.HTTPVersion.HTTP_1_1;
 
-public class StatusOKActionTest {
+public class HEADActionTest {
     @Test
     public void createStatusOkResponse() {
-        StatusOKAction action = new StatusOKAction();
-        HTTPResponse response = action.generateResponse(knownResourceHEADRequest(), new RouterStub() , new URIProcessorStub());
+        HEADAction action = new HEADAction();
+        HTTPResponse response = action.generateResponse(knownResourceHEADRequest());
         assertEquals("HTTP/1.1 200 OK", response.getStatusLine());
     }
 
